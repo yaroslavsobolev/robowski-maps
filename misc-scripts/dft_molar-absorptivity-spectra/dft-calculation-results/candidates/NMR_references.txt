@@ -1,0 +1,3 @@
+TMS/DMF OPT wb97xd/cc-pvdz NMR b3lyp/6-311+G(2d,p)
+Hydrogen: 31.6473
+Carbon: 182.0648

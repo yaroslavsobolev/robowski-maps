@@ -1,0 +1,4 @@
+mono_pin_rear_1: No.
+mono_pin_rear_2: No.
+G1: No.
+dimer_cage_anti: very unlikely, but not excluded: there are a couple of very weak peaks at 475 nm and 562 nm
