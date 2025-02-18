@@ -1,0 +1,1883 @@
+For index set 0, max yield is 0.1488320829728972 at index 11136, where ptsa is 0.1230470219435736
+For index set 1, max yield is 0.0995897747111937 at index 14796, where ptsa is 0.2915736677115987
+For index set 2, max yield is 0.0773333472421486 at index 12966, where ptsa is 0.2073103448275862
+For index set 3, max yield is 0.0364722622526047 at index 630, where ptsa is 0.1061943573667711
+For index set 4, max yield is 0.019306182369724 at index 1896, where ptsa is 0.2915736677115987
+number of indices: 85
+parameter upper bounds:
+10000
+10000
+20000
+1000000
+1000000
+10000
+10000
+10000
+10000
+200000
+50000
+5000
+10000000000000
+10000
+10000
+20000
+20000
+1
+14
+-6
+8
+8
+15
+17
+3
+18
+2
+18
+4
+14
+8
+Timeout set to 1800 seconds.
+initial guess:
+k1: 6759.12562121889
+k_1: 3.860580182916683
+k2: 15187.686448423408
+k_2: 171140.82009287286
+k3: 10158.085016677855
+k_3: 0.004253879919773828
+k4: 28.911560643454656
+k_4: 393.959083803352
+k5: 2.7175181082907627
+k6: 1446.2079052262934
+k_6: 284.3690143937299
+k7: 156.7795576072815
+k8: 1003574755847.9436
+k9: 6172.863531584512
+km1: 0.4756685400616421
+k_m1: 12972.075278137201
+km3: 12844.59309439952
+pKa_ptsa: -2.488713611727929
+pKa_BuNH3: 11.151031681536168
+pKa_DMFH: -7.0546203754300345
+pKa_p1: 7.233570999678938
+pKa_p2: 8.425868862726261
+pKa_p3: 11.16592680726188
+pKa_c: 14.405297012432914
+pKa_ch: -3.917192682229626
+pKa_q1: 16.61998715577274
+pKa_q2h: -0.5357275089585349
+pKa_m1h: 14.500608842092147
+pKa_m4h: -0.24016089076834174
+pKa_me2nh2: 11.002496668600305
+pKa_q4: 6.709000211723483
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.073689698857913
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 5.40730050e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 43, used conditions ptsa      0.173605
+ic001     0.300000
+am001     0.210000
+ald001    0.210000
+Name: 12954, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.156752
+ic001     0.300000
+am001     0.210000
+ald001    0.210000
+Name: 12948, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.190458
+ic001     0.300000
+am001     0.210000
+ald001    0.210000
+Name: 12960, dtype: float64
+Corresponding loglikelihood: -7.917407416945126
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 8.11095075e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 80, used conditions ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.20731
+ic001     0.12000
+am001     0.30000
+ald001    0.12000
+Name: 1866, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -8.175916558813695
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.08846415e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 80, used conditions ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.20731
+ic001     0.12000
+am001     0.30000
+ald001    0.12000
+Name: 1866, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.499892781175635
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  4.63269622e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 43, used conditions ptsa      0.173605
+ic001     0.300000
+am001     0.210000
+ald001    0.210000
+Name: 12954, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.156752
+ic001     0.300000
+am001     0.210000
+ald001    0.210000
+Name: 12948, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.190458
+ic001     0.300000
+am001     0.210000
+ald001    0.210000
+Name: 12960, dtype: float64
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.786647748079075
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.21501492e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 30, used conditions ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14784, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.059264478752483
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.82252237e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.152288781746898
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.36912656e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.241434404255103
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  2.05368984e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.800087912900604
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  8.12646801e+03  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -8.154134185981949
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.21897020e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 80, used conditions ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.20731
+ic001     0.12000
+am001     0.30000
+ald001    0.12000
+Name: 1866, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.7861801227778535
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  3.40310394e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.051496381538548
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  5.10465590e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.910598671530877
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.31292485e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -11.840766687515625
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  3.46938728e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -13.383813817384635
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.15167267e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -16.690409719626565
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  4.72750901e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -9.967996645253592
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.17401449e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -12.04389414154563
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  3.26102173e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -13.37464125419094
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.15696632e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.073646800773909
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.73544949e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.073735030612262
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.27495212e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.886523833548557
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  3.41242817e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.886531590966279
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.25423646e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.073690892954308
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.88135469e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.886510610791424
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00347440e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.886464703999421
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00367511e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.073695920525727
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  4.93829083e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 29, used conditions ptsa      0.224163
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14772, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.300000
+am001     0.300000
+ald001    0.120000
+Name: 14778, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.30000
+am001     0.30000
+ald001    0.12000
+Name: 14766, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.88664769981823
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  7.40743624e+03  4.75668540e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.073593665521981
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  3.80534832e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 80, used conditions ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.20731
+ic001     0.12000
+am001     0.30000
+ald001    0.12000
+Name: 1866, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -7.851528216658856
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  5.70802248e-01  1.29720753e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.836983102993925
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.03776602e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.142869480062471
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.55664903e+04
+  1.28445931e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.014757141394186
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.02756745e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.101184338895452
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.71140820e+05
+  1.01580850e+04  4.25387992e-03  2.89115606e+01  3.93959084e+02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.54135117e+04 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -6.0563488586795025
+   Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality   
+       0              1         2.4295e-03                                    4.40e+18    
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785553533129699
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 5.73476569e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -7.159419715432429
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 8.60214853e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 80, used conditions ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.12000
+am001     0.30000
+ald001    0.12000
+Name: 1866, dtype: float64
+Corresponding loglikelihood: -8.449233940548496
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  3.56731054e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 56, used conditions ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.123047
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 636, dtype: float64
+For index 80, used conditions ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.20731
+ic001     0.12000
+am001     0.30000
+ald001    0.12000
+Name: 1866, dtype: float64
+Corresponding loglikelihood: -6.3156569279785355
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  5.35096581e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.675212146550387
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.24762919e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+For index 81, used conditions ptsa      0.241016
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1878, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.224163
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1872, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.257868
+ic001     0.120000
+am001     0.300000
+ald001    0.120000
+Name: 1884, dtype: float64
+Corresponding loglikelihood: -5.6318791256433025
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.87144379e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -6.003181113023061
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  9.26557182e+04
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -6.068652033026266
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.38983577e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+Corresponding loglikelihood: -5.642836542879865
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  8.55968774e+03  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -8.251318363098825
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.28395316e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+Corresponding loglikelihood: -6.22696486663303
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.34834352e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.772631145354864
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  2.02251528e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.79928603012651
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.31011653e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -11.300683019413816
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  3.46517479e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -13.725246930488739
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.15252755e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -17.347565544246375
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  4.72879132e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -9.280780476790273
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.17207582e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -11.300646350655269
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  3.25811373e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -13.707715914070594
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  6.97405781e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785387813472276
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  1.04610867e+03  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785722884352495
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.27339767e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.7855544083629225
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  3.41009651e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785549710505329
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.18318653e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.78555091317969
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  4.77477979e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785565238955124
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00349644e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785498897304471
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00369716e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785599145560424
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  4.93903524e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785611770091299
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  7.40855286e+03  4.84571710e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.785519978703228
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  3.87657368e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+For index 55, used conditions ptsa      0.089342
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 624, dtype: float64 to compute the mean of the two closest model values.
+For the 0-th closest condition, used parameters ptsa      0.072489
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 618, dtype: float64
+For the 1-th closest condition, used parameters ptsa      0.106194
+ic001     0.120000
+am001     0.120000
+ald001    0.300000
+Name: 630, dtype: float64
+Corresponding loglikelihood: -7.673911409690944
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  5.81486052e-01  3.31908944e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -6.17833333170859
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  2.65527155e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.9005201323112795
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.98290732e+04
+  7.08268525e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.70091082891377
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  5.66614820e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.803014088440078
+Computing residuals in parallel in 25 threads for 1800 seconds for theta=[ 7.16845711e+03  4.45913817e+00  1.55953649e+04  1.15819648e+05
+  1.06996097e+04  1.68542940e-03  2.88764566e+01  3.94065944e+02
+  2.71509477e+00  8.71757227e+02  2.84174709e+02  3.97898316e+02
+  1.00359680e+12  6.17379405e+03  4.84571710e-01  3.31908944e+04
+  8.49922230e+03 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 0 conditions out of 85
+Finished computing for 85 conditions.
+Corresponding loglikelihood: -5.776512555443526
+       1              2         2.3142e-03      1.15e-04       2.20e+07       2.11e+17    
+Both `ftol` and `xtol` termination conditions are satisfied.
+Function evaluations 2, initial cost 2.4295e-03, final cost 2.3142e-03, first-order optimality 2.11e+17.
+res success: True
+res message: Both `ftol` and `xtol` termination conditions are satisfied.
+solution:[7.16845711e+03 4.45913817e+00 1.55953649e+04 1.15819648e+05
+ 1.06996097e+04 1.68542940e-03 2.88764566e+01 3.94065944e+02
+ 2.71509477e+00 8.71757227e+02 2.84174709e+02 3.97898316e+02
+ 1.00359680e+12 6.17379405e+03 4.84571710e-01 3.31908944e+04
+ 7.08268525e+03]
+perr: [1.45537033e+04 6.07144923e+00 9.56251026e+04 7.53423436e+05
+ 1.96073843e+04 6.05720200e-02 2.64937680e+03 3.08279350e+04
+ 1.32386598e+02 1.68547311e+05 8.25207364e+06 1.00386129e+07
+ 6.15616687e+00 8.03083512e+06 1.42707073e-01 3.04424206e+05
+ 2.09317991e+05]
+default perr: [1.47864838e+04 6.91706952e+00 9.59770900e+04 7.53424672e+05
+ 2.45317492e+04 6.46448033e-02 2.85106258e+03 3.71052722e+04
+ 1.40844158e+02 1.70791154e+05 8.25731268e+06 1.01404336e+07
+ 4.06031524e+12 8.42863716e+06 1.48753133e-01 3.04496641e+05
+ 2.11473319e+05]
