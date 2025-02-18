@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 # load the covariance_matrix from the file
 
-# cov_matrix_filepath = 'visualize-results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_0.001diff/v3_REV_theta_pcov_nopka.npy'
 cov_matrix_filepath = 'visualize-results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3rrr_diff0.2_3point/v3r_REV_theta_pcov_nopka.npy'
+# cov_matrix_filepath = 'visualize-results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3_diff0p2_3points/v3_REV_theta_pcov_nopka_2025-02-15.npy'
 
 cov_matrix = np.load(cov_matrix_filepath)
 
@@ -33,14 +33,13 @@ cbar = plt.colorbar()
 cbar.set_label('Correlation coefficient')
 plt.tight_layout()
 fig.savefig('misc-scripts/figures/correlation_matrix_ugi_reformulated_v2.png', dpi=300)
+# fig.savefig('misc-scripts/figures/correlation_matrix_ugi.png', dpi=300)
 plt.show()
 
 # Load the perr from 'perr_nopka.npy' file, then multiply the errors by (2*5.8/85)**(1/2)
-# perr = np.load('visualize-results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_0.001diff/v3_REV_theta_perr_nopka.npy')
+# perr = np.load('visualize-results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3_diff0p2_3points/v3_REV_theta_perr_nopka_2025-02-15.npy')
 perr = np.load('visualize-results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3rrr_diff0.2_3point/v3r_REV_theta_perr_nopka.npy')
 
-# assume that the root mean square discrepancy between the model and experiment is the error.
-# This assumes that the model is correct and the only error is in the data.
 perr = perr * (2 * 5.8 / 85) ** (0.5)
 
 # print the errors with 3 significant digits ('g')
