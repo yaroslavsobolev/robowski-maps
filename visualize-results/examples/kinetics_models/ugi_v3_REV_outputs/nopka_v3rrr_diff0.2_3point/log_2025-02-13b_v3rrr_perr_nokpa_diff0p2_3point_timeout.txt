@@ -1,0 +1,605 @@
+For index set 0, max yield is 0.1488320829728972 at index 11136, where ptsa is 0.1230470219435736
+For index set 1, max yield is 0.0995897747111937 at index 14796, where ptsa is 0.2915736677115987
+For index set 2, max yield is 0.0773333472421486 at index 12966, where ptsa is 0.2073103448275862
+For index set 3, max yield is 0.0364722622526047 at index 630, where ptsa is 0.1061943573667711
+For index set 4, max yield is 0.019306182369724 at index 1896, where ptsa is 0.2915736677115987
+number of indices: 85
+Timeout set to 900 seconds.
+initial guess before variable change:
+k1: 6759.12562121889
+k_1: 3.860580182916683
+k2: 15187.686448423408
+k_2: 171140.82009287286
+k3: 10158.085016677855
+k_3: 0.004253879919773828
+k4: 28.911560643454656
+k_4: 393.959083803352
+k5: 2.7175181082907627
+k6: 1446.2079052262934
+k_6: 284.3690143937299
+k7: 156.7795576072815
+k8: 1003574755847.9436
+k9: 6172.863531584512
+km1: 0.4756685400616421
+k_m1: 12972.075278137201
+km3: 12844.59309439952
+initial guess after variable change:
+k1: 6759.12562121889
+k_1: 3.860580182916683
+k2: 15187.686448423408
+K2: 0.08874379847064842
+K3: 0.6653936849437223
+k_3: 0.004253879919773828
+k4: 28.911560643454656
+K4: 0.07338721667320687
+k5: 2.7175181082907627
+k6: 1446.2079052262934
+k_6: 284.3690143937299
+k7: 156.7795576072815
+k8: 1003574755847.9436
+k9: 6172.863531584512
+km1: 0.4756685400616421
+k_m1: 12972.075278137201
+Km3: 166621028.53759184
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.591288242932698
+computing residuals in parallel for theta=[ 5.40730050e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.80597992630288
+computing residuals in parallel for theta=[ 8.11095075e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 6 conditions out of 85
+Finished computing for 79 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.827534200025792
+computing residuals in parallel for theta=[ 6.75912562e+03  3.08846415e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.3398412741927785
+computing residuals in parallel for theta=[ 6.75912562e+03  4.63269622e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.431385395904188
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.21501492e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 1 conditions out of 85
+Finished computing for 84 conditions.
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.073752661103421
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.82252237e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 5 conditions out of 85
+Finished computing for 80 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.709561784351698
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  7.09950388e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 6 conditions out of 85
+Finished computing for 79 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.689172959814192
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  1.06492558e-01
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.017987031159857
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  5.32314948e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 7 conditions out of 85
+Finished computing for 78 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.8314994803949425
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  7.98472422e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 6 conditions out of 85
+Finished computing for 79 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -7.3105375617634305
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  3.40310394e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.01576550003155
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  5.10465590e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.758639487573928
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.31292485e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.884285645132158
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  3.46938728e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 5 conditions out of 85
+Finished computing for 80 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.589619403951984
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  5.87097733e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 5 conditions out of 85
+Finished computing for 80 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -11.295661548477412
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  8.80646600e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 5 conditions out of 85
+Finished computing for 80 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -12.666459524657505
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.17401449e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 5 conditions out of 85
+Finished computing for 80 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -11.48749030218182
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  3.26102173e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -13.011302922321239
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.15696632e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.900578147331241
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.73544949e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.029805426286377
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.27495212e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 5 conditions out of 85
+Finished computing for 80 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.582964524890086
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  3.41242817e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.728793447773248
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.25423646e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.59129209133893
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.88135469e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.720456872316822
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00347440e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.591207133643917
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00367511e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.892310319531466
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  4.93829083e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.591404964111442
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  7.40743624e+03  4.75668540e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.0380218521470645
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  3.80534832e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -7.677400371209389
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  5.70802248e-01  1.29720753e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 6 conditions out of 85
+Finished computing for 79 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.268460856619266
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.03776602e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.634203828092533
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.55664903e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.551564574308655
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.33296823e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 4 conditions out of 85
+Finished computing for 81 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.620310602853532
+computing residuals in parallel for theta=[ 6.75912562e+03  3.86058018e+00  1.51876864e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620791e+03  2.84369014e+02  1.56779558e+02
+  1.00357476e+12  6.17286353e+03  4.75668540e-01  1.29720753e+04
+  1.99945234e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 2 conditions out of 85
+Finished computing for 83 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -6.020788792609444
+   Iteration     Total nfev        Cost      Cost reduction    Step norm     Optimality   
+       0              1         2.2365e-03                                    1.47e+17    
+computing residuals in parallel for theta=[ 6.75912562e+03  3.87890798e+00  1.51876873e+04  8.87437985e-02
+  6.65393685e-01  4.25387992e-03  2.89115606e+01  7.33872167e-02
+  2.71751811e+00  1.44620827e+03  2.84369014e+02  1.56779913e+02
+  1.00357476e+12  6.17286354e+03  4.90606880e-01  1.29720770e+04
+  1.66621029e+08 -2.48871361e+00  1.11510317e+01 -7.05462038e+00
+  7.23357100e+00  8.42586886e+00  1.11659268e+01  1.44052970e+01
+ -3.91719268e+00  1.66199872e+01 -5.35727509e-01  1.45006088e+01
+ -2.40160891e-01  1.10024967e+01  6.70900021e+00]
+Unfinished calculation for 3 conditions out of 85
+Finished computing for 82 conditions.
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Replacing None with experimental yield at index {i}
+Corresponding loglikelihood: -5.893359808093577
+       1              2         2.2365e-03      0.00e+00       0.00e+00       1.47e+17    
+`xtol` termination condition is satisfied.
+Function evaluations 2, initial cost 2.2365e-03, final cost 2.2365e-03, first-order optimality 1.47e+17.
+res success: True
+res message: `xtol` termination condition is satisfied.
+solution:[6.75912562e+03 3.86058018e+00 1.51876864e+04 8.87437985e-02
+ 6.65393685e-01 4.25387992e-03 2.89115606e+01 7.33872167e-02
+ 2.71751811e+00 1.44620791e+03 2.84369014e+02 1.56779558e+02
+ 1.00357476e+12 6.17286353e+03 4.75668540e-01 1.29720753e+04
+ 1.66621029e+08]
+perr: [3.25849908e+03 6.83991980e+00 3.15507996e+04 1.80644182e-01
+ 6.12297491e-01 9.50707357e-02 7.02091980e+03 1.11241535e-01
+ 4.72410401e+00 1.98522312e+05 3.59802396e+04 3.09821117e+04
+ 2.30367284e+06 1.48729097e+06 1.17646325e-01 1.57352521e+05
+ 1.74633289e+09]
+default perr: [3.26178716e+03 1.00062896e+01 4.04809346e+04 2.44423696e-01
+ 6.34195592e-01 1.16493764e-01 7.10668439e+03 1.16867343e-01
+ 4.75870504e+00 2.12980757e+05 2.55887300e+05 3.17481762e+04
+ 4.51349286e+11 5.62000590e+06 1.22170261e-01 1.57360109e+05
+ 1.84504072e+09]

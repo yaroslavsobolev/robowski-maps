@@ -1,0 +1,17 @@
+{
+  "arduino_port": {"port": "COM5", "baudrate": 115200, "timeout": 0.2},
+  "balance_port": {"port": "COM6", "baudrate": 19200, "timeout": 0.2},
+  "gantry": {
+    "max_x": -800,
+    "max_y": -450,
+    "horiz_speed": 12000,
+    "xy_offset": [0,0],
+    "zeus_traverse_position": 880,
+    "trash_xy": [-400,-160],
+    "idle_xy": [-400,-300],
+    "balance_left_boundary": -760,
+    "balance_chamber_upper_boundary": -200,
+    "balance_chamber_lower_boundary": -250
+
+  }
+}
