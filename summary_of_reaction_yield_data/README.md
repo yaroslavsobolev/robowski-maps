@@ -44,3 +44,14 @@ like `19d_c_HPLC_[M]`, where `19d` is the substance code (same as in the researc
 
 The columns containing the yields are named similarly, but with `_y_` instead
 of `_c_`. For example: `19d_y_HPLC_[%]`.
+
+# Preprocessing the datasets for interactive 3D viewer format (YipMan)
+
+The preprocessing (converting the data to the format suitable for YipMan) is done by
+the `convert_dataset_to_3dviewer_yipman_format.py` script. The commands we used to do this preprocessing were
+executed in this folder (`summary_of_reaction_yield_data`) and are:
+
+```bash
+python convert_dataset_to_3dviewer_yipman_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_yipman.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield' --Xscale=1000 --Yscale=1000 --Zscale=1 --Xrename='[SN10H01](mM)' --Yrename='[HBr](mM)'
+python convert_dataset_to_3dviewer_yipman_format.py --input_csv=SN1/resampled_SN1_yield.csv --output_csv=SN1/resampled_SN1_yield_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='Yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+```
