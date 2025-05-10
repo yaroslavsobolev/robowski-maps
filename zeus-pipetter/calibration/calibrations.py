@@ -36,7 +36,7 @@ def treat_console_txt( file ):
         output[vol] = [round(float(i) / 1000,2) for i in vol_lst.split(',')]
 
     # convert the dictionary to dataframe
-    df = pd.DataFrame(output)
+    df = pd.DataFrame(output, dtype=object)
     df = df.T
     # set the first column as index
     df.set_index(df.iloc[:, 0])
@@ -205,7 +205,7 @@ class Interpolation:
                 dict_df[f'm_{i}'].append(value[i])
 
         # save the dictionary into a dataframe
-        df_after_calib = pd.DataFrame(dict_df)
+        df_after_calib = pd.DataFrame(dict_df, dtype=object)
         # set the keys of data_list as index
         df_after_calib.index= [key for key, values in data_dict.items()]
 

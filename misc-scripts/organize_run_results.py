@@ -694,7 +694,7 @@ def outV_to_outC_by_lookup(experiment_name, lookup_run):
     run_name = experiment_name.split('/')[1]
     df_excel = pd.read_excel(data_folder + experiment_name + f'{run_name}.xlsx', sheet_name=0)
 
-    df_outC = pd.DataFrame().reindex_like(df_lookup_C)[0:0]
+    df_outC = pd.DataFrame(dtype=object).reindex_like(df_lookup_C)[0:0]
     # iterate over df_excel, look for row of df_lookup_C with index equal to 'reactions' and populate df_outC
     for row_id, row in df_excel.iterrows():
         # Zero-filled rows in Excel are used as padding for matching to 54 conditions on each plate).
@@ -866,7 +866,7 @@ def locate_condition_by_operation_datetime_and_plate_id(timestamp, plate_id, dat
 def find_measurement_files_and_compiile_a_table(target_folder, extension, regexp_pattern,
                                                 datetime_string_format='%Y-%m-%d_%H-%M-%S'):
     # make an empty dateframe with columns for filename, plate_id, timestamp
-    df_files = pd.DataFrame(columns=['filename', 'plate_id', 'timestamp'])
+    df_files = pd.DataFrame(columns=['filename', 'plate_id', 'timestamp'], dtype=object)
     for filename in os.listdir(target_folder):
         if not filename.endswith(extension):
             continue

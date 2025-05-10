@@ -472,7 +472,7 @@ ptsa_values = df_results.loc[indices_here]['ptsa']
 #     ptsa = am001
 #     yield_here = 0
 #     list_to_populate.append([ic001, am001, ald001, ptsa, yield_here])
-# df_results = pd.DataFrame(list_to_populate, columns=['ic001', 'am001', 'ald001', 'ptsa', 'yield'])
+# df_results = pd.DataFrame(list_to_populate, columns=['ic001', 'am001', 'ald001', 'ptsa', 'yield'], dtype=object)
 # ##### End of uncomment for model evaluation at the diagonal ############
 
 

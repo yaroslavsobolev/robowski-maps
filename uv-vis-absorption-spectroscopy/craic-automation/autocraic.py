@@ -256,7 +256,7 @@ def copy_temp_folder_to_archive(plate_id, exp_name):
               index=False)
     # # This initialized the archive CSV. Never run.
     # df = pd.DataFrame([[unixtime, datetime_string_now, plate_id, exp_name, target_folder_name]],
-    #                   columns=['timestamp', 'datetime', 'plate_id', 'exp_name', 'folder'])
+    #                   columns=['timestamp', 'datetime', 'plate_id', 'exp_name', 'folder'], dtype=object)
 
 
 # x_range = 103581,

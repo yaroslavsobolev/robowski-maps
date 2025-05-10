@@ -50,7 +50,7 @@ for substance in substances:
     print(f'{len(sorted_unique)} unique volumes for {substance}')
     print(sorted_unique)
 
-# df_manual_outliers = pd.DataFrame().reindex_like(df_data)[0:0]
+# df_manual_outliers = pd.DataFrame(dtype=object).reindex_like(df_data)[0:0]
 
 def make_outliers_at_given_locations(locations, output_filename, substances = ('ic001','am001','ald001','ptsa')):
 

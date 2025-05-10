@@ -23,7 +23,7 @@ for ic in np.linspace(minc, maxc, 4):
                 amines.append(amine)
                 ptsas.append(ptsa)
 
-df = pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas})
+df = pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}, dtype=object)
 
 # remove the cube face where ic001 is 0.30 (maximum):
 df.drop(df[df.ic001 == 0.3].index, inplace=True)
@@ -42,7 +42,7 @@ for ald in np.linspace(minc, maxc, 7):
             amines.append(amine)
             ptsas.append(ptsa)
 # append this face to the dataframe:
-df = df.append(pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}), ignore_index=True)
+df = df.append(pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}), ignore_index=True, dtype=object)
 
 # remove the cube face where amine is 0.12 (minimum):
 df.drop(df[df.am001 == 0.12].index, inplace=True)
@@ -61,7 +61,7 @@ for ald in np.linspace(minc, maxc, 7):
             amines.append(amine)
             ptsas.append(ptsa)
 # append this face to the dataframe:
-df = df.append(pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}), ignore_index=True)
+df = df.append(pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}), ignore_index=True, dtype=object)
 
 # remove the cube face where ald001 is 0.12 (minimum):
 df.drop(df[df.ald001 == 0.12].index, inplace=True)
@@ -80,7 +80,7 @@ for amine in np.linspace(minc, maxc, 7):
             amines.append(amine)
             ptsas.append(ptsa)
 # append this face to the dataframe:
-df = df.append(pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}), ignore_index=True)
+df = df.append(pd.DataFrame({'ic001': ics, 'ald001': alds, 'am001': amines, 'ptsa': ptsas}), ignore_index=True, dtype=object)
 
 # randomize the order of rows
 df = df.sample(frac=1).reset_index(drop=True)

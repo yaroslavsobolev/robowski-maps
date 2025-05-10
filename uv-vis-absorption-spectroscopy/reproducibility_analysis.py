@@ -134,7 +134,7 @@ x = [concentrations_reprod_hotpress,
      concentrations_reprod]
 df = pd.DataFrame(x, index=[f'Same conditions, capped better and with very uniform temperature, STD {rel_std_reprod_hotpress:.1%}',
                             f'Same conditions, large oven, repetition, STD {rel_std_reprod_oven_2:.1%}',
-                            f'Same conditions, large oven, STD {rel_std_reprod:.1%}'])
+                            f'Same conditions, large oven, STD {rel_std_reprod:.1%}'], dtype=object)
 figbox = plt.figure(34, figsize=(14,3))
 df.T.boxplot(vert=False)
 plt.xlabel('Concentration of product, mol/L')
@@ -213,9 +213,9 @@ plt.show()
 x = [concentrations_identical_capped_in_oven/(0.0249922896339447/0.21741)*100,
      concentrations_identical/(0.02295312069974119/0.212)*100]
 # df = pd.DataFrame(x, index=[f'Repeated experimental condition, N=27, yield (21.7 ± 1.2)%',
-#                             f'Repeated measurements of same crude, N=54, yield (21.2 ± 0.4)%'])
+#                             f'Repeated measurements of same crude, N=54, yield (21.2 ± 0.4)%'], dtype=object)
 df = pd.DataFrame(x, index=[f'Replicates',
-                            f'UV-VIS repeats'])
+                            f'UV-VIS repeats'], dtype=object)
 figbox = plt.figure(69, figsize=(4.9*0.9,0.9*4.9/3*0.9), dpi=300)
 bp = df.T.boxplot(vert=False, patch_artist=True, widths=(0.6, 0.6), return_type='dict')
 for median in bp['medians']:

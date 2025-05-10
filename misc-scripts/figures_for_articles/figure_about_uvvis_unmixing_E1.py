@@ -217,7 +217,7 @@ def process_plate(sp, dilution_factor,
     if upper_bounds == 'auto':
         upper_bounds = [np.inf] * len(calibrant_shortnames)
     plate_name = plate_folder.split('/')[-1]
-    df = pd.DataFrame(columns=['well_id'] + calibrant_shortnames)
+    df = pd.DataFrame(columns=['well_id'] + calibrant_shortnames, dtype=object)
     for well_id in well_ids:
         spectrum = sp.load_msp_by_id(
             plate_folder=plate_folder,

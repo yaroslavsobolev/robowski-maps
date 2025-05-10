@@ -23,7 +23,7 @@ def request_outliers(run_name, destination_run, known_outliers_filename, manual_
     # pad with zero-filled rows to make the number of rows divisible by 54
     # (the number of rows in a 9x6 grid)
     if df_all_outliers.shape[0] % 54 != 0:
-        pad_df = pd.DataFrame().reindex_like(df_all_outliers)[0:54 - df_all_outliers.shape[0] % 54]
+        pad_df = pd.DataFrame(dtype=object).reindex_like(df_all_outliers)[0:54 - df_all_outliers.shape[0] % 54]
         # fill pad_df with zeros
         pad_df.fillna(0, inplace=True)
         df_all_outliers = pd.concat([df_all_outliers,

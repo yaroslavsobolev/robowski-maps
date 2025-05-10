@@ -173,7 +173,7 @@ def process_run_by_shortname(run_shortname, substances_for_fitting, folder_for_p
 
 def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse'):
     # make a dataframe with columns 'param', 'set_index'
-    overall_df = pd.DataFrame(columns=['param', 'set_index'])
+    overall_df = pd.DataFrame(columns=['param', 'set_index'], dtype=object)
     # fig, axarr = plt.subplots(1, len(list_of_calibrant_set_ids), figsize=(15, 5), sharey=True, dpi=150)
     for set_index in list_of_calibrant_set_ids:
         df_results = organize_run_results.join_data_from_runs([f'BPRF/{x}/' for x in list_of_runs],
@@ -181,7 +181,7 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse')
                                                           subfolder_containing_csv=f'results/historical/calibrantset_{set_index}')
         param_values = df_results[param_to_plot].values
         # add all the param values to the overall_df with column 'set_index' containing the set_index
-        overall_df = pd.concat([overall_df, pd.DataFrame({'param': param_values, 'set_index': [set_index] * len(param_values)})])
+        overall_df = pd.concat([overall_df, pd.DataFrame({'param': param_values, 'set_index': [set_index] * len(param_values)}, dtype=object)])
         # make a histogram of the param values
 
         # # linear scale

@@ -43,8 +43,8 @@ class EventInterpreter:
                                                'container_id',
                                                'substance',
                                                'transfer_volume',
-                                               ])
-        self.reaction_plates = pd.DataFrame()
+                                               ], dtype=object)
+        self.reaction_plates = pd.DataFrame(dtype=object)
         self.is_for_bio = is_for_bio
         if self.is_for_bio:
             self.containers_per_plate: int = 96
@@ -99,7 +99,7 @@ class EventInterpreter:
                     }
                     # self.volume_update(volume = transfer_volume, source_container = source_container, destination_container = destination_container)
                     # print(_dict)
-                    self.pd_output = pd.concat([self.pd_output, pd.DataFrame(dict_here, index=[event_id])],
+                    self.pd_output = pd.concat([self.pd_output, pd.DataFrame(dict_here, index=[event_id], dtype=object)],
                                                ignore_index=True)
                     event_id += 1
 

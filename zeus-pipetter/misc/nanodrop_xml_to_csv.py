@@ -54,7 +54,7 @@ def treat_one_file(xml_folder, xml_name, rename = True):
     assert len(all_spectra) == len(row_index), "wrong data structure of XML file!!"
 
     # save row_dict to dataframe
-    df = pd.DataFrame(all_spectra, index=row_index)
+    df = pd.DataFrame(all_spectra, index=row_index, dtype=object)
     df = df.T
 
     # remove unwated columens

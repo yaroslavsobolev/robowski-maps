@@ -26,7 +26,7 @@ if __name__ == '__main__':
         ptsa = am001
         yield_here = 0
         list_to_populate.append([ic001, am001, ald001, ptsa, yield_here])
-    df_results = pd.DataFrame(list_to_populate, columns=['ic001', 'am001', 'ald001', 'ptsa', 'yield'])
+    df_results = pd.DataFrame(list_to_populate, columns=['ic001', 'am001', 'ald001', 'ptsa', 'yield'], dtype=object)
 
     # unique_amine = list(df_results['am001'].unique())
     # sorted_amine = np.sort(unique_amine)

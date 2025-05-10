@@ -32,7 +32,7 @@ def treat_one_file(folder, file, date):
         pipetted_volumes_mean_cv[key_int] = [round(np.mean(volumes),2), round(np.std(volumes) / np.mean(volumes) * 100,2)]
 
     # transform pipetted_volumes to a dataframe
-    df = pd.DataFrame(pipetted_volumes).T
+    df = pd.DataFrame(pipetted_volumes, dtype=object).T
     df.columns = [str(i)+"_"+date for i in df.columns]
     df['mean'+"_"+date] = np.round(df.mean(axis=1),2)
     df['std'+"_"+date] = df.std(axis=1)

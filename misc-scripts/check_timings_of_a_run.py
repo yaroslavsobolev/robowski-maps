@@ -35,7 +35,7 @@ for index, row in df.iterrows():
         timing_dicts.append(dict_here)
 
 # make dataframe from timing_dicts
-df_timings = pd.DataFrame(timing_dicts)
+df_timings = pd.DataFrame(timing_dicts, dtype=object)
 
 latest_timestamp_of_the_entire_dataframe = df_timings.max().max()
 print(f'Latest timestamp of the entire dataframe: {latest_timestamp_of_the_entire_dataframe}')
