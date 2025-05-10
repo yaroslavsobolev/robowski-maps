@@ -538,7 +538,7 @@ def construct_short_db():
 
 
 def load_short_db(suffix=''):
-    with open(ff'{data_folder}simulations/smoothness/short_db{suffix}.pkl', 'rb') as f:
+    with open(f'{data_folder}simulations/smoothness/short_db{suffix}.pkl', 'rb') as f:
         short_db = pickle.load(f)
     return short_db
 
