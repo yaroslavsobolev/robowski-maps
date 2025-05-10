@@ -51,7 +51,10 @@ For the rest of the repository, the principal requirements are as follows:
 
 `scipy` 1.5.2 or later
 
-`mayavi`4.7.2 or later (for viewing the interactive 3D plots in)
+`mayavi`4.7.2 or later (for viewing the interactive 3D plots in). 
+To work, `mayavi` requires Microsoft Visual C++ 14.0 or greater. If `conda` or `pip` fail to install it automatically,
+you can download it from the [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/) and
+install it manually.
 
 `tqdm` 4.64.1 or later (for progress bars)
 
