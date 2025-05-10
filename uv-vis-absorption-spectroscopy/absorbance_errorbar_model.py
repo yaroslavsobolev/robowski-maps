@@ -63,16 +63,17 @@ grid_z = griddata((xs, ys), zs, (grid_x, grid_y), method='linear')
 grid_z = np.sqrt(grid_z)
 # use pcolormesh
 plt.figure()
-plt.pcolormesh(grid_x, grid_y, grid_z, vmax=0.1, cmap='viridis', shading='auto')
 
+## Uncomment to only show zone with errors below 0.03 absorbance units.
+# grid_z[grid_z > 0.03] = np.nan
+
+plt.pcolormesh(grid_x, grid_y, grid_z, vmax=0.1, cmap='viridis', shading='auto')
 
 plt.xlabel('Wavelength, nm')
 plt.ylabel('Absorbance')
-plt.title('Residuals')
 # colorbar with label
 plt.colorbar(label='Root-mean square residuals')
 plt.show()
-
 
 
 def func(x, a, b, c, d, e, f):
@@ -178,7 +179,7 @@ plt.xlabel('Wavelength, nm')
 plt.ylabel('Absorbance')
 plt.title('Residuals')
 # colorbar with label
-plt.colorbar(label='Root-mean square residuals')
+# plt.colorbar(label='Root-mean square residuals')
 plt.show()
 
 print(np.sqrt(smth_func(225, 0.8)[0][0]))
