@@ -111,7 +111,7 @@ def process_run_by_shortname(run_shortname, substances_for_fitting, folder_for_p
                                                                                      upper_limit_of_absorbance=0.95,
                                                                                      return_report=True,
                                                                                      list_of_starting_concentration_dicts=list_of_starting_concentration_dicts,
-                                                                                     obey_stoichiometric_inequalities=False)
+                                                                                     obey_stoichiometric_inequalities=True)
 
         for vial_id, product_concentrations in enumerate(concentrations_here):
             # index of this vial in the concentrations_df dataframe
@@ -210,10 +210,10 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse')
     ax.yaxis.set_major_formatter(FormatStrFormatter('%g'))
     ax.yaxis.set_major_locator(mticker.LogLocator(numticks=999))
     ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
-    plt.axhspan(ymin=0.01, ymax=0.02, alpha=0.3, color='C2', zorder=-15)
+    plt.axhspan(ymin=0.01, ymax=0.03, alpha=0.3, color='C2', zorder=-15)
 
     plt.tight_layout()
-    fig.savefig('misc-scripts/figures/hntz_discovery_timeline_2.png', dpi=300)
+    fig.savefig('misc-scripts/figures/hntz_discovery_timeline_withstoich1.png', dpi=300)
 
     plt.show()
 
@@ -223,17 +223,17 @@ if __name__ == '__main__':
                           '2024-02-17-run01',
                           '2024-02-17-run02'])
 
-    # for set_index in [7]:
-    #     print(f'Processing calibrant set {set_index}...')
-    #     combined_set = []
-    #     for i in range(set_index+1):
-    #         combined_set += calibrant_sets[i]['calibrant_set']
-    #     print(f'Combined set: {combined_set}')
-    #     folder_for_prod_conc = f'results/historical/calibrantset_{set_index}'
-    #
-    #     for i, run_shortname in enumerate(list_of_runs):
-    #         process_run_by_shortname(run_shortname, combined_set, folder_for_prod_conc)
+    for set_index in [0]:
+        print(f'Processing calibrant set {set_index}...')
+        combined_set = []
+        for i in range(set_index+1):
+            combined_set += calibrant_sets[i]['calibrant_set']
+        print(f'Combined set: {combined_set}')
+        folder_for_prod_conc = f'results/historical/calibrantset_{set_index}'
 
-    plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6, 7], param_to_plot='maxresidual')
-    # plot_timeline(list_of_runs, [0, 1, 2, 3], param_to_plot='maxresidual')
+        for i, run_shortname in enumerate(list_of_runs):
+            process_run_by_shortname(run_shortname, combined_set, folder_for_prod_conc)
+
+    # plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6, 7], param_to_plot='maxresidual')
+    # plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6], param_to_plot='maxresidual')
 
