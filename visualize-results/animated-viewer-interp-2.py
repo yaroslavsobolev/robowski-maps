@@ -9,9 +9,15 @@ from mayavi.core.ui.api import MayaviScene, SceneEditor, \
 from tvtk.tools import visual
 from scipy.interpolate import Rbf, LinearNDInterpolator
 from visualize_results import *
+
+os.environ['ETS_TOOLKIT'] = 'qt'
+os.environ['QT_API'] = 'pyqt5'
+
 organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
 
 contourvalues = [0.01] #[0.10, 0.11, 0.12]
+
+
 
 
 pos1 = [-0.168916619662477, 0.3818710137155461, 0.8890913200020035]

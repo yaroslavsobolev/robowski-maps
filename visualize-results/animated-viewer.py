@@ -9,6 +9,9 @@ from scipy.interpolate import Rbf
 from visualize_results import *
 import time
 
+os.environ['ETS_TOOLKIT'] = 'qt'
+os.environ['QT_API'] = 'pyqt5'
+
 contourvalues = [0.05, 0.12]
 indices_of_outliers = [909, 917]
 

@@ -8,6 +8,8 @@ savitzky_golay_werrors = importlib.import_module("visualize-results.savitzky_gol
 import importlib
 organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
 
+os.environ['ETS_TOOLKIT'] = 'qt'
+os.environ['QT_API'] = 'pyqt5'
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 

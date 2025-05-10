@@ -10,6 +10,10 @@ from visualize_results import *
 import time
 from scipy.interpolate import LinearNDInterpolator
 from scipy.interpolate import interp1d
+
+os.environ['ETS_TOOLKIT'] = 'qt'
+os.environ['QT_API'] = 'pyqt5'
+
 organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
 
 contourvalues = [0.5, 0.7, 0.9]

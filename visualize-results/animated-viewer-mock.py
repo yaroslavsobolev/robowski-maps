@@ -11,6 +11,9 @@ from scipy.interpolate import Rbf, LinearNDInterpolator
 from visualize_results import *
 import time
 
+os.environ['ETS_TOOLKIT'] = 'qt'
+os.environ['QT_API'] = 'pyqt5'
+
 contourvalues = [0.10, 0.14]
 
 

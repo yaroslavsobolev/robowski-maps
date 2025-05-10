@@ -10,6 +10,9 @@ from scipy.interpolate import LinearNDInterpolator
 from scipy.interpolate import interp1d
 organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
 
+os.environ['ETS_TOOLKIT'] = 'qt'
+os.environ['QT_API'] = 'pyqt5'
+
 from mayavi.core.ui.api import MayaviScene, SceneEditor, \
                 MlabSceneModel
 from traits.api import HasTraits, Range, Instance, \
