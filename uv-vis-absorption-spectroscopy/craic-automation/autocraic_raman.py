@@ -2,7 +2,7 @@ import pyautogui, time, os, shutil
 import numpy as np
 from datetime import datetime
 import pandas as pd
-import cv2
+# import cv2
 
 # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
@@ -318,28 +318,28 @@ def measure_one_plate(id, experiment_name='test',
     print('Returned to zero position.')
 
 
-def scan_barcode():
-    ret, img = cap.read()
-    # img = np.flip(img, axis=0)
-    # img = np.flip(img, axis=1)
-    img = img[0:135, 60:600, :]
-    # img = cv2.resize(img, dsize=(img.shape[1], img.shape[0]*3), interpolation=cv2.INTER_CUBIC)
-    img_for_scanner = cv2.bitwise_not(cv2.resize(img, dsize=(img.shape[1], img.shape[0]*6), interpolation=cv2.INTER_CUBIC))
-    img_for_scanner = cv2.normalize(img_for_scanner, None, 0, 255, cv2.NORM_MINMAX)
-    cv2.imwrite("barcode_frame.jpg", np.flip(np.flip(img, axis=0), axis=1))
-    cv2.imwrite("barcode_frame_for_scanner.jpg", img_for_scanner)
-    bd = cv2.barcode.BarcodeDetector()
-    retval, decoded_info, decoded_type, points = bd.detectAndDecode(img_for_scanner)
-    if retval:
-        # Remove the last digit because the last digit in EAN-8 protocol is the checksum digit ("check digit")
-        goodinfo = [x[:-1] for x in decoded_info if x != '']
-        # print(f'Barcode found: {decoded_info}, good one is {goodinfo}')
-        print(f'Barcode found: {goodinfo}')
-        return retval, goodinfo
-    else:
-        print('No barcode found')
-        return retval, decoded_info
-    # cap.release()
+# def scan_barcode():
+#     ret, img = cap.read()
+#     # img = np.flip(img, axis=0)
+#     # img = np.flip(img, axis=1)
+#     img = img[0:135, 60:600, :]
+#     # img = cv2.resize(img, dsize=(img.shape[1], img.shape[0]*3), interpolation=cv2.INTER_CUBIC)
+#     img_for_scanner = cv2.bitwise_not(cv2.resize(img, dsize=(img.shape[1], img.shape[0]*6), interpolation=cv2.INTER_CUBIC))
+#     img_for_scanner = cv2.normalize(img_for_scanner, None, 0, 255, cv2.NORM_MINMAX)
+#     cv2.imwrite("barcode_frame.jpg", np.flip(np.flip(img, axis=0), axis=1))
+#     cv2.imwrite("barcode_frame_for_scanner.jpg", img_for_scanner)
+#     bd = cv2.barcode.BarcodeDetector()
+#     retval, decoded_info, decoded_type, points = bd.detectAndDecode(img_for_scanner)
+#     if retval:
+#         # Remove the last digit because the last digit in EAN-8 protocol is the checksum digit ("check digit")
+#         goodinfo = [x[:-1] for x in decoded_info if x != '']
+#         # print(f'Barcode found: {decoded_info}, good one is {goodinfo}')
+#         print(f'Barcode found: {goodinfo}')
+#         return retval, goodinfo
+#     else:
+#         print('No barcode found')
+#         return retval, decoded_info
+#     # cap.release()
 
 def n_last_codes_are_the_same(x):
     return (x.count(x[0]) == len(x)) and (x[0] != '')
