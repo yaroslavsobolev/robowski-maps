@@ -177,6 +177,9 @@ class SpectraProcessor:
         with open(sigma_interpolator_filename, 'rb') as f:
             self.sigma_interpolator = pickle.load(f)
 
+        # uncertainty associated with stoichiometric overspending ratio
+        self.uncertainty_of_stoichiometric_overspending_ratio = 0.1
+
 
     def load_nanodrop_csv_for_one_plate(self, plate_folder,
                                         ):
@@ -1142,8 +1145,8 @@ class SpectraProcessor:
             comboY = func_prelim(*args)
             if starting_concentration_dict is not None:
                 stoich_penalization_of_cost = stoich_cost(calibrants_concentrations, calibrant_shortnames, starting_concentration_dict)
-                comboY[-2] += stoich_penalization_of_cost * 0.4e-2 / 0.00833486 * combo_sigmas[-2] * 1
-                comboY[-1] -= stoich_penalization_of_cost * 0.4e-2 / 0.00833486 * combo_sigmas[-1] * 1
+                comboY[-2] += stoich_penalization_of_cost * combo_sigmas[-2] / self.uncertainty_of_stoichiometric_overspending_ratio
+                comboY[-1] -= stoich_penalization_of_cost * combo_sigmas[-1] / self.uncertainty_of_stoichiometric_overspending_ratio
 
             return comboY
 
@@ -1151,6 +1154,22 @@ class SpectraProcessor:
         lower_bounds = []
         upper_bounds = []
         x_scale = []
+
+        # it stoichiometry is obeyed, limit the upper bound of calibrant concentration to two times the possible
+        # concentration if all the starting material is used to make this calibrant only
+        if obey_stoichiometric_inequalities:
+            calibrant_concentration_upper_bounds = []
+            for i, substance_for_fitting in enumerate(calibrant_shortnames):
+                limits_here = []
+                for s in substrates:
+                    if df_stoich.loc[df_stoich['Names'] == substance_for_fitting, s].values[0] == 0:
+                        continue
+                    limit_by_this_substrate = starting_concentration_dict[s] / df_stoich.loc[df_stoich['Names'] == substance_for_fitting, s].values[0]
+                    limits_here.append(limit_by_this_substrate)
+                calibrant_concentration_upper_bounds.append(min(limits_here))
+            print(f'Limits: {calibrant_concentration_upper_bounds}')
+
+
         for i in range(number_of_calibrants):
             # if calibrant_shortnames[i] == 'bb017':
             #     p0.append(0.0068)
@@ -1163,7 +1182,10 @@ class SpectraProcessor:
             #     lower_bounds.append(-1*np.inf)
             # else:
             lower_bounds.append(0)
-            upper_bounds.append(np.inf)
+            if obey_stoichiometric_inequalities:
+                upper_bounds.append(2 * calibrant_concentration_upper_bounds[i])
+            else:
+                upper_bounds.append(np.inf)
 
         for i in range(number_of_spectra - 1):
             p0.append(dilution_factors[i+1])
@@ -1195,7 +1217,7 @@ class SpectraProcessor:
             upper_bounds.append(maximum_wavelength_offset)
 
         bounds = (lower_bounds, upper_bounds)
-        popt, pcov = curve_fit(func_prelim, comboX, comboY,
+        popt, pcov = curve_fit(func_prelim, comboX, comboY, method='trf',
                                p0=p0, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                maxfev=100000, ftol=1e-15, xtol=1e-15, gtol=1e-15, verbose=1, x_scale=x_scale)
         if obey_stoichiometric_inequalities:
@@ -1210,7 +1232,7 @@ class SpectraProcessor:
                 print(f'RuntimeError, hopefully max_nfev')
                 print('Trying again with 1e-12 tolerances')
                 try:
-                    popt, pcov = curve_fit(func, comboX, comboY,
+                    popt, pcov = curve_fit(func, comboX, comboY, method='trf',
                                            p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                            maxfev=100, ftol=1e-12, xtol=1e-12, gtol=1e-12, verbose=1,
                                            x_scale=x_scale)
@@ -1218,14 +1240,14 @@ class SpectraProcessor:
                     print(f'RuntimeError, hopefully max_nfev')
                     print('Trying again with 1e-10 tolerances')
                     try:
-                        popt, pcov = curve_fit(func, comboX, comboY,
+                        popt, pcov = curve_fit(func, comboX, comboY, method='trf',
                                                p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                                maxfev=100, ftol=1e-10, xtol=1e-10, gtol=1e-10, verbose=1,
                                                x_scale=x_scale)
                     except RuntimeError:
                         print(f'RuntimeError, hopefully max_nfev')
                         print('Trying again with 1e-6 tolerances')
-                        popt, pcov = curve_fit(func, comboX, comboY,
+                        popt, pcov = curve_fit(func, comboX, comboY, method='trf',
                                                p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                                maxfev=100, ftol=1e-6, xtol=1e-6, gtol=1e-6, verbose=1,
                                                x_scale=x_scale)
@@ -1493,11 +1515,6 @@ class SpectraProcessor:
                 separate_predicted_spectra.append(predicted_spectrum)
             comboY = np.concatenate(separate_predicted_spectra)
 
-            # if stoich_callable is not None:
-            #     stoich_penalization_of_cost = stoich_callable(calibrants_concentrations)
-            #     comboY[-2] += stoich_penalization_of_cost * 1e-2
-            #     comboY[-1] -= stoich_penalization_of_cost * 1e-2
-
             return comboY
 
         def func(*args):
@@ -1599,14 +1616,17 @@ class SpectraProcessor:
 
         concentrations_here = popt[0:number_of_calibrants]
 
-        required_subs = product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
-        os_string = ''
-        for s in substrates:
-            overspending_ratio = required_subs[s] / starting_concentration_dict[s]
-            string_here = f'{s} osr: {overspending_ratio-1:.1%}\n'
-            os_string += string_here
-        os_string = os_string[:-1]
-        print(os_string)
+        if use_stoich_inequalities:
+            required_subs = product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
+            os_string = ''
+            for s in substrates:
+                overspending_ratio = required_subs[s] / starting_concentration_dict[s]
+                string_here = f'{s} osr: {overspending_ratio-1:.1%}\n'
+                os_string += string_here
+            os_string = os_string[:-1]
+            print(os_string)
+        else:
+            os_string = ''
 
         fitted_dilution_factors = popt[number_of_calibrants: number_of_calibrants + number_of_spectra - 1]
         fitted_offsets = popt[number_of_calibrants + number_of_spectra - 1: number_of_calibrants + number_of_spectra - 1 + number_of_spectra]
@@ -1796,7 +1816,7 @@ def stoich_cost(concentrations, calibrant_shortnames, starting_concentrations_di
     for s in substrates:
         if starting_concentrations_dict[s] > 0:
             overspending_ratio = required_subs[s] / starting_concentrations_dict[s]
-            final_penalization += smooth_step((overspending_ratio - 1)/0.01)
+            final_penalization += smooth_step((overspending_ratio - 1))
         # final_penalization += smooth_step((required_subs[s] - starting_concentrations_dict[s])/0.001)
 
     # find concentration of acetic acid
@@ -1849,19 +1869,7 @@ if __name__ == '__main__':
     print('len of spectrum1', len(spectrum1))
     plt.show()
 
-    # set logging level to debug
-
-    # spectrum1 = spectrum2 * 1.1
-
-    # concentrations = sp.spectrum_to_concentration(target_spectrum_input=spectrum2,
-    #                                                    calibration_folder=data_folder + 'BPRF/2023-11-08-run01/' + 'microspectrometer_data/calibration/',
-    #                                                    calibrant_shortnames=substances_for_fitting,
-    #                                                    background_model_folder=data_folder + 'simple-reactions/2023-09-06-run01/microspectrometer_data/background_model/',
-    #                                                    upper_bounds=[np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf],
-    #                                                    do_plot=True, cut_from=cut_from,
-    #                                                    ignore_abs_threshold=True, ignore_pca_bkg=True)
-
-    concentrations = sp.multispectrum_to_concentration(target_spectrum_inputs=[spectrum1, spectrum2],
+    concentrations = sp.multispectrum_to_concentration_general(target_spectrum_inputs=[spectrum1, spectrum2],
                                                        dilution_factors=[20, 200],
                                                        calibration_folder=data_folder + 'BPRF/2024-01-17-run01/' + 'microspectrometer_data/calibration/',
                                                        calibrant_shortnames=substances_for_fitting,
@@ -1873,6 +1881,7 @@ if __name__ == '__main__':
                                                        upper_limit_of_absorbance=0.95)
 
     print(concentrations)
+    print('Done!')
 
     # sp.load_single_nanodrop_spectrum(plate_folder=data_folder + 'simple-reactions/2023-08-21-run01/nanodrop_spectra/2023-08-23_23-50-41_plate_51.csv',
     #                                  well_id=0)
@@ -1990,7 +1999,7 @@ if __name__ == '__main__':
     # plt.legend()
     # plt.show()
 
-
+    # sp.nanodrop_lower_cutoff_of_wavelengths = 250
     # run_name = 'simple-reactions/2023-08-21-run01/'
     # concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
     #                                                       plate_folder=data_folder + 'simple-reactions/2023-08-21-run01/nanodrop_spectra/2023-08-23_23-52-13_plate_51.csv',
@@ -2004,18 +2013,18 @@ if __name__ == '__main__':
     # print(concentrations_here)
 
     ###################### E1 REACTIONS ######################
-
-    # run_name = 'simple-reactions/2023-09-06-run01/'
-    # concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
-    #                                                       plate_folder=data_folder + 'simple-reactions/2023-09-06-run01/nanodrop_spectra/2023-09-06_20-29-24_plate_50.csv',
-    #                                                       calibration_folder=data_folder + 'simple-reactions/2023-09-06-run01/' + 'microspectrometer_data/calibration/',
-    #                                                       calibrant_shortnames=['E1DB02', 'E1OH02'],
-    #                                                       background_model_folder=data_folder + 'simple-reactions/2023-09-06-run01/microspectrometer_data/background_model/',
-    #                                                       calibrant_upper_bounds=[np.inf, np.inf],
-    #                                                       do_plot=True, return_all_substances=True,
-    #                                                       cut_from=50, cut_to=False,
-    #                                                       ignore_abs_threshold=True, ignore_pca_bkg=True)
-    # print(concentrations_here)
+    sp.nanodrop_lower_cutoff_of_wavelengths = 250
+    run_name = 'simple-reactions/2023-09-06-run01/'
+    concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
+                                                          plate_folder=data_folder + 'simple-reactions/2023-09-06-run01/nanodrop_spectra/2023-09-06_20-29-24_plate_50.csv',
+                                                          calibration_folder=data_folder + 'simple-reactions/2023-09-06-run01/' + 'microspectrometer_data/calibration/',
+                                                          calibrant_shortnames=['E1DB02', 'E1OH02'],
+                                                          background_model_folder=data_folder + 'simple-reactions/2023-09-06-run01/microspectrometer_data/background_model/',
+                                                          calibrant_upper_bounds=[np.inf, np.inf],
+                                                          do_plot=True, return_all_substances=True,
+                                                          cut_from=50, cut_to=False,
+                                                          ignore_abs_threshold=True, ignore_pca_bkg=True)
+    print(concentrations_here)
 
     # ## JC
     # sp.nanodrop_lower_cutoff_of_wavelengths = 230
