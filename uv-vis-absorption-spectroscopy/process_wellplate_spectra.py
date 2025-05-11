@@ -1183,7 +1183,7 @@ class SpectraProcessor:
             # else:
             lower_bounds.append(0)
             if obey_stoichiometric_inequalities:
-                upper_bounds.append(2 * calibrant_concentration_upper_bounds[i])
+                upper_bounds.append(max([2e-7, 2 * calibrant_concentration_upper_bounds[i]]))
             else:
                 upper_bounds.append(np.inf)
 
