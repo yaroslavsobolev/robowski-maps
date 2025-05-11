@@ -1,9 +1,9 @@
 import importlib
 import numpy as np
-smoothness_vs = importlib.import_module("misc-scripts.smoothness_theory.smoothness_v2")
+smoothness = importlib.import_module("misc-scripts.smoothness_theory.smoothness_v2")
 
 def test_right_hand_side_speedup():
-    smoothness_vs.N = 5
+    smoothness_vs = smoothness.ReactionNetwork(N=5)
     for i in range(smoothness_vs.N):
         for j in range(smoothness_vs.N):
             for k in range(smoothness_vs.N):
