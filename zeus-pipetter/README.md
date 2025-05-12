@@ -1,6 +1,13 @@
 ## Reagent pipetting platform ##
 
-## Introduction ##
+## Installation ##
+
+For required packages, please refer to the `requirements.txt` file. You can install them using:
+```bash
+pip install -r requirements.txt
+```
+
+## Usage ##
 These scripts control an automated platform that utilizes a pipetting module 
 and an XY gantry to precisely transfer chemical reagents between designated containers.
 
