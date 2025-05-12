@@ -202,15 +202,31 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse')
     simpleaxis(ax)
     # disable gridlines
     ax.grid(False)
-    plt.xlabel('Components discovered')
-    # plt.xlabel('')
-    plt.ylabel('Max. residual, absorbance units')
+    # plt.xlabel('Components discovered')
+    plt.xlabel('')
+    # plt.ylabel('Max. residual, absorbance units')
+    # plt.ylabel('')
+
+    # Noise level is displayed as the median (over spectra) of the maximum (over wavelengths) absolute deviation of
+    # absorbance between the true and measured spectrum, assuming that the standard error of absorbance at each
+    # wavelength is 0.01 absorbance units.
+    sigma = 0.01
+    N_wavelengths = 349
+    max_residual_samples = []
+    for M in range(500):
+        # sample from normal distribution with sigma = 0.03 and zero mean
+        x = np.random.normal(0, sigma, N_wavelengths)
+        # calculate the max residual
+        max_residual_samples.append(np.max(np.abs(x)))
+    max_residual_samples = np.array(max_residual_samples)
+    median_maxresidual = np.median(max_residual_samples)
+    plt.axhline(y=median_maxresidual, color='C2', linestyle='--', zorder=15, linewidth=3)
+
     # set x axis labels to the dates of the calibrant sets
     ax.set_xticklabels([f"{sum([len(calibrant_sets[i]['calibrant_set']) for i in range(k+1)])}" for k in list_of_calibrant_set_ids])
     ax.yaxis.set_major_formatter(FormatStrFormatter('%g'))
     ax.yaxis.set_major_locator(mticker.LogLocator(numticks=999))
     ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
-    plt.axhspan(ymin=0.01, ymax=0.03, alpha=0.3, color='C2', zorder=-15)
 
     plt.tight_layout()
     fig.savefig('misc-scripts/figures/hntz_discovery_timeline_withstoich1.png', dpi=300)
@@ -223,17 +239,16 @@ if __name__ == '__main__':
                           '2024-02-17-run01',
                           '2024-02-17-run02'])
 
-    for set_index in [0]:
-        print(f'Processing calibrant set {set_index}...')
-        combined_set = []
-        for i in range(set_index+1):
-            combined_set += calibrant_sets[i]['calibrant_set']
-        print(f'Combined set: {combined_set}')
-        folder_for_prod_conc = f'results/historical/calibrantset_{set_index}'
+    ### Uncomment to recalibrate the analysis
+    # for set_index in [0, 1, 2, 3, 4, 5, 6, 7]:
+    #     print(f'Processing calibrant set {set_index}...')
+    #     combined_set = []
+    #     for i in range(set_index+1):
+    #         combined_set += calibrant_sets[i]['calibrant_set']
+    #     print(f'Combined set: {combined_set}')
+    #     folder_for_prod_conc = f'results/historical/calibrantset_{set_index}'
+    #
+    #     for i, run_shortname in enumerate(list_of_runs):
+    #         process_run_by_shortname(run_shortname, combined_set, folder_for_prod_conc)
 
-        for i, run_shortname in enumerate(list_of_runs):
-            process_run_by_shortname(run_shortname, combined_set, folder_for_prod_conc)
-
-    # plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6, 7], param_to_plot='maxresidual')
-    # plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6], param_to_plot='maxresidual')
-
+    plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6, 7], param_to_plot='maxresidual')
