@@ -1,3 +1,4 @@
+from robowski.settings import *
 from hntz_kinetics_v1_emcee import *
 from scipy.optimize import minimize
 from scipy.optimize import least_squares

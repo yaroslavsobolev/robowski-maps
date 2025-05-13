@@ -1,12 +1,12 @@
-import importlib
+from robowski.settings import *
 import os
 import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 from scipy import interpolate
 from scipy.optimize import curve_fit
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-avs = importlib.import_module("visualize_results.animated_viewer_static")
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 
@@ -63,7 +63,7 @@ data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 def make_interpolator_of_hbr_activity(do_plot = True):
     if do_plot:
         fig2 = plt.figure(2)
-    df = pd.read_csv('misc_scripts/activity_data/hbr-water-dioxane/mussini-et-al-1971-electroanalchem.csv')
+    df = pd.read_csv(repo_data_path + 'misc_scripts/activity_data/hbr-water-dioxane/mussini-et-al-1971-electroanalchem.csv')
 
     interp_dict = dict()
     for i, row in df.iterrows():

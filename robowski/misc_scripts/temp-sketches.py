@@ -1,3 +1,4 @@
+from robowski.settings import *
 # import logging
 # import os
 # import numpy as np

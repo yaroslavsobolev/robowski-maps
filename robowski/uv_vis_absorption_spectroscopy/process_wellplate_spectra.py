@@ -1,3 +1,4 @@
+from robowski.settings import *
 import logging
 import pickle
 
@@ -51,8 +52,8 @@ def get_spectra_file_list(target_folder, prefix='spectrum_'):
 def construct_interpolators_for_absorbance_correction(
         nd_names=[0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0],
         nd_names_used=[0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.5, 3.0, 3.5, 4.0],
-        microspec_folder='uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/2-inch-nd-calibrations',
-        folder_for_saving_interpolator_datasets='uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/interpolator-dataset/'):
+        microspec_folder=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/2-inch-nd-calibrations',
+        folder_for_saving_interpolator_datasets=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/interpolator-dataset/'):
     microspec_absorbances = dict()
 
     example_data = load_msp_file(experimental_data_filename=microspec_folder +
@@ -66,7 +67,7 @@ def construct_interpolators_for_absorbance_correction(
         craic_data.append(data[:, 1])
     craic_data = np.stack(craic_data)
 
-    spectrophotometer_file = 'uv_vis_absorption_spectroscopy/spectrophotometer-references/' \
+    spectrophotometer_file = repo_data_path + 'uv_vis_absorption_spectroscopy/spectrophotometer-references/' \
                              '2-inch-nd-filters/nd-filters.csv'
     df = pd.read_csv(spectrophotometer_file, skiprows=[0], nrows=451)
     wavelengths_agilent = df.loc[:, 'Wavelength (nm)']
@@ -91,7 +92,7 @@ def construct_interpolators_for_absorbance_correction(
     np.save(folder_for_saving_interpolator_datasets + 'agilent_data.npy', agilent_data)
 
 
-def load_dataset_for_absorbance_correction(target_folder='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+def load_dataset_for_absorbance_correction(target_folder=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                          '2022-12-01/interpolator-dataset/'):
     craic_data = np.load(target_folder + 'craic_data.npy')
     agilent_data = np.load(target_folder + 'agilent_data.npy')
@@ -1758,7 +1759,7 @@ def plot_differential_absorbances_for_plate(craic_exp_name,
     diff: np.array
         Array of differential absorbances.
     """
-    sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                          '2022-12-01/interpolator-dataset/')
     craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
     sp.show_all_spectra(craic_folder + craic_exp_name + '/')
@@ -1819,7 +1820,7 @@ def stoich_cost(concentrations, calibrant_shortnames, starting_concentrations_di
 
 if __name__ == '__main__':
 
-    sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                          '2022-12-01/interpolator-dataset/')
     sp.nanodrop_lower_cutoff_of_wavelengths = 220
     sp.use_instrumental_sigmas = True

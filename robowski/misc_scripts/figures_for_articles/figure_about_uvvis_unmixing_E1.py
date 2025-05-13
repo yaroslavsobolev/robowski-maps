@@ -1,12 +1,12 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
 from scipy import interpolate
 import matplotlib.text as mtext
 from scipy.optimize import curve_fit
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 def simpleaxis(ax):
@@ -267,7 +267,7 @@ def process_plate(sp, dilution_factor,
 # experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Claisen_WaiShing/'
 #
 # sp = process_wellplate_spectra.SpectraProcessor(
-#     folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+#     folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
 #                                    '2022-12-01/interpolator-dataset/')
 # sp.nanodrop_lower_cutoff_of_wavelengths = 220
 # calibration_folder = data_folder + experiment_name + 'microspectrometer_data/calibration/'
@@ -284,7 +284,7 @@ def process_plate(sp, dilution_factor,
 experiment_name = f'simple-reactions/2024-02-15-run01/nanodrop_spectra/'
 
 sp = process_wellplate_spectra.SpectraProcessor(
-    folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                    '2022-12-01/interpolator-dataset/')
 sp.nanodrop_lower_cutoff_of_wavelengths = 250
 calibration_folder = data_folder + experiment_name + 'microspectrometer_data/calibration/'

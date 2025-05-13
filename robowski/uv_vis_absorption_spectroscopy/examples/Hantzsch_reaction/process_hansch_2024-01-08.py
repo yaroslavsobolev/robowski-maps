@@ -1,10 +1,11 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
+import robowski.misc_scripts.organize_run_results as organize_run_results
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 plt.ioff()
 
@@ -17,7 +18,7 @@ def process_run_by_shortname(run_shortname, cut_from=5, dilution_factor=200):
     run_name = f'BPRF/{run_shortname}/'
     substances_for_fitting = ['methoxybenzaldehyde', 'HRP01']
 
-    sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                          '2022-12-01/interpolator-dataset/')
     sp.nanodrop_lower_cutoff_of_wavelengths = 220
 
@@ -65,7 +66,7 @@ def process_run_by_shortname(run_shortname, cut_from=5, dilution_factor=200):
 def plot_all_spectra_by_shortname(run_shortname):
     run_name = f'BPRF/{run_shortname}/'
 
-    sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                          '2022-12-01/interpolator-dataset/')
     sp.nanodrop_lower_cutoff_of_wavelengths = 220
 

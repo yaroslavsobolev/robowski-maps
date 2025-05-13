@@ -1,3 +1,4 @@
+from robowski.settings import *
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import numpy as np
@@ -12,7 +13,7 @@ import corner
 if __name__ == '__main__':
 
     # # server settings
-    filename = 'visualize_results/examples/kinetics_models/ugi_v3_outputs/ugi_v2_emcee_backend_gauss_2025_01_14a.h5'
+    filename = repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_outputs/ugi_v2_emcee_backend_gauss_2025_01_14a.h5'
 
     sampler = emcee.backends.HDFBackend(filename)
 
@@ -65,6 +66,6 @@ if __name__ == '__main__':
         samples, labels=labels
     )
 
-    fig.savefig('visualize_results/examples/kinetics_models/ugi_v3_outputs/tempcorner.png', dpi=300)
+    fig.savefig(repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_outputs/tempcorner.png', dpi=300)
     plt.show()
 

@@ -1,11 +1,12 @@
-import importlib
+from robowski.settings import *
+
 import os
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-avs = importlib.import_module("visualize_results.animated_viewer_static")
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 # list_of_runs = tuple([
@@ -266,7 +267,7 @@ def reorient_callable(scene):
     scene.scene.camera.compute_view_plane_normal()
     scene.scene.render()
 
-figure_filename = f'misc_scripts/figures/cubes/Hansch-80deg-2024-02-16-run01_{column_to_plot}.png'
+figure_filename = frepo_data_path + 'misc_scripts/figures/cubes/Hansch-80deg-2024-02-16-run01_{column_to_plot}.png'
 
 avs.plot_3d_dataset_as_cube(xs, ys, zs, yields,
                             substance_titles=('', '', ''),

@@ -1,3 +1,4 @@
+from robowski.settings import *
 # The goal of this script is to construct a linear model of the background spectrum of the CRAIC microspectrometer
 # when it is measuring the solutes in 500 uL of DMF in the 2mL glass vials. To this end, we will use the
 # 2023-03-25_14-33-50__plate0000003__- folder, which contains 27 spectra of 500 uL of DMF in the 2mL glass vials.
@@ -9,17 +10,17 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from sklearn.decomposition import PCA as pca
 import os
-import importlib
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
-sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 
-litdata = np.loadtxt('misc_scripts/literature_spectra/carbocation_Yuichi_Nishimae_2004.txt', delimiter='\t')
-litdata_e12 = np.loadtxt('misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E12.txt', delimiter='\t')
-litdata_e3 = np.loadtxt('misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E3.txt', delimiter='\t')
+litdata = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/carbocation_Yuichi_Nishimae_2004.txt', delimiter='\t')
+litdata_e12 = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E12.txt', delimiter='\t')
+litdata_e3 = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E3.txt', delimiter='\t')
 
 # load background
 plate_folder = craic_folder + '2023-03-25_14-33-50__plate0000003__-' + '/'
@@ -102,10 +103,10 @@ carboca_highest_fom = np.load(data_folder + 'Yaroslav/mystery_prod/pink_spectrum
 spectrum_with_lowest_diff = np.load(data_folder + 'Yaroslav/mystery_prod/nonpink_spectrum.npy')
 plt.plot(carboca_highest_fom[:, 0], carboca_highest_fom[:, 1] - spectrum_with_lowest_diff[:, 1], color='deeppink', label='Unexpected compound')
 
-nms = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_nms.npy')
-spectrum = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_mean.npy')
-perc1 = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc1.npy')
-perc2 = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc2.npy')
+nms = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_nms.npy')
+spectrum = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_mean.npy')
+perc1 = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc1.npy')
+perc2 = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc2.npy')
 
 plt.plot(nms, spectrum, label=f'Theory for compound   ', linestyle='-',
          color='black', zorder=10)
@@ -122,7 +123,7 @@ plt.ylim(-0.01, 0.3)
 
 plt.tight_layout()
 print(f'cwd: {os.getcwd()}')
-plt.gcf().savefig('misc_scripts/figures/pink-spectrum-comparisons.png', dpi=300)
+plt.gcf().savefig(repo_data_path + 'misc_scripts/figures/pink-spectrum-comparisons.png', dpi=300)
 
 plt.show()
 #

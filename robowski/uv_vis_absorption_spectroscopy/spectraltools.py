@@ -1,3 +1,4 @@
+from robowski.settings import *
 import os
 from matplotlib import pyplot as plt
 from scipy import interpolate

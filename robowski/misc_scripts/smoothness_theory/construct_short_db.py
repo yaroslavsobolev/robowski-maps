@@ -1,3 +1,4 @@
+from robowski.settings import *
 from smoothness_v2 import *
 
 if __name__ == '__main__':

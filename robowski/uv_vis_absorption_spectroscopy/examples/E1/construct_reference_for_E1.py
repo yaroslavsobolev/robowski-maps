@@ -1,11 +1,12 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
+
 from scipy import interpolate
 from scipy.optimize import curve_fit
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 dilution_factor = 1
 cut_from = 26
@@ -15,7 +16,7 @@ concentration_column_name = 'concentration'
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
-sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 run_shortname = '2023-09-06-run01'
 experiment_name = f'simple-reactions/{run_shortname}/'

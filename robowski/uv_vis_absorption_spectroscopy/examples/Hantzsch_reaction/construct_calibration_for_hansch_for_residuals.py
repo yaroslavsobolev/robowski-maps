@@ -1,6 +1,7 @@
-import importlib
+from robowski.settings import *
+
 import os
-calibrator = importlib.import_module("uv_vis_absorption_spectroscopy.calibrator")
+import robowski.uv_vis_absorption_spectroscopy.calibrator as calibrator
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 experiment_name = f'BPRF/2024-01-17-run01/'

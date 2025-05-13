@@ -1,3 +1,4 @@
+from robowski.settings import *
 from smoothness_v2 import *
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'

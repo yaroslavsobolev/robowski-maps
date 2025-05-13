@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import logging
 import os
 import numpy as np
@@ -14,7 +15,7 @@ from tqdm import tqdm
 R_gas = 8.31446261815324  # J/(K*mol)
 
 if 'ROBOCHEM_DATA_PATH' in os.environ:
-    activity_folder = 'misc_scripts/activity_data/e1_hanna/'
+    activity_folder = repo_data_path + 'misc_scripts/activity_data/e1_hanna/'
 else:
     activity_folder = 'e1_hanna/'
 df_water_activities = pd.read_csv(f'{activity_folder}activity_coeffs_vs_T_for_water.csv')
@@ -29,12 +30,12 @@ def simpleaxis(ax):
     ax.get_yaxis().tick_left()
 
 if 'ROBOCHEM_DATA_PATH' in os.environ:
-    abe = importlib.import_module("visualize_results.examples.kinetics_models.acid_base_equilibrium")
+    import robowski.visualize_results.examples.kinetics_models.acid_base_equilibrium as abe
 
     logging.basicConfig(level=logging.INFO)
 
-    organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-    avs = importlib.import_module("visualize_results.animated_viewer_static")
+    import robowski.misc_scripts.organize_run_results as organize_run_results
+    import robowski.visualize_results.animated_viewer_static as avs
     data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
     experiment_name = 'simple-reactions/2023-09-14-run01/'
@@ -67,7 +68,7 @@ if 'ROBOCHEM_DATA_PATH' in os.environ:
     # df_results.to_csv('e1results.csv', index=False)
     njobs = 4
 else:
-    abe = importlib.import_module("visualize_results.examples.kinetics_models.acid_base_equilibrium")
+    import robowski.visualize_results.examples.kinetics_models.acid_base_equilibrium as abe
     df_results = pd.read_csv('e1results.csv')
     njobs = 77
 

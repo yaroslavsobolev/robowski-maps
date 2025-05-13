@@ -1,9 +1,10 @@
+from robowski.settings import *
 # The goal of this script is to construct a linear model of the background spectrum of the NANODROP microspectrometer
 # when it is measuring the solutes in 500 uL of solvent in the 2mL glass vials. To this end, we will use the
 # 2023-03-25_14-33-50__plate0000003__- folder, which contains 27 spectra of 500 uL of solvent in the 2mL glass vials.
 # Then, we will perform principal component analysis on the background spectra, and save the two first principal
 # components for later use in a linear model of the background spectra.
-import importlib
+
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,10 +12,10 @@ from scipy.signal import savgol_filter
 from sklearn.decomposition import PCA as pca
 import os
 # from process_wellplate_spectra import SpectraProcessor, create_folder_unless_it_exists
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 # sp.nanodrop_lower_cutoff_of_wavelengths = 220
 # load background

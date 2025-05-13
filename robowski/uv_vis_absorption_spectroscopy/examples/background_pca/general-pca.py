@@ -1,3 +1,4 @@
+from robowski.settings import *
 # The goal of this script is to construct a linear model of the background spectrum of the CRAIC microspectrometer
 # when it is measuring the solutes in 500 uL of DMF in the 2mL glass vials. To this end, we will use the
 # 2023-03-25_14-33-50__plate0000003__- folder, which contains 27 spectra of 500 uL of DMF in the 2mL glass vials.
@@ -9,12 +10,12 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from sklearn.decomposition import PCA as pca
 import os
-import importlib
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
-sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 
 # load background

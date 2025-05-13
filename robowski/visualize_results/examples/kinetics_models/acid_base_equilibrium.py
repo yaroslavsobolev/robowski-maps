@@ -1,3 +1,4 @@
+from robowski.settings import *
 # from pHcalc import Acid, Inert, System
 import numpy as np
 import matplotlib.pyplot as plt # Optional for plotting below
@@ -230,19 +231,19 @@ if __name__ == '__main__':
 
     # # pickle phs, waters, proportions for persistence
     # import pickle
-    # with open('misc_scripts/ugi_ph.pkl', 'wb') as f:
+    # with open(repo_data_path + 'misc_scripts/ugi_ph.pkl', 'wb') as f:
     #     pickle.dump(phs, f)
-    # with open('misc_scripts/ugi_waters.pkl', 'wb') as f:
+    # with open(repo_data_path + 'misc_scripts/ugi_waters.pkl', 'wb') as f:
     #     pickle.dump(waters, f)
-    # with open('misc_scripts/ugi_proportions.pkl', 'wb') as f:
+    # with open(repo_data_path + 'misc_scripts/ugi_proportions.pkl', 'wb') as f:
     #     pickle.dump(proportions, f)
     #
     # # load from pickle
-    # with open('misc_scripts/ugi_ph.pkl', 'rb') as f:
+    # with open(repo_data_path + 'misc_scripts/ugi_ph.pkl', 'rb') as f:
     #     phs = pickle.load(f)
-    # with open('misc_scripts/ugi_waters.pkl', 'rb') as f:
+    # with open(repo_data_path + 'misc_scripts/ugi_waters.pkl', 'rb') as f:
     #     waters = pickle.load(f)
-    # with open('misc_scripts/ugi_proportions.pkl', 'rb') as f:
+    # with open(repo_data_path + 'misc_scripts/ugi_proportions.pkl', 'rb') as f:
     #     proportions = pickle.load(f)
 
 
@@ -257,7 +258,7 @@ if __name__ == '__main__':
     plt.xlabel('(p-TSA$\cdot H_2 O$) concentration, mol/L')
     plt.ylabel('Total amine+ammonium concentration, mol/L')
     plt.tight_layout()
-    fig.savefig('misc_scripts/figures/ugi_ph.png', dpi=300)
+    fig.savefig(repo_data_path + 'misc_scripts/figures/ugi_ph.png', dpi=300)
     plt.show()
 
     fig, ax = plt.subplots(1, 1, figsize=(5, 4))
@@ -268,7 +269,7 @@ if __name__ == '__main__':
     plt.xlabel('(p-TSA$\cdot H_2 O$) concentration, mol/L')
     plt.ylabel('Total amine+ammonium concentration, mol/L')
     plt.tight_layout()
-    fig.savefig('misc_scripts/figures/ugi_ion_fraction.png', dpi=300)
+    fig.savefig(repo_data_path + 'misc_scripts/figures/ugi_ion_fraction.png', dpi=300)
     plt.show()
 
     fig, ax = plt.subplots(1, 1, figsize=(5, 4))
@@ -279,5 +280,5 @@ if __name__ == '__main__':
     plt.xlabel('(p-TSA$\cdot H_2 O$) concentration, mol/L')
     plt.ylabel('Amine (BuNH$_{2}$) concentration, mol/L')
     plt.tight_layout()
-    fig.savefig('misc_scripts/figures/ugi_neutral_water.png', dpi=300)
+    fig.savefig(repo_data_path + 'misc_scripts/figures/ugi_neutral_water.png', dpi=300)
     plt.show()

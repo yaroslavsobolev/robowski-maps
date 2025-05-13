@@ -1,13 +1,14 @@
-import importlib
+from robowski.settings import *
+
 import os
 
 import numpy as np
 from matplotlib import pyplot as plt
 
-SpectraProcessor = importlib.import_module('uv_vis_absorption_spectroscopy.process_wellplate_spectra').SpectraProcessor
+from robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra import SpectraProcessor
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
-sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 sp.nanodrop_lower_cutoff_of_wavelengths = 220
 

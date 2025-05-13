@@ -1,3 +1,4 @@
+from robowski.settings import *
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import numpy as np
@@ -8,16 +9,16 @@ from _decimal import Decimal
 from tqdm import tqdm
 from multiprocessing import Pool
 import acid_base_equilibrium as abe
-import importlib
+
 import logging
 
 logging.basicConfig(level=logging.ERROR)
 
 NCORES = 77
-target_folder = 'visualize_results/examples/kinetics_models/'
+target_folder = repo_data_path + 'visualize_results/examples/kinetics_models/'
 # target_folder = ''
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+import robowski.misc_scripts.organize_run_results as organize_run_results
 
 
 list_of_runs = tuple(['2024-03-04-run01',
@@ -349,7 +350,7 @@ if __name__ == '__main__':
     #                2.45759559e+02, 1.84622923e-02,
     #                1.05885445e+00, 5.63083827e+01,
     #                5.02497025e-02, 7.90050804e+00])
-    # plot_yields(filename='visualize_results/examples/kinetics_models/theta_opt.npy')
+    # plot_yields(filename=repo_data_path + 'visualize_results/examples/kinetics_models/theta_opt.npy')
 
     popt = np.load(f'{target_folder}theta_opt.npy')
     # popt = np.load(f'{target_folder}theta_opt_2024-09-25.npy')
@@ -363,7 +364,7 @@ if __name__ == '__main__':
     pickle.HIGHEST_PROTOCOL = 4
     df_results.to_hdf('hntz_df_results_model_p4.hdf', key='df')
 
-    # target_folder = 'visualize_results/examples/kinetics_models/'
+    # target_folder = repo_data_path + 'visualize_results/examples/kinetics_models/'
     # params = np.load(f'{target_folder}theta_opt.npy')
     # errors = np.load(f'{target_folder}theta_perr_opt.npy')
     # param_names = ['k1', 'k_1', 'k2', 'k_2', 'k3', 'k_3', 'k4', 'k_4']

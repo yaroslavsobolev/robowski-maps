@@ -1,3 +1,4 @@
+from robowski.settings import *
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 
@@ -5,11 +6,11 @@ from scipy.optimize import curve_fit
 import time
 from scipy.interpolate import LinearNDInterpolator
 from scipy.interpolate import interp1d
-import importlib
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-visualize_results = importlib.import_module("visualize_results.visualize_results")
-animated_viewer_static = importlib.import_module("visualize_results.animated_viewer_static")
-# import animated_viewer_static as avs
+
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.visualize_results as visualize_results
+import robowski.visualize_results.animated_viewer_static as animated_viewer_static
+
 import os
 import numpy as np
 

@@ -1,13 +1,14 @@
+from robowski.settings import *
 import os
 import numpy as np
 import pandas as pd
-import importlib
+
 from matplotlib import pyplot as plt
 import logging
 # set level to info
 logging.basicConfig(level=logging.INFO)
 
-st = importlib.import_module('uv_vis_absorption_spectroscopy.spectraltools')
+import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'

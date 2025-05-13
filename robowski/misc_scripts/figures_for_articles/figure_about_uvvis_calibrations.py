@@ -1,3 +1,4 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 
 from calibration_illustration import *
@@ -47,5 +48,5 @@ plt.xlabel('Wavelength (nm)')
 plt.ylabel('Absorbance')
 plt.xlim(220, 420)
 plt.tight_layout()
-f.savefig('misc_scripts/figures/calibration-illustration.png', dpi=300)
+f.savefig(repo_data_path + 'misc_scripts/figures/calibration-illustration.png', dpi=300)
 plt.show()

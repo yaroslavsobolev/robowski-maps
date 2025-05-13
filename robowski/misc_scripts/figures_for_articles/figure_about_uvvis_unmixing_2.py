@@ -1,11 +1,11 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
 from scipy import interpolate
 from scipy.optimize import curve_fit
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 def spectrum_to_concentration_local(sp, target_spectrum_input, calibration_folder, calibrant_shortnames,
@@ -230,7 +230,7 @@ product_name = 'IIO029A'
 plate_folder = 'D:/Docs/Dropbox/robochem/data/craic_microspectrometer_measurements/absorbance/2023-06-23_10-16-05__plate0000049__multicomp_reactions_2023-06-22-run02/'
 
 sp = process_wellplate_spectra.SpectraProcessor(
-    folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                    '2022-12-01/interpolator-dataset/')
 # experiment_name = 'multicomp-reactions/2023-06-22-run02/'
 calibration_folder = data_folder + 'multicomp-reactions/2023-01-18-run01/' + 'microspectrometer_data/calibration/'

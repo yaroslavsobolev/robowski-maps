@@ -1,3 +1,4 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 
 from visualize_results import *

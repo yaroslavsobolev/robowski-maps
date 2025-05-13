@@ -1,8 +1,9 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
+
 from tqdm import tqdm
 import seaborn as sns
 from matplotlib.ticker import ScalarFormatter, FormatStrFormatter
@@ -41,8 +42,8 @@ calibrant_sets = {
     7: {'calibrant_set': ['bb021_f2'], 'date': '2024-04-03'}
 }
 
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
+import robowski.misc_scripts.organize_run_results as organize_run_results
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 plt.ioff()
 
@@ -72,7 +73,7 @@ def process_run_by_shortname(run_shortname, substances_for_fitting, folder_for_p
     print(f'Processing run {run_name}...')
 
     sp = process_wellplate_spectra.SpectraProcessor(
-        folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+        folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
         '2022-12-01/interpolator-dataset/')
     sp.nanodrop_lower_cutoff_of_wavelengths = 220
     sp.use_instrumental_sigmas = True
@@ -229,7 +230,7 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse')
     ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
 
     plt.tight_layout()
-    fig.savefig('misc_scripts/figures/hntz_discovery_timeline_withstoich1.png', dpi=300)
+    fig.savefig(repo_data_path + 'misc_scripts/figures/hntz_discovery_timeline_withstoich1.png', dpi=300)
 
     plt.show()
 

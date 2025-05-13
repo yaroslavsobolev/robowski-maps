@@ -1,11 +1,12 @@
+from robowski.settings import *
 # plot the covariance matrix obtained from the curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 
 # load the covariance_matrix from the file
 
-cov_matrix_filepath = 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3rrr_diff0.2_3point/v3r_REV_theta_pcov_nopka.npy'
-# cov_matrix_filepath = 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3_diff0p2_3points/v3_REV_theta_pcov_nopka_2025-02-15.npy'
+cov_matrix_filepath = repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3rrr_diff0.2_3point/v3r_REV_theta_pcov_nopka.npy'
+# cov_matrix_filepath = repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3_diff0p2_3points/v3_REV_theta_pcov_nopka_2025-02-15.npy'
 
 cov_matrix = np.load(cov_matrix_filepath)
 
@@ -32,13 +33,13 @@ plt.yticks(np.arange(len(parameter_names)), parameter_names)
 cbar = plt.colorbar()
 cbar.set_label('Correlation coefficient')
 plt.tight_layout()
-fig.savefig('misc_scripts/figures/correlation_matrix_ugi_reformulated_v2.png', dpi=300)
-# fig.savefig('misc_scripts/figures/correlation_matrix_ugi.png', dpi=300)
+fig.savefig(repo_data_path + 'misc_scripts/figures/correlation_matrix_ugi_reformulated_v2.png', dpi=300)
+# fig.savefig(repo_data_path + 'misc_scripts/figures/correlation_matrix_ugi.png', dpi=300)
 plt.show()
 
 # Load the perr from 'perr_nopka.npy' file, then multiply the errors by (2*5.8/85)**(1/2)
-# perr = np.load('visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3_diff0p2_3points/v3_REV_theta_perr_nopka_2025-02-15.npy')
-perr = np.load('visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3rrr_diff0.2_3point/v3r_REV_theta_perr_nopka.npy')
+# perr = np.load(repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3_diff0p2_3points/v3_REV_theta_perr_nopka_2025-02-15.npy')
+perr = np.load(repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/nopka_v3rrr_diff0.2_3point/v3r_REV_theta_perr_nopka.npy')
 
 perr = perr * (2 * 5.8 / 85) ** (0.5)
 

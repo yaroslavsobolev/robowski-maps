@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import os
 from sklearn.decomposition import PCA as pca
 import numpy as np
@@ -7,8 +8,8 @@ from matplotlib import pyplot as plt
 from scipy.signal import savgol_filter
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
-sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
+sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 sp.nanodrop_lower_cutoff_of_wavelengths = 220
 

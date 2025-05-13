@@ -1,3 +1,4 @@
+from robowski.settings import *
 # The goal of this script is to construct a linear model of the background spectrum of the NANODROP microspectrometer
 # when it is measuring the solutes in 500 uL of solvent in the 2mL glass vials. To this end, we will use the
 # 2023-03-25_14-33-50__plate0000003__- folder, which contains 27 spectra of 500 uL of solvent in the 2mL glass vials.
@@ -12,7 +13,7 @@ import os
 from process_wellplate_spectra import SpectraProcessor, create_folder_unless_it_exists
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 
 # load background

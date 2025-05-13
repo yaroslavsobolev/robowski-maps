@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import os
 import numpy as np
 from matplotlib import pyplot as plt
@@ -6,8 +7,8 @@ from scipy.optimize import curve_fit
 import plotly.graph_objects as go
 from scipy.interpolate import griddata
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-avs = importlib.import_module("visualize_results.animated_viewer_static")
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 # list_of_runs = tuple(['2024-01-29-run01',

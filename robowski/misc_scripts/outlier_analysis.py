@@ -1,7 +1,8 @@
-import importlib
+from robowski.settings import *
+
 import os
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+import robowski.misc_scripts.organize_run_results as organize_run_results
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 list_of_runs = tuple(['2024-01-29-run01',

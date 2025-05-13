@@ -1,9 +1,10 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
@@ -16,7 +17,7 @@ true_sequence_of_plates = {( 6, '2023-04-15_14-23-51__plate0000006__simple-react
                            ( 21, '2023-04-15_14-58-10__plate0000021__simple-reactions-2023-04-15-run01-diluted'): 1,
                            ( 18, '2023-04-15_15-36-43__plate0000018__simple-reactions-2023-04-15-run01-diluted'): 2}
 
-sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 
 df = pd.read_csv(craic_folder + 'database_about_these_folders.csv')

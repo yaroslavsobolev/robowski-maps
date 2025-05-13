@@ -1,3 +1,4 @@
+from robowski.settings import *
 import pyautogui, time, os, shutil
 import numpy as np
 from datetime import datetime

@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import os
 import numpy as np
 from matplotlib import pyplot as plt
@@ -13,8 +14,8 @@ from scipy.ndimage import gaussian_filter
 what_to_plot = 'data'
 do_smooth = False
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-avs = importlib.import_module("visualize_results.animated_viewer_static")
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 df_results = pd.read_csv(data_folder + 'BPRF/2024-10-01-run01/results/product_concentrations.csv')
@@ -24,7 +25,7 @@ substance_titles = ['Acetoacetate', 'Methoxy', 'Ammonium acetate']
 # substrates = ['c#SN1OH03', 'c#HBr']
 
 if what_to_plot == 'model':
-    target_folder = 'visualize_results/examples/kinetics_models/'
+    target_folder = repo_data_path + 'visualize_results/examples/kinetics_models/'
     df_results = pd.read_hdf(f'{target_folder}hntz_df_results_model_p4.hdf', key='df')
 
 substrates = ['ethyl_acetoacetate',  'methoxybenzaldehyde', 'ammonium_acetate']
@@ -257,7 +258,7 @@ if do_smooth:
     smooth_suffix = '-smooth'
 else:
     smooth_suffix = ''
-scene.scene.save(f'misc_scripts/figures/hantzsch-points3d-NMR-sparse-{what_to_plot}{smooth_suffix}.png')
+scene.scene.save(frepo_data_path + 'misc_scripts/figures/hantzsch-points3d-NMR-sparse-{what_to_plot}{smooth_suffix}.png')
 
 # scene.scene.light_manager.lights[1].intensity = 0
 # scene.scene.light_manager.lights[2].intensity = 0
@@ -267,7 +268,7 @@ scene.scene.save(f'misc_scripts/figures/hantzsch-points3d-NMR-sparse-{what_to_pl
 # camera_light.azimuth = -5.0
 scene.scene.render()
 
-# mlab.savefig('misc_scripts/figures/hansch-mainprod.obj')
+# mlab.savefig(repo_data_path + 'misc_scripts/figures/hansch-mainprod.obj')
 
 mlab.show()
 

@@ -1,17 +1,18 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import importlib
+
 from scipy import interpolate
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
-process_wellplate_spectra = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 nanodrop_errorbar_folder = data_folder + 'nanodrop-spectrophotometer-measurements/nanodrop_errorbar_folder_2024-03-16/raw_residuals/'
 
-st = importlib.import_module('uv_vis_absorption_spectroscopy.spectraltools')
+import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 
 def construct_calibrant(
                         cut_from,
@@ -47,7 +48,7 @@ def construct_calibrant(
     plate_folder = f'{data_folder}{experiment_name}{calibration_source_filename}.csv'
     all_calibrants_df = pd.read_csv(f'{data_folder}{experiment_name}{calibration_source_filename}.txt')
 
-    sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    sp = process_wellplate_spectra.SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                          '2022-12-01/interpolator-dataset/')
     sp.nanodrop_lower_cutoff_of_wavelengths = 220 - nanodrop_wavelength_shift
     sp.nanodrop_upper_cutoff_of_wavelengths = 600 - nanodrop_wavelength_shift

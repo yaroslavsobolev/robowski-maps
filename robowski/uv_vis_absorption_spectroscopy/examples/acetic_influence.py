@@ -1,7 +1,8 @@
+from robowski.settings import *
 import os
 import numpy as np
 import pandas as pd
-import importlib
+
 from matplotlib import pyplot as plt
 import logging
 from scipy import interpolate
@@ -13,7 +14,7 @@ from scipy.signal import savgol_filter
 
 # set level to info
 logging.basicConfig(level=logging.INFO)
-st = importlib.import_module('uv_vis_absorption_spectroscopy.spectraltools')
+import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 def average_all_cycles(cary_file, column_name_without_cycle_suffix):

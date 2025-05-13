@@ -1,3 +1,4 @@
+from robowski.settings import *
 import pickle
 
 from traits.api import HasTraits, Range, Instance, \

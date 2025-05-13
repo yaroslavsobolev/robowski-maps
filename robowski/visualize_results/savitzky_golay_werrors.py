@@ -1,3 +1,4 @@
+from robowski.settings import *
 import numpy as np
 from scipy.linalg import svd, inv
 from numpy.polynomial import polynomial as P

@@ -1,3 +1,4 @@
+from robowski.settings import *
 import os
 import numpy as np
 import pandas as pd
@@ -16,7 +17,7 @@ data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 # labels = ['$\\tilde{\Delta S}_{pKa, COH_2^{+}}$', '$\\tilde{\Delta H}_{pKa, COH_2^{+}}$', '$\Delta S_{net}$', '$\Delta H_{net}$', '$\\tilde{\Delta S}_{dehyd}$/R', '$\\tilde{\Delta H}_{dehyd}/R$', '$10^{5} \kappa_{-}$', '$\Delta S^{\ddag}_{-}$', '$\Delta H^{\ddag}_{-}$', '$10^{2} B_{HBr}$']
 # fig = corner.corner(samples, labels=labels, show_titles=True, hist_bin_factor=1, range=[0.95]*10, plot_contours=False, figsize=(12.5, 12.5), bins=14, labelpad=0.06)
 # fig.set_size_inches(14.5, 14.5)
-# fig.savefig('misc_scripts/figures/bootstrapped_keq_fits_E1.png', dpi=300)
+# fig.savefig(repo_data_path + 'misc_scripts/figures/bootstrapped_keq_fits_E1.png', dpi=300)
 # plt.show()
 
 samples = np.load(f'{data_folder}simple-reactions/2023-09-14-run01/results/kinetics/bootstrapped_keq_fits_size434_2024-12-05.npy')
@@ -39,7 +40,7 @@ truths = np.median(samples, axis=0)
 labels = ['$\\tilde{\Delta S}_{pKa}$', '$\\tilde{\Delta H}_{pKa}/R$', '$\Delta S_{net}$', '$\Delta H_{net}$', '$\\tilde{\Delta S}_{dehyd}$/R', '$\\tilde{\Delta H}_{dehyd}/R$', '$10^{5} \kappa_{-} k_{B}/h$', '$\Delta S^{\ddag}_{-}/R$', '$\Delta H^{\ddag}_{-}/R$', '$100 B_{HBr}$']
 fig = corner.corner(samples, labels=labels, show_titles=True, hist_bin_factor=1, range=[0.95]*10, plot_contours=False, figsize=(12.5, 12.5), bins=14, labelpad=0.06, truths=truths)
 fig.set_size_inches(14.5, 14.5)
-fig.savefig('misc_scripts/figures/bootstrapped_keq_fits_E1_2024-12-11b.png', dpi=300)
+fig.savefig(repo_data_path + 'misc_scripts/figures/bootstrapped_keq_fits_E1_2024-12-11b.png', dpi=300)
 plt.show()
 
 
@@ -80,5 +81,5 @@ plt.show()
 # labels = ['$\\tilde{\Delta S}_{pKa}$', '$\\tilde{\Delta H}_{pKa}/R$', '$\Delta S_{net}$', '$\Delta H_{net}$', '$\\tilde{\Delta S}_{dehyd}$/R', '$\\tilde{\Delta H}_{dehyd}/R$', '$10^{5} \kappa_{-} k_{B}/h$', '$\Delta S^{\ddag}_{-}/R$', '$\Delta H^{\ddag}_{-}/R$', '$B_{HBr}$']
 # fig = corner.corner(samples, labels=labels, show_titles=True, hist_bin_factor=1, range=[0.95]*10, plot_contours=False, figsize=(12.5, 12.5), bins=14, labelpad=0.06, truths=truths)
 # fig.set_size_inches(14.5, 14.5)
-# fig.savefig('misc_scripts/figures/bootstrapped_keq_fits_E1_temps16-21-26.png', dpi=300)
+# fig.savefig(repo_data_path + 'misc_scripts/figures/bootstrapped_keq_fits_E1_temps16-21-26.png', dpi=300)
 # plt.show()

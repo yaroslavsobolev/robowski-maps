@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import os
 import numpy as np
 from matplotlib import pyplot as plt
@@ -185,12 +186,12 @@ def make_hist_fot_ugi():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 def make_hist_for_e1():
     data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-    df_results = pd.read_csv('visualize_results/examples/final_datasets/e1results.csv')
+    df_results = pd.read_csv(repo_data_path + 'visualize_results/examples/final_datasets/e1results.csv')
 
     temps = np.array([16, 21, 26, 31, 36])
     all_derivs_list = []
@@ -227,12 +228,12 @@ def make_hist_for_e1():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 
 def make_hist_for_sn1():
-    organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+    import robowski.misc_scripts.organize_run_results as organize_run_results
     # Third batch from december
     experiment_name = 'simple-reactions/2023-12-11-run01/'
     list_of_runs = tuple([
@@ -309,12 +310,12 @@ def make_hist_for_sn1():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 
 def make_hist_for_sn1_carbocat():
-    organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+    import robowski.misc_scripts.organize_run_results as organize_run_results
     # timepoint_id = 1
     experiment_name = 'simple-reactions/2023-07-05-run01/'
     # df_results = pd.read_csv(data_folder + experiment_name + f'results/timepoint{timepoint_id:03d}-reaction_results.csv')
@@ -379,7 +380,7 @@ def make_hist_for_sn1_carbocat():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 if __name__ == '__main__':

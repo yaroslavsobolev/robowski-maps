@@ -1,7 +1,8 @@
+from robowski.settings import *
 import os
 import numpy as np
 import pandas as pd
-import importlib
+
 from matplotlib import pyplot as plt
 import logging
 # set level to info
@@ -10,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 
-st = importlib.import_module('uv_vis_absorption_spectroscopy.spectraltools')
+import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 
 # make a figure with 6 subplots with sharex = true
 fig, axs = plt.subplots(4, 1, figsize=(5, 7), sharex=True)
@@ -46,29 +47,29 @@ ax.set_ylim(0, 0.3)
 #
 # ax = axs[2]
 # color = 'C0'
-# litdata = np.loadtxt('misc_scripts/literature_spectra/carbocation_Yuichi_Nishimae_2004.txt', delimiter='\t')
+# litdata = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/carbocation_Yuichi_Nishimae_2004.txt', delimiter='\t')
 # ax.plot(litdata[:, 0], litdata[:, 1], color=color, linewidth=2, alpha=0.9, label='Nishimae et al. (2004)')
 # ax.fill_between(x=litdata[:, 0], y1=0, y2=litdata[:, 1], color=color, alpha=0.4)
 #
 # ax = axs[3]
 # color = 'C2'
-# litdata = np.loadtxt('misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E12.txt', delimiter='\t')
+# litdata = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E12.txt', delimiter='\t')
 # ax.plot(litdata[:, 0], litdata[:, 1], color=color, linewidth=2, alpha=0.9, label='Ammer et al. (2012), E3+')
 # ax.fill_between(x=litdata[:, 0], y1=0, y2=litdata[:, 1], color=color, alpha=0.4)
 #
 # ax = axs[4]
 # color = 'C3'
-# litdata = np.loadtxt('misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E3.txt', delimiter='\t')
+# litdata = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/ammer-sailer-riedle-2012-E3.txt', delimiter='\t')
 # ax.plot(litdata[:, 0], litdata[:, 1], color=color, linewidth=2, alpha=0.9, label='Ammer et al. (2012), E12+')
 # ax.fill_between(x=litdata[:, 0], y1=0, y2=litdata[:, 1], color=color, alpha=0.4)
 
 
 ax = axs[3]
-# data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-cation-uv-60-states.txt', skiprows=4)
-nms = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_nms.npy')
-spectrum = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_mean.npy')
-perc1 = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc1.npy')
-perc2 = np.load('misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc2.npy')
+# data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-cation-uv-60-states.txt', skiprows=4)
+nms = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_nms.npy')
+spectrum = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_mean.npy')
+perc1 = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc1.npy')
+perc2 = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc2.npy')
 
 ax.plot(nms, spectrum, label='Best match, theory', linewidth=2, alpha=0.5)
 ax.fill_between(x=nms, y1=0, y2=spectrum, color='C0', alpha=0.4)
@@ -80,7 +81,7 @@ ax.set_ylim(0, 0.26)
 
 ax = axs[1]
 color='C1'
-data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 ax.plot(data[:, 0], data[:, 1], color=color, label='Radical, theory')
 ax.fill_between(x=data[:, 0], y1=0, y2=data[:, 1], color=color, alpha=0.4)
@@ -88,7 +89,7 @@ ax.set_ylim(0, 8500)
 
 ax = axs[2]
 color='C2'
-data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 ax.plot(data[:, 0], data[:, 1], color=color, label='Cation, theory')
 ax.fill_between(x=data[:, 0], y1=0, y2=data[:, 1], color=color, alpha=0.4)
@@ -96,7 +97,7 @@ ax.set_ylim(0, 22000)
 
 
 #
-# data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
+# data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
 # maxy = np.max(data[:, 1])
 # plt.plot(data[:, 0], data[:, 1]/maxy*0.1, label='Cation, theory')
 

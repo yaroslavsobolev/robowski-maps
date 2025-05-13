@@ -1,3 +1,4 @@
+from robowski.settings import *
 import shortuuid
 import pandas as pd
 import numpy as np

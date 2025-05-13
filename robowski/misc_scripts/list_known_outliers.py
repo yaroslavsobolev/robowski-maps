@@ -1,3 +1,4 @@
+from robowski.settings import *
 import os
 
 import pandas as pd

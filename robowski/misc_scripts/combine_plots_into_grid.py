@@ -1,3 +1,4 @@
+from robowski.settings import *
 from PIL import Image
 import os
 

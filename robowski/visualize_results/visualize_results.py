@@ -1,12 +1,13 @@
+from robowski.settings import *
 import pandas as pd
 import numpy as np
 import os
 import matplotlib.pyplot as plt
 from scipy.interpolate import splev, splrep
-import importlib
-savitzky_golay_werrors = importlib.import_module("visualize_results.savitzky_golay_werrors")
-import importlib
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+
+import robowski.visualize_results.savitzky_golay_werrors as savitzky_golay_werrors
+
+import robowski.misc_scripts.organize_run_results as organize_run_results
 
 os.environ['ETS_TOOLKIT'] = 'qt'
 os.environ['QT_API'] = 'pyqt5'
@@ -301,7 +302,7 @@ if __name__ == '__main__':
                                          factor=1, marker="^")
 
     # plot the model
-    model_folder = 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/'
+    model_folder = repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/'
     xs = np.load(f'{model_folder}ugi_xs_set0.npy')
     ys1 = 100*np.load(f'{model_folder}ugi_ys1_set0.npy')
     plt.plot(xs, ys1, color = 'black')
@@ -320,7 +321,7 @@ if __name__ == '__main__':
     simpleaxis(plt.gca())
 
     plt.tight_layout()
-    fig.savefig('misc_scripts/figures/ugi-corners-with-model_v2.png', dpi=300)
+    fig.savefig(repo_data_path + 'misc_scripts/figures/ugi-corners-with-model_v2.png', dpi=300)
     plt.show()
 
 

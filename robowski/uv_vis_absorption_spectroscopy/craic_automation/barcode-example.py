@@ -1,3 +1,4 @@
+from robowski.settings import *
 # import cv2
 
 # vid = cv2.VideoCapture(0, cv2.CAP_DSHOW)

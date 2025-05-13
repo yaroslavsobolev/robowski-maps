@@ -1,3 +1,4 @@
+from robowski.settings import *
 from ugi_kinetics_v3b_emcee import *
 
 if __name__ == '__main__':

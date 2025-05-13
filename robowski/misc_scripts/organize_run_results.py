@@ -1,3 +1,4 @@
+from robowski.settings import *
 from datetime import datetime
 import logging
 import os

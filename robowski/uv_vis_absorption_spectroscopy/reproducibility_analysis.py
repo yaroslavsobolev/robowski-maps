@@ -1,3 +1,4 @@
+from robowski.settings import *
 from process_wellplate_spectra import SpectraProcessor
 import os
 import numpy as np
@@ -7,7 +8,7 @@ from sklearn.decomposition import PCA as pca
 from scipy.signal import savgol_filter
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 
 
@@ -242,7 +243,7 @@ for cap in bp['caps']:
 plt.xlabel('Yield, %')
 # plt.subplots_adjust(left=0.25)
 plt.tight_layout()
-figbox.savefig('misc_scripts/figures/Figure_69.png', dpi=300)
+figbox.savefig(repo_data_path + 'misc_scripts/figures/Figure_69.png', dpi=300)
 plt.show()
 
 concentrations_aluminum_plate_2023_06_07 = process_or_load_processed(nickname='concentrations_aluminum_plate_2023_06_07', plate_name='2023-06-08_12-41-45__plate0000006__multicomponent-reactions-2023-06-08-dil')

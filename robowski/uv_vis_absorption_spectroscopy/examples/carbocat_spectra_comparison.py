@@ -1,26 +1,25 @@
+from robowski.settings import *
 import os
 import numpy as np
 import pandas as pd
-import importlib
 from matplotlib import pyplot as plt
 import logging
+import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 # set level to info
 logging.basicConfig(level=logging.INFO)
 
-st = importlib.import_module('uv_vis_absorption_spectroscopy.spectraltools')
-
-data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-cation-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-cation-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 plt.plot(data[:, 0], data[:, 1]/maxy*0.25, label='Radical cation, theory', linewidth=5, alpha=0.5)
 # for shift in [-0.12, 0.12]:
 #     plt.plot(data[:, 0]*(1+shift), data[:, 1]/maxy*0.25, color='C0', alpha=0.5)
 plt.errorbar(x=529, y=0.086, xerr=529*0.12, marker='', color='C0', alpha=0.9, capsize=5, capthick=2)
 
-data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 plt.plot(data[:, 0], data[:, 1]/maxy*1, label='Radical, theory')
 
-data = np.loadtxt('misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 plt.plot(data[:, 0], data[:, 1]/maxy*0.1, label='Cation, theory')
 

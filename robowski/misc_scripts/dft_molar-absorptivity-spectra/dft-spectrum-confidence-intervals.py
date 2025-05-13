@@ -1,8 +1,8 @@
+from robowski.settings import *
 import numpy as np
 from matplotlib import pyplot as plt
 import re
-import importlib
-st = importlib.import_module('uv_vis_absorption_spectroscopy.spectraltools')
+import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 
 
 def parse_tddft(text):
@@ -177,14 +177,14 @@ def plot_dft_vs_pink(gaussian_file, molar_concentration, legend=True, ymax=0.35,
         plt.legend()
     st.simpleaxis(ax)
     # plt.tight_layout()
-    fig.savefig(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
+    fig.savefig(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
 
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
             spectrum * molar_concentration)
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
             percentiles[0] * molar_concentration)
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
             percentiles[1] * molar_concentration)
 
 
@@ -220,14 +220,14 @@ def plot_dft_vs_pink_talk(gaussian_file, molar_concentration, legend=True, ymax=
         plt.legend()
     st.simpleaxis(ax)
     # plt.tight_layout()
-    fig.savefig(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
+    fig.savefig(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
 
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
             spectrum * molar_concentration)
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
             percentiles[0] * molar_concentration)
-    np.save(f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
+    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
             percentiles[1] * molar_concentration)
 
 
@@ -264,18 +264,18 @@ def plot_dft_vs_pink_weighted(freqfiles, uvfiles, molar_concentration, legend=Tr
         plt.legend()
     st.simpleaxis(ax)
     # plt.tight_layout()
-    fig.savefig(f'misc_scripts/figures_for_articles/dft-uv-vis/{uvfiles[0].split("/")[-1].replace(".out", ".png")}')
+    fig.savefig(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{uvfiles[0].split("/")[-1].replace(".out", ".png")}')
 
 
 
 if __name__ == '__main__':
-    base_folder = 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/candidates/dimer_OHplus/'
+    base_folder = repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/candidates/dimer_OHplus/'
     plot_dft_vs_pink(gaussian_file = base_folder + 'dimer_OHplus_conf2_1054kjm_uv.out',
                      molar_concentration=1/(1e9*0.6/1.20*1.63),
                      legend=False)
     plt.show()
 
-    base_folder = 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/candidates/other_candidates_uv/'
+    base_folder = repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/candidates/other_candidates_uv/'
     # plot_dft_vs_pink(gaussian_file = base_folder + 'dimer_cage_anti_uv.out',
     #                  molar_concentration=2.5e-9, legend=False)
     # plt.show()

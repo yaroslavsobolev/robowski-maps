@@ -1,3 +1,4 @@
+from robowski.settings import *
 from ugi_kinetics_v3r_emcee import *
 from scipy.optimize import least_squares
 import numpy as np

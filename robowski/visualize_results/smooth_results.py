@@ -1,3 +1,4 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 from matplotlib.ticker import FuncFormatter

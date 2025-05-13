@@ -1,3 +1,4 @@
+from robowski.settings import *
 from traits.api import HasTraits, Range, Instance, \
         on_trait_change
 from traitsui.api import View, Item, Group
@@ -14,7 +15,7 @@ from scipy.interpolate import interp1d
 os.environ['ETS_TOOLKIT'] = 'qt'
 os.environ['QT_API'] = 'pyqt5'
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+import robowski.misc_scripts.organize_run_results as organize_run_results
 
 contourvalues = [0.5, 0.7, 0.9]
 indices_of_outliers = []

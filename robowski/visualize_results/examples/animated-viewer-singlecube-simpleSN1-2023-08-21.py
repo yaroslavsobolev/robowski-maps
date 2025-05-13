@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import logging
 import os
 import numpy as np
@@ -8,8 +9,8 @@ import matplotlib.ticker as mtick
 from scipy.optimize import curve_fit, brentq
 from scipy import interpolate
 
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
-avs = importlib.import_module("visualize_results.animated_viewer_static")
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 dioxane_density = 1.034  # g/mL
@@ -27,7 +28,7 @@ def simpleaxis(ax):
 
 
 def water_activity_function(do_plot=False):
-    data = np.loadtxt('misc_scripts/activity_data/water-dioxane/'
+    data = np.loadtxt(repo_data_path + 'misc_scripts/activity_data/water-dioxane/'
                       'kogan-fridman-kafarov-1966/data_activity_of_water_in_dioxane.txt',
                       skiprows=1, delimiter=',')
     mole_fraction = data[:, 0]

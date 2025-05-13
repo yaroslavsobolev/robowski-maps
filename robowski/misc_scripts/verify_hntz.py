@@ -1,3 +1,4 @@
+from robowski.settings import *
 from hntz_discovery_timeline import *
 from assert_identity_of_two_csv_tables import compare_csv_tables
 

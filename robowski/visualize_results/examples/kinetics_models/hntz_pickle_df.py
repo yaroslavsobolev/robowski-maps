@@ -1,14 +1,15 @@
+from robowski.settings import *
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import numpy as np
 import pandas as pd
-import importlib
+
 import logging
 
 logging.basicConfig(level=logging.ERROR)
 
 NCORES = 77
-organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
+import robowski.misc_scripts.organize_run_results as organize_run_results
 
 
 list_of_runs = tuple(['2024-03-04-run01',

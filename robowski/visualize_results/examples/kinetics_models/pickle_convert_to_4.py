@@ -1,3 +1,4 @@
+from robowski.settings import *
 
 import pandas as pd
 df_results = pd.read_pickle(f'hntz_df_results_model.pkl')

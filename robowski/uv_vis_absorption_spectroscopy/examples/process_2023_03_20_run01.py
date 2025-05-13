@@ -1,9 +1,10 @@
+from robowski.settings import *
 from ..process_wellplate_spectra import *
 
 dilution_factor = 200
 experiment_name = 'multicomp-reactions/2023-03-20-run01/'
 
-sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 
 df = pd.read_csv(craic_folder + 'database_about_these_folders.csv')

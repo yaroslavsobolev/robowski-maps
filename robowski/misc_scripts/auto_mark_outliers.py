@@ -1,8 +1,8 @@
+from robowski.settings import *
 import pandas as pd
 import numpy as np
 import os
-import importlib
-visualize_results = importlib.import_module("visualize_results.visualize_results")
+import robowski.visualize_results.visualize_results as visualize_results
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 

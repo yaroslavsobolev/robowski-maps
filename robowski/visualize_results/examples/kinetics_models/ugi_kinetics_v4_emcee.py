@@ -1,3 +1,4 @@
+from robowski.settings import *
 '''
 This script is used to optimize the parameters of the model of the reaction. The model is a system of ODEs that describes
 the kinetics of the reaction. See the Supplementary Materials Section 5.3 for the model description.

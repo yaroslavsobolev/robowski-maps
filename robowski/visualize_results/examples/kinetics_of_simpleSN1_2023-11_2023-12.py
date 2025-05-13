@@ -1,3 +1,4 @@
+from robowski.settings import *
 import os
 import numpy as np
 from matplotlib import pyplot as plt
@@ -45,7 +46,7 @@ plt.xlabel('1000/T, K$^{-1}$')
 plt.ylabel('ln K')
 plt.xlim(3.01, 3.47)
 plt.tight_layout()
-fig.savefig('misc_scripts/figures/kinetics_of_simpleSN1_2023-12_hoff.png', dpi=300)
+fig.savefig(repo_data_path + 'misc_scripts/figures/kinetics_of_simpleSN1_2023-12_hoff.png', dpi=300)
 # plt.legend()
 
 plt.show()

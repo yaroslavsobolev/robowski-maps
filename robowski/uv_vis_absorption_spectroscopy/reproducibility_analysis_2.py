@@ -1,3 +1,4 @@
+from robowski.settings import *
 """
 This script is used to analyze the reproducibility of the concentrations of product RF029A in the plates,
 in experiments where the same reaction conditions are repeated in all vials of the same plate.
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-sp = SpectraProcessor(folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                      '2022-12-01/interpolator-dataset/')
 craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
 dilution_factor = 200

@@ -1,4 +1,5 @@
-import importlib
+from robowski.settings import *
+
 import glob
 import os
 

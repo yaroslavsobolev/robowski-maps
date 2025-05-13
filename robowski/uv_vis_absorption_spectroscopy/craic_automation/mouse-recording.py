@@ -1,3 +1,4 @@
+from robowski.settings import *
 import pyautogui, sys, time
 delay = 1
 

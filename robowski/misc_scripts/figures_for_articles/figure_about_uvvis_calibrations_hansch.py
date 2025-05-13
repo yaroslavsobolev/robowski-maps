@@ -1,3 +1,4 @@
+from robowski.settings import *
 import matplotlib.pyplot as plt
 
 from calibration_illustration import *
@@ -247,5 +248,5 @@ plt.ylabel('Absorbance')
 plt.xlim(260, 430)
 plt.ylim(-0.05, 0.808)
 plt.tight_layout()
-f.savefig('misc_scripts/figures/calibration-illustration-hansch-1.png', dpi=300)
+f.savefig(repo_data_path + 'misc_scripts/figures/calibration-illustration-hansch-1.png', dpi=300)
 plt.show()

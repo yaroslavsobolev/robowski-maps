@@ -1,3 +1,4 @@
+from robowski.settings import *
 from versatility_examples import *
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/'
@@ -71,7 +72,7 @@ construct_calibrant(
 
 
 sp = process_wellplate_spectra.SpectraProcessor(
-    folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
+    folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                    '2022-12-01/interpolator-dataset/')
 sp.nanodrop_lower_cutoff_of_wavelengths = 220
 calibration_folder = data_folder + experiment_name + 'microspectrometer_data/calibration/'
