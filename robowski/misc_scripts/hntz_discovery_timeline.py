@@ -172,7 +172,7 @@ def process_run_by_shortname(run_shortname, substances_for_fitting, folder_for_p
     concentrations_df.to_csv(data_folder + run_name + folder_for_prod_conc + '/product_concentration.csv', index=False)
 
 
-def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse'):
+def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse', plot_name=''):
     # make a dataframe with columns 'param', 'set_index'
     overall_df = pd.DataFrame(columns=['param', 'set_index'], dtype=object)
     # fig, axarr = plt.subplots(1, len(list_of_calibrant_set_ids), figsize=(15, 5), sharey=True, dpi=150)
@@ -192,7 +192,6 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse')
         # axarr[list_of_calibrant_set_ids.index(set_index)].hist(param_values, orientation='horizontal', bins=np.logspace(np.log10(np.min(param_values)),np.log10(np.max(param_values)), 30))
         # axarr[list_of_calibrant_set_ids.index(set_index)].set_yscale('log')
 
-    fig, ax = plt.subplots(figsize=(5, 4))
     fig, ax = plt.subplots(figsize=(5, 4))
     sns.set_style('whitegrid')
     ax = sns.boxplot(ax=ax, x='set_index', y='param', data=overall_df, color='grey', notch=True, whis=[5, 95])
@@ -230,15 +229,36 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse')
     ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
 
     plt.tight_layout()
-    fig.savefig(repo_data_path + 'misc_scripts/figures/hntz_discovery_timeline_withstoich1.png', dpi=300)
-
+    fig.savefig(repo_data_path + f'misc_scripts/figures/hntz_discovery_timeline_withstoich1_{plot_name}.png', dpi=300)
     plt.show()
 
 
 if __name__ == '__main__':
+
+    # For Figure 6 in main text
     list_of_runs = tuple(['2024-02-16-run01',
                           '2024-02-17-run01',
                           '2024-02-17-run02'])
+
+    # More repetitions for SI Figure S98, a
+    list_of_runs_Fig_S98a = tuple(['2024-01-08-run01',
+                                  '2024-01-08-run02',
+                                  '2024-01-08-run03'])
+
+    # More repetitions for SI Figure S98, b
+    list_of_runs_Fig_S98b = tuple(['2024-01-29-run01',
+                                  '2024-01-29-run01',
+                                  '2024-01-30-run01'])
+
+    # More repetitions for SI Figure S98, c
+    list_of_runs_Fig_S98c = tuple(['2024-01-16-run01',
+                                  '2024-01-16-run02',
+                                  '2024-01-17-run01'])
+
+    # More repetitions for SI Figure S98, d
+    list_of_runs_Fig_S98d = tuple(['2024-02-20-run01',
+                                  '2024-02-20-run02',
+                                  '2024-02-21-run01'])
 
     ### Uncomment to recalibrate the analysis
     # for set_index in [0, 1, 2, 3, 4, 5, 6, 7]:
@@ -252,4 +272,27 @@ if __name__ == '__main__':
     #     for i, run_shortname in enumerate(list_of_runs):
     #         process_run_by_shortname(run_shortname, combined_set, folder_for_prod_conc)
 
-    plot_timeline(list_of_runs, [0, 1, 2, 3, 4, 5, 6, 7], param_to_plot='maxresidual')
+    plot_timeline(list_of_runs,
+                  [0, 1, 2, 3, 4, 5, 6, 7],
+                  param_to_plot='maxresidual',
+                  plot_name='maintext')
+
+    plot_timeline(list_of_runs_Fig_S98a,
+                  [0, 1, 2, 3, 4, 5, 6, 7],
+                  param_to_plot='maxresidual',
+                  plot_name='SI_panel_a')
+
+    plot_timeline(list_of_runs_Fig_S98b,
+                  [0, 1, 2, 3, 4, 5, 6, 7],
+                  param_to_plot='maxresidual',
+                  plot_name='SI_panel_b')
+
+    plot_timeline(list_of_runs_Fig_S98c,
+                  [0, 1, 2, 3, 4, 5, 6, 7],
+                  param_to_plot='maxresidual',
+                  plot_name='SI_panel_c')
+
+    plot_timeline(list_of_runs_Fig_S98d,
+                  [0, 1, 2, 3, 4, 5, 6, 7],
+                  param_to_plot='maxresidual',
+                  plot_name='SI_panel_d')
