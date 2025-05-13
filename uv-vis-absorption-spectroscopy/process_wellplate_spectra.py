@@ -1091,9 +1091,6 @@ class SpectraProcessor:
                                                              fill_value='extrapolate')
                                         for i in range(1)]
 
-        indices_of_calibrants_that_depend_on_acetic_acid = []
-        # indices_of_calibrants_that_depend_on_acetic_acid = []
-
         def func_prelim(*args):
             xs = args[0]
             separate_spectra = np.split(xs, indices_for_splitting)
@@ -1111,24 +1108,15 @@ class SpectraProcessor:
                 wavelengths = wavelengths + wavelength_offsets[spectrum_index]
                 dilution_factor_for_this_spectrum = dilutions_factors_here[spectrum_index]
                 calibrants_concentrations_for_this_spectrum = [x / dilution_factor_for_this_spectrum for x in calibrants_concentrations]
-                # get the concentration where calibrant_shortname = 'acetic_acid'
-                # acetic_acid_concentration = calibrants_concentrations_for_this_spectrum[calibrant_shortnames.index('acetic_acid')] / dilution_factor_for_this_spectrum
-                # print(f"AAconc: {product_concentrations_to_required_substrates(calibrants_concentrations, calibrant_shortnames)['ammonium_acetate'] / dilution_factor_for_this_spectrum}")
-                acetic_acid_concentration = product_concentrations_to_required_substrates(calibrants_concentrations, calibrant_shortnames)['ammonium_acetate'] / dilution_factor_for_this_spectrum
 
                 calibrants_coeffs_for_this_spectrum = [np.asscalar(calibrants[i]['concentration_to_coeff_interpolator'](calibrants_concentrations_for_this_spectrum[i]))
                                                        for i in range(number_of_calibrants)]
 
                 predicted_spectrum = np.zeros_like(wavelengths)
 
-                # first add components that don't depend on acetic acid
                 for i in range(number_of_calibrants):
-                    if not (i in indices_of_calibrants_that_depend_on_acetic_acid):
-                        predicted_spectrum += calibrants_coeffs_for_this_spectrum[i] * calibrants[i]['reference_interpolator'](wavelengths)
-                # then add components that depend on acetic acid
-                for i in indices_of_calibrants_that_depend_on_acetic_acid:
-                    reference_spectrum_for_this_calibrant = calibrants[i]['reference_interpolator']((wavelengths, np.ones_like(wavelengths)*acetic_acid_concentration))
-                    predicted_spectrum += calibrants_coeffs_for_this_spectrum[i] * reference_spectrum_for_this_calibrant
+                    predicted_spectrum += calibrants_coeffs_for_this_spectrum[i] * calibrants[i]['reference_interpolator'](wavelengths)
+
                 predicted_spectrum += offsets[spectrum_index] + background_interpolators[0](wavelengths) * bkg_pca_weights[spectrum_index]
                 separate_predicted_spectra.append(predicted_spectrum)
             comboY = np.concatenate(separate_predicted_spectra)
@@ -1257,14 +1245,17 @@ class SpectraProcessor:
 
         concentrations_here = popt[0:number_of_calibrants]
 
-        required_subs = product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
-        os_string = ''
-        for s in substrates:
-            overspending_ratio = required_subs[s] / starting_concentration_dict[s]
-            string_here = f'{s} osr: {overspending_ratio-1:.1%}\n'
-            os_string += string_here
-        os_string = os_string[:-1]
-        print(os_string)
+        if obey_stoichiometric_inequalities:
+            required_subs = product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
+            os_string = ''
+            for s in substrates:
+                overspending_ratio = required_subs[s] / starting_concentration_dict[s]
+                string_here = f'{s} osr: {overspending_ratio-1:.1%}\n'
+                os_string += string_here
+            os_string = os_string[:-1]
+            print(os_string)
+        else:
+            os_string = ''
 
         fitted_dilution_factors = popt[number_of_calibrants: number_of_calibrants + number_of_spectra - 1]
         fitted_offsets = popt[number_of_calibrants + number_of_spectra - 1: number_of_calibrants + number_of_spectra - 1 + number_of_spectra]
@@ -1833,8 +1824,8 @@ if __name__ == '__main__':
     sp.nanodrop_lower_cutoff_of_wavelengths = 220
     sp.use_instrumental_sigmas = True
 
-    print('>>>>>>>>>')
-    print(sp.uncertainty_of_measured_absorbance(221, 0.37))
+    # print('>>>>>>>>>')
+    # print(sp.uncertainty_of_measured_absorbance(221, 0.37))
 
     # x = sp.load_nanodrop_csv_for_one_plate(plate_folder=data_folder + 'BPRF/2024-01-08-run01/nanodrop_spectra/2024-01-10_12-51-07_UV-Vis_plate_71.csv')
 
@@ -1869,16 +1860,17 @@ if __name__ == '__main__':
     print('len of spectrum1', len(spectrum1))
     plt.show()
 
-    concentrations = sp.multispectrum_to_concentration_general(target_spectrum_inputs=[spectrum1, spectrum2],
+    concentrations = sp.multispectrum_to_concentration(target_spectrum_inputs=[spectrum1, spectrum2],
                                                        dilution_factors=[20, 200],
                                                        calibration_folder=data_folder + 'BPRF/2024-01-17-run01/' + 'microspectrometer_data/calibration/',
                                                        calibrant_shortnames=substances_for_fitting,
                                                        background_model_folder=data_folder + 'BPRF/cross_conamination_and_backgound_test/ethanol_background_model/',
                                                        upper_bounds=[np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf],
-                                                       do_plot=True, cut_from=cut_from, cut_to=250,
+                                                       do_plot=False, cut_from=cut_from, cut_to=250,
                                                        ignore_abs_threshold=False, ignore_pca_bkg=False,
-                                                       plot_calibrant_references=True,
-                                                       upper_limit_of_absorbance=0.95)
+                                                       plot_calibrant_references=False,
+                                                       upper_limit_of_absorbance=0.95,
+                                                       obey_stoichiometric_inequalities=False)
 
     print(concentrations)
     print('Done!')
@@ -2012,23 +2004,16 @@ if __name__ == '__main__':
     #                                                       ignore_abs_threshold=True)
     # print(concentrations_here)
 
-    ###################### E1 REACTIONS ######################
-    sp.nanodrop_lower_cutoff_of_wavelengths = 250
-    run_name = 'simple-reactions/2023-09-06-run01/'
-    concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
-                                                          plate_folder=data_folder + 'simple-reactions/2023-09-06-run01/nanodrop_spectra/2023-09-06_20-29-24_plate_50.csv',
-                                                          calibration_folder=data_folder + 'simple-reactions/2023-09-06-run01/' + 'microspectrometer_data/calibration/',
-                                                          calibrant_shortnames=['E1DB02', 'E1OH02'],
-                                                          background_model_folder=data_folder + 'simple-reactions/2023-09-06-run01/microspectrometer_data/background_model/',
-                                                          calibrant_upper_bounds=[np.inf, np.inf],
-                                                          do_plot=True, return_all_substances=True,
-                                                          cut_from=50, cut_to=False,
-                                                          ignore_abs_threshold=True, ignore_pca_bkg=True)
-    print(concentrations_here)
-
-    # ## JC
-    # sp.nanodrop_lower_cutoff_of_wavelengths = 230
-    # plate_folder = 'D:/Docs/Science/UNIST/Projects/useless-random-shit/nanodrop_spectra/' + 'raw_calibration_data/2023-09-11-PBAS-reference.csv'
-    # sp.show_all_spectra(plate_folder)
-    # plt.legend()
-    # plt.show()
+    # ###################### E1 REACTIONS ######################
+    # sp.nanodrop_lower_cutoff_of_wavelengths = 250
+    # run_name = 'simple-reactions/2023-09-06-run01/'
+    # concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
+    #                                                       plate_folder=data_folder + 'simple-reactions/2023-09-06-run01/nanodrop_spectra/2023-09-06_20-29-24_plate_50.csv',
+    #                                                       calibration_folder=data_folder + 'simple-reactions/2023-09-06-run01/' + 'microspectrometer_data/calibration/',
+    #                                                       calibrant_shortnames=['E1DB02', 'E1OH02'],
+    #                                                       background_model_folder=data_folder + 'simple-reactions/2023-09-06-run01/microspectrometer_data/background_model/',
+    #                                                       calibrant_upper_bounds=[np.inf, np.inf],
+    #                                                       do_plot=False, return_all_substances=True,
+    #                                                       cut_from=50, cut_to=False,
+    #                                                       ignore_abs_threshold=True, ignore_pca_bkg=True)
+    # print(concentrations_here)
