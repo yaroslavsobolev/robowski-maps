@@ -1,10 +1,11 @@
+from robowski.settings import *
 import importlib
 import pickle
 from distutils import dir_util
 import pandas as pd
 from pytest import fixture
 import os
-organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
+import robowski.misc_scripts.organize_run_results as organize_run_results
 
 
 @fixture
@@ -88,7 +89,7 @@ def test_join_data_from_runs(datadir):
                                                       'multicomp-reactions/2023-06-21-run01/',
                                                       'multicomp-reactions/2023-06-21-run02/'
                                                      ])
-        frame1.to_pickle('C:/Users/ICanSeeYourPixels/Desktop/temp/joined_data_from_runs.pkl')
+        # frame1.to_pickle('C:/Users/ICanSeeYourPixels/Desktop/temp/joined_data_from_runs.pkl')
         frame2 = pd.read_pickle('expected_outputs/joined_data_from_runs.pkl')
         pd.testing.assert_frame_equal(frame1, frame2)
 
