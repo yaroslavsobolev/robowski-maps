@@ -65,7 +65,7 @@ ax.set_ylim(0, 0.3)
 
 
 ax = axs[3]
-# data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-cation-uv-60-states.txt', skiprows=4)
+# data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/dft-monomer-radical-cation-uv-60-states.txt', skiprows=4)
 nms = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_nms.npy')
 spectrum = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_mean.npy')
 perc1 = np.load(repo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/dimer_OHplus_conf2_1054kjm_uv_perc1.npy')
@@ -81,7 +81,7 @@ ax.set_ylim(0, 0.26)
 
 ax = axs[1]
 color='C1'
-data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-radical-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/dft-monomer-radical-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 ax.plot(data[:, 0], data[:, 1], color=color, label='Radical, theory')
 ax.fill_between(x=data[:, 0], y1=0, y2=data[:, 1], color=color, alpha=0.4)
@@ -89,7 +89,7 @@ ax.set_ylim(0, 8500)
 
 ax = axs[2]
 color='C2'
-data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
+data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
 maxy = np.max(data[:, 1])
 ax.plot(data[:, 0], data[:, 1], color=color, label='Cation, theory')
 ax.fill_between(x=data[:, 0], y1=0, y2=data[:, 1], color=color, alpha=0.4)
@@ -97,7 +97,7 @@ ax.set_ylim(0, 22000)
 
 
 #
-# data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
+# data = np.loadtxt(repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/dft-monomer-cation-uv-60-states.txt', skiprows=4)
 # maxy = np.max(data[:, 1])
 # plt.plot(data[:, 0], data[:, 1]/maxy*0.1, label='Cation, theory')
 

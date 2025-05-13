@@ -3,8 +3,6 @@ import os
 
 import pandas as pd
 
-data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-
 def join_structures_from_runs(run_names):
     """
     Loads the `results/run_structure.csv` from multiple runs and joins them into one dataframe.

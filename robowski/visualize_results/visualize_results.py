@@ -302,7 +302,7 @@ if __name__ == '__main__':
                                          factor=1, marker="^")
 
     # plot the model
-    model_folder = repo_data_path + 'visualize_results/examples/kinetics_models/ugi_v3_REV_outputs/'
+    model_folder = repo_data_path + 'kinetics_models/Ugi_kinetics/ugi_v3_REV_outputs/'
     xs = np.load(f'{model_folder}ugi_xs_set0.npy')
     ys1 = 100*np.load(f'{model_folder}ugi_ys1_set0.npy')
     plt.plot(xs, ys1, color = 'black')

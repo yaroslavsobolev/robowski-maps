@@ -1,7 +1,7 @@
-from robowski.settings import *
 '''Takes in the run_info.csv file, adds certain time delay to the finishing time and makes a table.
 This comvenient for planning the next operation.'''
 
+from robowski.settings import *
 import pandas as pd
 import datetime
 import os

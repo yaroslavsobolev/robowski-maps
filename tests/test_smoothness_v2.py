@@ -1,7 +1,7 @@
 from robowski.settings import *
 import importlib
 import numpy as np
-import robowski.misc_scripts.smoothness_theory.smoothness_v2 as smoothness
+import robowski.smoothness_theory.smoothness_v2 as smoothness
 
 def test_right_hand_side_speedup():
     smoothness_vs = smoothness.ReactionNetwork(N=5)

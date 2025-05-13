@@ -42,7 +42,7 @@ df_results = organize_run_results.join_data_from_runs([f'BPRF/{x}/' for x in lis
                                  round_on_columns=None)
 
 if what_to_plot == 'model':
-    target_folder = repo_data_path + 'visualize_results/examples/kinetics_models/'
+    target_folder = repo_data_path + 'kinetics_models/'
     df_results = pd.read_hdf(f'{target_folder}hntz_df_results_model_p4.hdf', key='df')
 
 

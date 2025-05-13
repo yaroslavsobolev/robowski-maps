@@ -1,6 +1,7 @@
-# Code and data supporting the research article Y. Jia el al., Nature, 2025
+# Robot-assisted reconstruction of reaction hyperspaces and complex reaction networks they contain
 
-This repository contains the code and data supporting the article 
+This repository contains the code and data supporting the article
+
 'Robot-assisted reconstruction of reaction hyperspaces and complex reaction networks they contain'
 by Yankai Jia, Rafał Frydrych, Yaroslav I. Sobolev, Wai-Shing Wong, Bibek Prajapati, Yasemin Bilgi, 
 Daniel Matuszczyk, Galymzhan Moldagulov, Juan Carlos Ahumada, Namhun Kim, Eric Larsen, Bartosz A. Grzybowski
@@ -24,7 +25,8 @@ The ZIP file is named `data.zip`, it is about 7 Gb, and 19 Gb when unzipped.
 It should be unzipped to any folder of your choosing, and then the path to that folder should be
 set as your operating system's ["environment variable"](https://en.wikipedia.org/wiki/Environment_variable) 
 named `ROBOCHEM_DATA_PATH`. This environment variable
-will be used by the Python scripts to locate the data files.
+will be used by the Python scripts to locate the data files. On Windows, you may have to restart the computer after
+changing the environment variable for it to be recognized by the system.
 
 ## Requirements for running the Python scripts
 
@@ -33,7 +35,7 @@ see the `requirements.txt` file in the `zeus-pipetter` folder and the `README.md
 
 For the rest of the repository, the installation procedure is as follows:
 
-### Installing Microsoft Visual C++ 14.0 or greater (required for `mayavi`)
+### Installing Microsoft Visual C++ 14.0 or greater (required for [Mayavi](https://docs.enthought.com/mayavi/mayavi/))
 After downloading vs_buildtools.exe from [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/): 
 When installing, click "Modify" near the "Visual Studio Build Tools" and check the "Desktop development with C++" option
 in the opened window, then click "Modify" button in the lower right corner. 
@@ -161,22 +163,22 @@ Kinetic fitting for the E1 and SN1 reactions is implemented in the `visualize_re
 
 #### E1 reaction
 To reproduce
-the "corner plot" from precalculated bootstrapping analysis data, run the `visualize_results/examples/kinetics_of_E1_2023_bootstrap.py` script.
+the "corner plot" from precalculated bootstrapping analysis data, run the `robowski/visualize_results/examples/kinetics_of_E1_2023_bootstrap.py` script.
 This would reproduce the Figure S141 from the Supplementary Materials.
 For regenerating the data for the bootstrap analysis from scratch, 
-run the `visualize_results/examples/animated-viewer-singlecube-E1-narrowrange_with_perr_v3.py` script.
+run the `robowski/visualize_results/examples/animated-viewer-singlecube-E1-narrowrange_with_perr_v3.py` script.
 The same script can be used to plot the model prediction against the experimental data (Figures S138 and S140
 from the Supplementary Materials) by uncommenting the appropriate lines in the script.
 
 #### SN1 reactions
 
 For kinetics fitting to the SN1 reaction (Figure 3), 
-run the `visualize_results/examples/animated-viewer-singlecube-simpleSN1-2023-08-21.py` script.
+run the `robowski/visualize_results/examples/animated-viewer-singlecube-simpleSN1-2023-08-21.py` script.
 
 #### Ugi reaction
 
 The scripts for kinetics fitting to the Ugi reaction (Figure 4 and Section 5.3 of the Supplementary Materials)
-are located in the `visualize_results/examples/kinetics_models` folder. The names of these scripts begin with
+are located in the `robowski/kinetics_models` folder. The names of these scripts begin with
 `ugi_kinetics_...` followed by the version of the kinetics model and the name of the procedure.
 In relation to the description in the Section 5.3 of the Supplementary Materials,
 version `v3b` is the "reduced model", `v3` is the full model, and `v3c` is the full model after
@@ -191,7 +193,7 @@ of the scripts whose names contain `_perr_`, meaning "parameter errors analysis"
 
 ### Calculating proton exchange equilibrium in a complex mixture
 
-The module `visualize_results/examples/kinetics_models/acid_base_equilibrium.py` contains the script for calculating
+The module `robowski/kinetics_models/acid_base_equilibrium.py` contains the script for calculating
 the proton transfer equilibria in the complex mixtures. The interface is similar to the interface of the 
 [`pHcalc` Python package](https://github.com/rnelsonchem/pHcalc). In contrast to [pHcalc](https://github.com/rnelsonchem/pHcalc),
 the `acid_base_equilibrium.py` script is more general, as
@@ -206,27 +208,27 @@ Some examples of the usage of this script are in the `main` function of the `aci
 ### Numerical exploration of the smoothness of the yield maps of reaction networks
 
 The scripts used as described in the Section 7.5 of the Supplementary Materials are in the
-`misc_scripts/smoothness_theory` folder. The `smoothness_analyze.py` can be used to reproduce Figures S154 and S155.
+`robowski/misc_scripts/smoothness_theory` folder. The `smoothness_analyze.py` can be used to reproduce Figures S154 and S155.
 To reproduce the Figure S153 showing the smoothness of experimental yield maps, run the
-`misc_scripts/smoothness_theory/smoothness_from_experiments.py` script.
+`robowski/misc_scripts/smoothness_theory/smoothness_from_experiments.py` script.
 
 
 ### Calculation of theoretical light absorption spectra from TD-DFT
 
-The respective code and data (Gaussian output files) are in the `misc_scripts/dft_molar-absorptivity-spectra` folder.
+The respective code and data (Gaussian output files) are in the `robowski/misc_scripts/dft_molar-absorptivity-spectra` folder.
 For description, see Section 6.2 of the Supplementary Materials.
 For calculating the spectra and reproducing the Figures S149, S150, S151 run the 
-`misc_scripts/dft_molar-absorptivity-spectra/dft-spectrum-confidence-intervals.py` script.
-Gaussian job files and the respective output files are in the `misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results`
+`robowski/misc_scripts/dft_molar-absorptivity-spectra/dft-spectrum-confidence-intervals.py` script.
+Gaussian job files and the respective output files are in the `robowski/misc_scripts/dft_molar-absorptivity-spectra/dft-calculation-results`
 folder.
 
 
 ### Reproducing other figures from the accompanying research article
 
-To reproduce the main-text Figure 5J, run the `visualize_results/visualize_results.py` script.
+To reproduce the main-text Figure 5J, run the `robowski/visualize_results/visualize_results.py` script.
 
 To reproduce the Figure S17 and recalculating the uncertainty map of the NanoDrop spectrophotometer,
-run the `uv-vis-absorption-spectroscopy/absorbance_errorbar_model.py` script.
+run the `robowski/uv-vis-absorption-spectroscopy/absorbance_errorbar_model.py` script.
 
 
 
