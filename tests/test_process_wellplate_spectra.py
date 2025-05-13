@@ -5,7 +5,7 @@ import pandas as pd
 from pytest import fixture
 import os
 import numpy as np
-pwc = importlib.import_module("uv-vis-absorption-spectroscopy.process_wellplate_spectra")
+pwc = importlib.import_module("uv_vis_absorption_spectroscopy.process_wellplate_spectra")
 
 
 @fixture
@@ -39,7 +39,7 @@ def test_concentrations_for_one_plate_end2end(datadir):
     data_folder = ''
     with datadir.as_cwd():
         sp = pwc.SpectraProcessor(
-            folder_with_correction_dataset='uv-vis-absorption-spectroscopy/microspectrometer-calibration/'
+            folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                            '2022-12-01/interpolator-dataset/')
         sp.nanodrop_lower_cutoff_of_wavelengths = 250
         run_name = 'simple-reactions/2023-09-06-run01/'
@@ -78,7 +78,7 @@ def test_multispectrum_to_concentration_end2end(datadir):
     data_folder = ''
     with datadir.as_cwd():
         sp = pwc.SpectraProcessor(
-            folder_with_correction_dataset='uv-vis-absorption-spectroscopy/microspectrometer-calibration/'
+            folder_with_correction_dataset='uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                            '2022-12-01/interpolator-dataset/')
         sigma_interpolator_filename = (f'{data_folder}nanodrop-spectrophotometer-measurements/'
                                        f'nanodrop_errorbar_folder_2024-03-16/bivariate_spline_interpolator.pkl')

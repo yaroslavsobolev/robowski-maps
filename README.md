@@ -56,10 +56,11 @@ to set the environment variables.
 vs_buildtools.exe --norestart --passive --downloadThenInstall --includeRecommended --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Workload.MSBuildTools
 ```
 
-### Creating `conda` environment with all the required dependencies
+### Creating Anaconda environment with all the required dependencies
 
-The recommended way to install the dependencies is to use `conda` package manager.
-In the Terminal ("Anaconda Command Line") navigate to your local folder containing this 
+The recommended way to install the dependencies is to 
+use [Anaconda package manager](https://www.anaconda.com/docs/getting-started/anaconda/install).
+In the Terminal ("Anaconda Command Prompt") navigate to your local folder containing this 
 repository and create a new `conda` environment named `robowski` by running this command:
 ```bash
 conda env create -f environment.yml
@@ -70,7 +71,7 @@ After installation, activate the new environment by the following command:
 conda activate robowski
 ```
 
-### Alternative installation with `pip` instead of `conda` (not recommended, not tested)
+### Alternative installation with `pip` instead of Anaconda (not recommended; not tested)
 
 For the alternative method of installation, we provide the `requirements.txt` list of dependencies that you
 may try to use to install these dependencies into one of your existing environments by 
@@ -81,7 +82,7 @@ This will install all the required dependencies, but it is not guaranteed to wor
 
 ### Installing this package with `pip`
 
-Once the `robowski` environment is activated in `conda`, run the following command in the Terminal ("Anaconda Command Line")
+Once the `robowski` environment is activated in `conda`, run the following command in the terminal ("Anaconda Command Prompt")
 to install this repository's code as "in-place" package:
 
 ```bash

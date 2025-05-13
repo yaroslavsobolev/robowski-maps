@@ -4,7 +4,7 @@ from distutils import dir_util
 import pandas as pd
 from pytest import fixture
 import os
-organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
+organize_run_results = importlib.import_module("misc_scripts.organize_run_results")
 
 
 @fixture
