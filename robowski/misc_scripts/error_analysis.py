@@ -1,9 +1,11 @@
 from uncertainties import ufloat
 from uncertainties.unumpy import uarray, nominal_values, std_devs
-
+import os
 import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
+
+data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 def pipetting_error_interpolation_right_after_calib(volume): # return absolute error
 
@@ -83,7 +85,7 @@ def format_uarray_with_percentage(uarray):
     print(f'Max: {np.max(percentage_uncertainties)}')
     return formatted_values
 
-excel = "20241118_Hantzsch_HPLC_copy.xlsx"
+excel = data_folder + "\\BPRF\\HPLC_results\\Hantzsch_80\\error_analysis\\20241118_Hantzsch_HPLC_copy.xlsx"
 df = pd.read_excel(excel, engine='openpyxl')
 
 vol_cols = ['vol#EtOH',
