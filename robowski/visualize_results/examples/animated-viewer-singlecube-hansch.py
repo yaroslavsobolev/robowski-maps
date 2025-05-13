@@ -267,7 +267,7 @@ def reorient_callable(scene):
     scene.scene.camera.compute_view_plane_normal()
     scene.scene.render()
 
-figure_filename = frepo_data_path + 'misc_scripts/figures/cubes/Hansch-80deg-2024-02-16-run01_{column_to_plot}.png'
+figure_filename = repo_data_path + f'misc_scripts/figures/cubes/Hansch-80deg-2024-02-16-run01_{column_to_plot}.png'
 
 avs.plot_3d_dataset_as_cube(xs, ys, zs, yields,
                             substance_titles=('', '', ''),

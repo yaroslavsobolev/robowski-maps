@@ -258,7 +258,7 @@ if do_smooth:
     smooth_suffix = '-smooth'
 else:
     smooth_suffix = ''
-scene.scene.save(frepo_data_path + 'misc_scripts/figures/hantzsch-points3d-NMR-sparse-{what_to_plot}{smooth_suffix}.png')
+scene.scene.save(repo_data_path + f'misc_scripts/figures/hantzsch-points3d-NMR-sparse-{what_to_plot}{smooth_suffix}.png')
 
 # scene.scene.light_manager.lights[1].intensity = 0
 # scene.scene.light_manager.lights[2].intensity = 0

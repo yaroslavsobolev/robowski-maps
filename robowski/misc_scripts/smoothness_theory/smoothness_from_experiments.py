@@ -186,7 +186,7 @@ def make_hist_fot_ugi():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(repo_data_path + f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 def make_hist_for_e1():
@@ -228,7 +228,7 @@ def make_hist_for_e1():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(repo_data_path + f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 
@@ -310,7 +310,7 @@ def make_hist_for_sn1():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(repo_data_path + f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 
@@ -380,7 +380,7 @@ def make_hist_for_sn1_carbocat():
     plt.xlabel('Partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(frepo_data_path + 'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(repo_data_path + f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
 
 if __name__ == '__main__':

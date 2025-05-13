@@ -128,5 +128,5 @@ fig.update_layout(scene = dict(
                     zaxis_title='Yield'),
                     margin=dict(l=0, r=0, b=0, t=0))
 # save to html
-fig.write_html("misc_scripts/figures/2d_plot_surface-hansch-smooth.html")
+fig.write_html(repo_data_path + "misc_scripts/figures/2d_plot_surface-hansch-smooth.html")
 fig.show()

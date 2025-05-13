@@ -20,7 +20,7 @@ def simpleaxis(ax):
     ax.get_yaxis().tick_left()
 
 if 'ROBOCHEM_DATA_PATH' in os.environ:
-    abe = importlib.import_module("visualize_results.examples.kinetics_models.acid_base_equilibrium")
+    import robowski.visualize_results.examples.kinetics_models.acid_base_equilibrium as abe
 
     logging.basicConfig(level=logging.INFO)
 
@@ -58,7 +58,7 @@ if 'ROBOCHEM_DATA_PATH' in os.environ:
     df_results.to_csv('e1results.csv', index=False)
     njobs = 4
 else:
-    abe = importlib.import_module("visualize_results.examples.kinetics_models.acid_base_equilibrium")
+    import robowski.visualize_results.examples.kinetics_models.acid_base_equilibrium as abe
     df_results = pd.read_csv('e1results.csv')
     njobs = 77
 

@@ -177,14 +177,14 @@ def plot_dft_vs_pink(gaussian_file, molar_concentration, legend=True, ymax=0.35,
         plt.legend()
     st.simpleaxis(ax)
     # plt.tight_layout()
-    fig.savefig(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
+    fig.savefig(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
 
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
             spectrum * molar_concentration)
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
             percentiles[0] * molar_concentration)
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
             percentiles[1] * molar_concentration)
 
 
@@ -220,14 +220,14 @@ def plot_dft_vs_pink_talk(gaussian_file, molar_concentration, legend=True, ymax=
         plt.legend()
     st.simpleaxis(ax)
     # plt.tight_layout()
-    fig.savefig(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
+    fig.savefig(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
 
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
             spectrum * molar_concentration)
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
             percentiles[0] * molar_concentration)
-    np.save(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
+    np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
             percentiles[1] * molar_concentration)
 
 
@@ -264,7 +264,7 @@ def plot_dft_vs_pink_weighted(freqfiles, uvfiles, molar_concentration, legend=Tr
         plt.legend()
     st.simpleaxis(ax)
     # plt.tight_layout()
-    fig.savefig(frepo_data_path + 'misc_scripts/figures_for_articles/dft-uv-vis/{uvfiles[0].split("/")[-1].replace(".out", ".png")}')
+    fig.savefig(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{uvfiles[0].split("/")[-1].replace(".out", ".png")}')
 
 
 
