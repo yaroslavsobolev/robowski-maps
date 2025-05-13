@@ -1,0 +1,13 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+0,solvent_Ethanol,1,Ethanol,0
+1,bb021_f2,1,Ethanol,0.01366
+2,bb021_f2,1,Ethanol,0.006
+3,bb021_f2,1,Ethanol,0.003
+4,bb021_f2,1,Ethanol,0.001
+5,bb021_f2,1,Ethanol,0.0008
+6,bb021_f2,1,Ethanol,0.0005
+7,bb021_f2,1,Ethanol,0.0003
+8,bb021_f2,1,Ethanol,0.0001
+9,bb021_f2,1,Ethanol,0.00005
+10,bb021_f2,1,Ethanol,0.000025
+11,bb021_f2,1,Ethanol,0.00001

@@ -1,0 +1,4 @@
+short_name,full_name,lowest_concentration,highest_concentration,number_of_points,molecular_weight,volume_of_first_stock_solution_to_obtain_highest_concentration_in_total_reaction_volume,date_of_run,solvent,total_reaction_volume,initial_temperature,number_of_points_temperature,temperature_range
+methoxybenzaldehyde,4-methoxybenzaldehyde,1.00E-02,1.00E-01,4,136.15,150,20231107,Ethanol,500,,,
+ethyl_acetoacetate,ethyl 3-oxobutanoate,1.00E-02,1.00E-01,4,130.14,150,,,,,,
+ammonium_acetate,ammonium acetate,1.00E-03,4.00E-01,30,77.08,150,,,,,,

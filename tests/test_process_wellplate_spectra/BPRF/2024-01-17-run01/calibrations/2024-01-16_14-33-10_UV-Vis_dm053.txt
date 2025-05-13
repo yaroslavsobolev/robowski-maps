@@ -1,0 +1,15 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+0,solvent_EtOH,1,EtOH,0
+1,dm053,1,EtOH,0.01645
+2,dm053,1,EtOH,0.00821
+3,dm053,1,EtOH,0.00328
+4,dm053,1,EtOH,0.00164
+5,dm053,1,EtOH,0.0008
+6,dm053,1,EtOH,0.0007
+7,dm053,1,EtOH,0.0005
+8,dm053,1,EtOH,0.0003
+9,dm053,1,EtOH,0.0001
+10,dm053,1,EtOH,0.00005
+11,dm053,1,EtOH,0.000025
+12,dm053,1,EtOH,0.00001
+13,dm053,1,EtOH,0.000005

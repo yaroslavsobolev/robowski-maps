@@ -1,0 +1,2 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+1,acetic_acid,1,Ethanol,0.05978

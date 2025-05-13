@@ -1,0 +1,9 @@
+27,ethyl_acetoacetate,1,Ethanol,0.003
+28,ethyl_acetoacetate,1,Ethanol,0.004
+29,ethyl_acetoacetate,1,Ethanol,0.005
+
+
+10,bb017,1,Ethanol,0.0008
+11,bb017,1,Ethanol,0.0009
+12,bb017,1,Ethanol,0.001
+13,solvent_Ethanol,1,Ethanol,0

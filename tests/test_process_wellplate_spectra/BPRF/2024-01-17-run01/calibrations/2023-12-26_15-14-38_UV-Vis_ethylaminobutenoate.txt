@@ -1,0 +1,13 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+0,EAB,1,Ethanol,0.0000025
+1,EAB,1,Ethanol,0.000005
+2,EAB,1,Ethanol,0.000025
+3,EAB,1,Ethanol,0.00005
+4,EAB,1,Ethanol,0.0001
+5,EAB,1,Ethanol,0.0002
+6,EAB,1,Ethanol,0.0004
+7,EAB,1,Ethanol,0.0005
+8,EAB,1,Ethanol,0.0007
+9,EAB,1,Ethanol,0.0008
+10,EAB,1,Ethanol,0.0009
+11,solvent_Ethanol,1,Ethanol,0

@@ -1,0 +1,15 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+0,ammonium_acetate,1,Ethanol,1,0.025
+1,ammonium_acetate,1,Ethanol,1,0.05
+2,ammonium_acetate,1,Ethanol,1,0.1
+3,ammonium_acetate,1,Ethanol,1,0.2
+4,ammonium_acetate,1,Ethanol,1,0.3
+5,ammonium_acetate,1,Ethanol,1,0.4
+6,ammonium_acetate,1,Ethanol,1,0.5
+7,ammonium_acetate,1,Ethanol,1,0.6
+8,ammonium_acetate,1,Ethanol,1,0.7
+9,ammonium_acetate,1,Ethanol,1,0.8
+10,ammonium_acetate,1,Ethanol,1,0.9
+11,ammonium_acetate,1,Ethanol,1,1.0
+12,solvent_Ethanol,1,Ethanol,0
+
