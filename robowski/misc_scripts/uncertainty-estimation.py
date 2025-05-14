@@ -2,7 +2,7 @@
 Estimate errors (variation) of product concentration measurement at certain experimental conditions
 using linear theory of uncertainty propagation. Units are arbitrary, but must be consistent.
 '''
-
+from robowski.settings import *
 import os, json, pandas as pd
 import time
 from textwrap import wrap
