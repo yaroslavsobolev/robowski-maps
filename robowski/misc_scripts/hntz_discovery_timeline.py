@@ -130,7 +130,7 @@ def process_run_by_shortname(run_shortname, substances_for_fitting, folder_for_p
             for key in reports[vial_id]:
                 df_structure.loc[index_of_this_vial, key] = reports[vial_id][key]
 
-            required_subs = process_wellplate_spectra.product_concentrations_to_required_substrates(product_concentrations, substances_for_fitting)
+            required_subs = sp.product_concentrations_to_required_substrates(product_concentrations, substances_for_fitting)
             for substrate in substrates:
                 df_structure.loc[index_of_this_vial, f'req#{substrate}'] = required_subs[substrate]
                 df_structure.loc[index_of_this_vial, f'os#{substrate}'] = (required_subs[substrate] - float(df_structure.loc[index_of_this_vial, f'c#{substrate}'])) / float(df_structure.loc[index_of_this_vial, f'c#{substrate}']) * 100

@@ -50,8 +50,8 @@ def get_spectra_file_list(target_folder, prefix='spectrum_'):
 
 
 def construct_interpolators_for_absorbance_correction(
-        nd_names=[0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0],
-        nd_names_used=[0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.5, 3.0, 3.5, 4.0],
+        nd_names=(0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0),
+        nd_names_used=(0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.5, 3.0, 3.5, 4.0),
         microspec_folder=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/2-inch-nd-calibrations',
         folder_for_saving_interpolator_datasets=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/interpolator-dataset/'):
     microspec_absorbances = dict()
@@ -153,7 +153,9 @@ class SpectraProcessor:
 
     def __init__(self, folder_with_correction_dataset, spectrum_data_type='craic',
                  sigma_interpolator_filename=f'{data_folder}nanodrop-spectrophotometer-measurements/'
-                                             f'nanodrop_errorbar_folder_2024-03-16/bivariate_spline_interpolator.pkl'):
+                                             f'nanodrop_errorbar_folder_2024-03-16/bivariate_spline_interpolator.pkl',
+                 filepath_of_csv_stoichiometry_table='BPRF/misc/Hnamesstechiometry3.csv',
+                 substrates = ('methoxybenzaldehyde', 'ethyl_acetoacetate', 'ammonium_acetate')):
         """
         Load the dataset for correcting the absorbance of CRAIC microspectrometer.
         This correction is based on dedicated experiments where certain neutral density optical filters were measured
@@ -182,6 +184,19 @@ class SpectraProcessor:
         # uncertainty associated with stoichiometric overspending ratio
         self.uncertainty_of_stoichiometric_overspending_ratio = 0.1
 
+        self.filepath_of_csv_stoichiometry_table = filepath_of_csv_stoichiometry_table
+        self.substrates = substrates
+        self.load_df_stoich()
+
+    def load_df_stoich(self):
+        self.df_stoich = pd.read_csv(data_folder + self.filepath_of_csv_stoichiometry_table)
+        # substrates = ['methoxybenzaldehyde', 'ethyl_acetoacetate', 'ammonium_acetate']
+
+        for i, s in enumerate(self.substrates):
+            # add row with string s in 'Names', string f'SUB{i}' in Short_names column, number 1 in the column called s and zeros in other columns
+            dict_to_add = {'Names': s, 'Short_names': f'SUB{i}', s: 1}
+            dict_to_add.update({x: 0 for x in self.substrates if x != s})
+            self.df_stoich = self.df_stoich.append(dict_to_add, ignore_index=True)
 
     def load_nanodrop_csv_for_one_plate(self, plate_folder,
                                         ):
@@ -1134,7 +1149,7 @@ class SpectraProcessor:
             calibrants_concentrations = args[1:number_of_calibrants + 1]
             comboY = func_prelim(*args)
             if starting_concentration_dict is not None:
-                stoich_penalization_of_cost = stoich_cost(calibrants_concentrations, calibrant_shortnames, starting_concentration_dict)
+                stoich_penalization_of_cost = self.stoich_cost(calibrants_concentrations, calibrant_shortnames, starting_concentration_dict)
                 comboY[-2] += stoich_penalization_of_cost * combo_sigmas[-2] / self.uncertainty_of_stoichiometric_overspending_ratio
                 comboY[-1] -= stoich_penalization_of_cost * combo_sigmas[-1] / self.uncertainty_of_stoichiometric_overspending_ratio
 
@@ -1151,10 +1166,10 @@ class SpectraProcessor:
             calibrant_concentration_upper_bounds = []
             for i, substance_for_fitting in enumerate(calibrant_shortnames):
                 limits_here = []
-                for s in substrates:
-                    if df_stoich.loc[df_stoich['Names'] == substance_for_fitting, s].values[0] == 0:
+                for s in self.substrates:
+                    if self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0] == 0:
                         continue
-                    limit_by_this_substrate = starting_concentration_dict[s] / df_stoich.loc[df_stoich['Names'] == substance_for_fitting, s].values[0]
+                    limit_by_this_substrate = starting_concentration_dict[s] / self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0]
                     limits_here.append(limit_by_this_substrate)
                 calibrant_concentration_upper_bounds.append(min(limits_here))
             print(f'Limits: {calibrant_concentration_upper_bounds}')
@@ -1248,9 +1263,9 @@ class SpectraProcessor:
         concentrations_here = popt[0:number_of_calibrants]
 
         if obey_stoichiometric_inequalities:
-            required_subs = product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
+            required_subs = self.product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
             os_string = ''
-            for s in substrates:
+            for s in self.substrates:
                 overspending_ratio = required_subs[s] / starting_concentration_dict[s]
                 string_here = f'{s} osr: {overspending_ratio-1:.1%}\n'
                 os_string += string_here
@@ -1377,7 +1392,6 @@ class SpectraProcessor:
         else:
             return concentrations_here
 
-
     def uncertainty_of_measured_absorbance(self, wavelength, absorbance, lower_threshold_of_sigma=0.005):
         variance = self.sigma_interpolator(wavelength, absorbance)[0][0]
         if variance < lower_threshold_of_sigma**2:
@@ -1385,6 +1399,37 @@ class SpectraProcessor:
         # if wavelength <= 270:
         #     variance = variance * (1 + 200*np.exp(-1*(wavelength - 220)/20))
         return np.sqrt(variance)
+
+    def product_concentrations_to_required_substrates(self, concentrations, calibrant_shortnames):
+        dict_of_substrate_concentrations = {s: 0 for s in self.substrates}
+        for i, substance_for_fitting in enumerate(calibrant_shortnames):
+            for s in self.substrates:
+                # find the cell in self.df_stoich where Name is equal to substance_for_fitting and column is s
+                dict_of_substrate_concentrations[s] += concentrations[i] * self.df_stoich.loc[
+                    self.df_stoich['Names'] == substance_for_fitting, s].values[0]
+        return dict_of_substrate_concentrations
+
+    def stoich_cost(self, concentrations, calibrant_shortnames, starting_concentrations_dict):
+        def smooth_step(x):
+            if x <= 0:
+                return 0
+            else:
+                return x
+            # return np.exp(x)
+
+        required_subs = self.product_concentrations_to_required_substrates(concentrations, calibrant_shortnames)
+        final_penalization = 0
+        for s in self.substrates:
+            if starting_concentrations_dict[s] > 0:
+                overspending_ratio = required_subs[s] / starting_concentrations_dict[s]
+                final_penalization += smooth_step((overspending_ratio - 1))
+            # final_penalization += smooth_step((required_subs[s] - starting_concentrations_dict[s])/0.001)
+
+        # find concentration of acetic acid
+        # acetic_mixmatch = np.abs(required_subs['ammonium_acetate'] - concentrations[calibrant_shortnames.index('acetic_acid')])
+        # final_penalization += acetic_mixmatch/0.001
+
+        return final_penalization
 
 
 def plot_differential_absorbances_for_plate(craic_exp_name,
@@ -1429,44 +1474,7 @@ def plot_differential_absorbances_for_plate(craic_exp_name,
     plt.show()
     return diff
 
-df_stoich = pd.read_csv(data_folder + 'BPRF/misc/Hnamesstechiometry3.csv')
-substrates = ['methoxybenzaldehyde', 'ethyl_acetoacetate', 'ammonium_acetate']
-for i, s in enumerate(substrates):
-    # add row with string s in 'Names', string f'SUB{i}' in Short_names column, number 1 in the column called s and zeros in other columns
-    dict_to_add = {'Names': s, 'Short_names': f'SUB{i}', s: 1}
-    dict_to_add.update({x: 0 for x in substrates if x != s})
-    df_stoich = df_stoich.append(dict_to_add, ignore_index=True)
 
-def product_concentrations_to_required_substrates(concentrations, calibrant_shortnames):
-    dict_of_substrate_concentrations = {s:0 for s in substrates}
-    for i, substance_for_fitting in enumerate(calibrant_shortnames):
-        for s in substrates:
-            # find the cell in df_stoich where Name is equal to substance_for_fitting and column is s
-            dict_of_substrate_concentrations[s] += concentrations[i] * df_stoich.loc[df_stoich['Names'] == substance_for_fitting, s].values[0]
-    return dict_of_substrate_concentrations
-
-
-def stoich_cost(concentrations, calibrant_shortnames, starting_concentrations_dict):
-    def smooth_step(x):
-        if x<=0:
-            return 0
-        else:
-            return x
-        # return np.exp(x)
-
-    required_subs = product_concentrations_to_required_substrates(concentrations, calibrant_shortnames)
-    final_penalization = 0
-    for s in substrates:
-        if starting_concentrations_dict[s] > 0:
-            overspending_ratio = required_subs[s] / starting_concentrations_dict[s]
-            final_penalization += smooth_step((overspending_ratio - 1))
-        # final_penalization += smooth_step((required_subs[s] - starting_concentrations_dict[s])/0.001)
-
-    # find concentration of acetic acid
-    # acetic_mixmatch = np.abs(required_subs['ammonium_acetate'] - concentrations[calibrant_shortnames.index('acetic_acid')])
-    # final_penalization += acetic_mixmatch/0.001
-
-    return final_penalization
 
 
 if __name__ == '__main__':
