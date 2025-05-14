@@ -118,7 +118,7 @@ df['vol_tol_u'] = vol_tols
 # vol_tol_errors_rel_percentage = vol_tol_errors_rel * 100
 
 # get error for dilution.
-# [529.4, 195.7, 1690.7] are the real volumes used for dilution, specified vols [530, 195, 1690].
+# [529.4, 195.7, 1690.7] are the real volumes of the specified volumes [530, 195, 1690].
 # The real total volume in a reaction vial is 540.
 # So the dil = (529.4+540) / 540 * (1690.7+195.7) / 195.7 = 19
 vol_a1 = [530] * len(v0) # vol. added to crude
@@ -175,7 +175,7 @@ THP_c_HPLC = df['THP_c_HPLC_insert'].to_numpy()
 # Varification of the HPLC calibration by known compound concentration shows that the HPLC error is small, <5%.
 # This error is the real HPLC measurement error.
 HE_c_real = [0.001491, 0.000746] # this conc is prepared by balance and hamilton syringe. In mole/liter
-HE_c_by_HPLC = [0.0015467, 0.00078381] # this conc measured by HPLC for the two solutions.
+HE_c_by_HPLC = [0.0015467, 0.00078381] # this conc is measured by HPLC for the two solutions.
 THP_c_real = [0.000868, 0.0003, 0.0002]
 THP_c_by_HPLC = [9.01E-04,3.04E-04,2.00E-04,]
 
@@ -238,17 +238,6 @@ df_no_repeat['THP_yield_u_relative_error_%'] = std_devs(THP_yield_u) / nominal_v
 
 # The following row is used as example in the SI error analysis section
 row = df_no_repeat[(round(df_no_repeat['vol#EtOH'], 1) == 198.9) & (round(df_no_repeat['vol#methoxybenzaldehyde'], 1) == 162.8)]
-
-for i in range(31):
-    print(i)
-    a1 = HE_c_HPLC_mean_u[i].s / HE_c_HPLC_mean_u[i].n * 100
-    a2 = HE_c_limit_after_dil_u[i].s / HE_c_limit_after_dil_u[i].n * 100
-    print(a1)
-    print(a2)
-    print((a1**2+a2**2)**0.5)
-    print(df_no_repeat['HE_yield_u_relative_error_%'].to_numpy()[i])
-    print('*****************')
-
 
 # format_uarray_with_percentage(HE_c_HPLC_mean_u)
 # format_uarray_with_percentage(HE_c_limit_after_dil_u)
