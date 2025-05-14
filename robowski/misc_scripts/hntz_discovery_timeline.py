@@ -260,7 +260,7 @@ if __name__ == '__main__':
                                   '2024-02-20-run02',
                                   '2024-02-21-run01'])
 
-    ### Uncomment to recalibrate the analysis
+    ### Uncomment to recalibrate the analysis. Replace 'list_of_runs' with the desired list of runs.
     # for set_index in [0, 1, 2, 3, 4, 5, 6, 7]:
     #     print(f'Processing calibrant set {set_index}...')
     #     combined_set = []
