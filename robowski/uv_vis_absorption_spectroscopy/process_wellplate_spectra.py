@@ -54,14 +54,15 @@ def create_folder_unless_it_exists(path):
 
 def load_msp_file(experimental_data_filename, cut=False):
     """
-    Load a microspectrometer data file (.msp format) containing spectral data.
+    Load a CRAIC microspectrometer data file (.msp format) containing spectral data.
 
     Parameters
     ----------
     experimental_data_filename : str
         Path to the .msp file
     cut : tuple or False, optional
-        If specified as (min_id, max_id), cuts the spectrum to this wavelength index range
+        If specified as (min_id, max_id), cuts the spectrum to this wavelength index range.
+        If False, no cutting is performed.
 
     Returns
     -------
@@ -82,7 +83,9 @@ def load_msp_file(experimental_data_filename, cut=False):
 
 def get_spectra_file_list(target_folder, prefix='spectrum_'):
     """
-    Get a list of spectrum files in the target folder that match the given prefix.
+    Get a list of spectrum files (.MSP) extension in the target folder that match the given prefix.
+    This excludes the files that have 'rep2' anywhere in their filename, because these files are
+    for second repetition of the measurement in CRAIC.
 
     Parameters
     ----------
@@ -94,7 +97,7 @@ def get_spectra_file_list(target_folder, prefix='spectrum_'):
     Returns
     -------
     list
-        List of filenames (excluding any '-3D.msp' files which contain 2D maps)
+        List of filenames (excluding any '-3D.msp' files which contain 2D maps, and file containing 'rep2' substring.
     """
     os.chdir(target_folder)
     file_list = glob.glob(f"{prefix}*.msp")
@@ -110,6 +113,58 @@ def construct_interpolators_for_absorbance_correction(
         nd_names_used=(0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 1.8, 2.5, 3.0, 3.5, 4.0),
         microspec_folder=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/2-inch-nd-calibrations',
         folder_for_saving_interpolator_datasets=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/2022-12-01/interpolator-dataset/'):
+    """
+    Construct interpolators for correcting CRAIC microspectrometer absorbance measurements.
+
+    This function generates a wavelength-dependent correction for CRAIC microspectrometer
+    absorbance measurements by comparing measurements of identical neutral density (ND)
+    filters on both the CRAIC microspectrometer and the reference Agilent Cary 5000
+    spectrophotometer. The Agilent instrument is considered the ground truth due to its
+    higher accuracy and precision.
+
+    The function:
+    1. Loads absorbance spectra for ND filters from both instruments
+    2. Applies Savitzky-Golay filtering to smooth the spectra
+    3. Aligns the wavelength domains using interpolation
+    4. For each wavelength, sorts the filter measurements by absorbance value
+    5. Saves the aligned and sorted datasets as numpy arrays for later use
+
+    These saved datasets can be used to create an interpolation function at each wavelength
+    that maps from CRAIC absorbance values to the corresponding Agilent values, effectively
+    calibrating the CRAIC instrument against the Agilent reference.
+
+    Parameters
+    ----------
+    nd_names : tuple
+        Complete list of neutral density filter optical densities used in Agilent measurements.
+        These values correspond to column indices in the Agilent data file.
+    nd_names_used : tuple
+        Subset of nd_names that are actually used in the correction. This allows excluding
+        certain filters that might have measurement issues.
+    microspec_folder : str
+        Path to the folder containing CRAIC microspectrometer measurements of ND filters.
+        Each file should be named according to the filter density (e.g., "0p5.msp" for 0.5 OD).
+    folder_for_saving_interpolator_datasets : str
+        Path where the processed numpy arrays will be saved for later use in the correction.
+
+    Returns
+    -------
+    None
+        The function doesn't return values directly but saves two numpy arrays:
+        - 'craic_data.npy': Array of sorted CRAIC absorbance values for each wavelength
+        - 'agilent_data.npy': Array of corresponding Agilent absorbance values
+
+    Notes
+    -----
+    The saved arrays can be loaded by the `load_dataset_for_absorbance_correction` function
+    and used by the `apply_correction` function to correct any CRAIC measurement.
+
+    The filenames in the microspec_folder should follow the pattern "{ND_value}.msp" where
+    decimal points are replaced with 'p' (e.g., "0p5.msp" for 0.5 OD).
+
+    The first row in both the craic_data and agilent_data arrays is filled with zeros to
+    ensure that a zero absorbance in CRAIC corresponds to a zero absorbance in Agilent.
+    """
     microspec_absorbances = dict()
 
     example_data = load_msp_file(experimental_data_filename=microspec_folder +
