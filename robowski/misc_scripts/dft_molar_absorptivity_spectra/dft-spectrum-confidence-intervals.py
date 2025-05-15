@@ -151,12 +151,12 @@ def plot_dft_vs_pink(gaussian_file, molar_concentration, legend=True, ymax=0.35,
     print(f'Molar concentration: {molar_concentration} mol/L')
     nms, spectrum, percentiles = gaussian_file_to_spectrum(gaussian_file, ev_range=ev_range)
 
-    data = np.load('D:/Docs/Dropbox/robochem/data/Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
+    data = np.load(data_folder + 'Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
     cut_from = 170
     fig, ax = plt.subplots(figsize=(6,4))
     plt.plot(data[cut_from:, 0], data[cut_from:, 1], label='Measured in reaction crude', color='C1')
 
-    cary_file = 'D:/Docs/Dropbox/robochem/data/Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
+    cary_file = data_folder + 'Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
     wav, spec = st.read_cary_agilent_csv_spectrum(cary_file, column_name='deuterated_TLC_pink_from_rafal_rep1')
     tlc_factor = 2.1
     plt.plot(wav, (spec - spec[0])*tlc_factor, label=f'Measured after prep. TLC, deuterated solvent, $\\times${tlc_factor:.1f}', zorder=10, color='C2')
@@ -192,12 +192,12 @@ def plot_dft_vs_pink_talk(gaussian_file, molar_concentration, legend=True, ymax=
     print(f'Molar concentration: {molar_concentration} mol/L')
     nms, spectrum, percentiles = gaussian_file_to_spectrum(gaussian_file, ev_range=ev_range)
 
-    data = np.load('D:/Docs/Dropbox/robochem/data/Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
+    data = np.load(data_folder + 'Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
     cut_from = 170
     fig, ax = plt.subplots(figsize=(6,4))
     plt.plot(data[cut_from:, 0], data[cut_from:, 1], label='Measured in reaction crude', color='C1')
 
-    cary_file = 'D:/Docs/Dropbox/robochem/data/Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
+    cary_file = data_folder + 'Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
     wav, spec = st.read_cary_agilent_csv_spectrum(cary_file, column_name='deuterated_TLC_pink_from_rafal_rep1')
     tlc_factor = 2.1
     plt.plot(wav, (spec - spec[0])*tlc_factor, label=f'Measured after prep. TLC, deuterated solvent, $\\times${tlc_factor:.1f}', zorder=10, color='C2')
@@ -238,12 +238,12 @@ def plot_dft_vs_pink_weighted(freqfiles, uvfiles, molar_concentration, legend=Tr
                                                                                       N_samples=1000,
                                                                                         ev_range=ev_range)
 
-    data = np.load('D:/Docs/Dropbox/robochem/data/Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
+    data = np.load(data_folder + 'Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
     cut_from = 170
     fig, ax = plt.subplots(figsize=(6,4))
     plt.plot(data[cut_from:, 0], data[cut_from:, 1], label='Measured in reaction crude', color='C1')
 
-    cary_file = 'D:/Docs/Dropbox/robochem/data/Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
+    cary_file = data_folder + 'Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
     wav, spec = st.read_cary_agilent_csv_spectrum(cary_file, column_name='deuterated_TLC_pink_from_rafal_rep1')
     tlc_factor = 2.1
     plt.plot(wav, (spec - spec[0])*tlc_factor, label=f'Measured after prep. TLC, deuterated solvent, $\\times${tlc_factor:.1f}', zorder=10, color='C2')
@@ -267,13 +267,58 @@ def plot_dft_vs_pink_weighted(freqfiles, uvfiles, molar_concentration, legend=Tr
     fig.savefig(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{uvfiles[0].split("/")[-1].replace(".out", ".png")}')
 
 
+def plot_dft_vs_pink_radical(gaussian_file, molar_concentration, legend=True, ymax=0.35, showmolar=False, ev_range=(1.3, 5)):
+    print(f'Molar concentration: {molar_concentration} mol/L')
+    nms, spectrum, percentiles = gaussian_file_to_spectrum(gaussian_file, ev_range=ev_range)
+
+    data = np.load( data_folder + 'Yaroslav/mystery_prod/extracted_pink_spectrum.npy')
+    cut_from = 170
+    fig, ax = plt.subplots(figsize=(6,4))
+    plt.plot(data[cut_from:, 0], data[cut_from:, 1], label='Measured in reaction crude', color='C1')
+
+    cary_file = data_folder + 'Yaroslav/SN1_mystery_product_pi nk/deuterated_TLC_pink_from_rafal_rep1.csv'
+    wav, spec = st.read_cary_agilent_csv_spectrum(cary_file, column_name='deuterated_TLC_pink_from_rafal_rep1')
+    tlc_factor = 2.1
+    plt.plot(wav, (spec - spec[0])*tlc_factor, label=f'Measured after prep. TLC, deuterated solvent, $\\times${tlc_factor:.1f}', zorder=10, color='C2')
+
+    if showmolar:
+        molarstring = f' for {molar_concentration*1e9:.1f} nmol/L'
+    else:
+        molarstring = ''
+    plt.plot(nms, spectrum * molar_concentration, label=f'Theoretical (nominal spectrum){molarstring}', linestyle='--', color='black', zorder=-10)
+    plt.fill_between(nms, percentiles[0] * molar_concentration, percentiles[1] * molar_concentration, alpha=0.4, label=f'Theoretical 1$\sigma$-confidence interval{molarstring}', color='grey', zorder=-10)
+    literature_spectrum = np.loadtxt(repo_data_path + 'misc_scripts/literature_spectra/radicals/Baumann_Merckel_timpe_graness_et_al_ChemPhysLett_.1984_Fig1a.txt', delimiter=',', skiprows=1)
+    # plot the literature spectrum
+    plt.plot(literature_spectrum[:, 0], literature_spectrum[:, 1] / 0.125 * 0.19, label='Literature spectrum in acetonitrile',
+             linestyle='-', color='C0', zorder=-10, linewidth=3, alpha=0.5)
+
+
+    plt.xlim(385, 800)
+    plt.ylim(-0.01, ymax)
+    plt.xlabel('Wavelength, nm')
+    plt.ylabel('Absorbance per 1 cm path length, absorbance units')
+    if legend:
+        plt.legend()
+    st.simpleaxis(ax)
+    # plt.tight_layout()
+    fig.savefig(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", ".png")}')
+
+    # np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_nms.npy")}', nms)
+    # np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_mean.npy")}',
+    #         spectrum * molar_concentration)
+    # np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc1.npy")}',
+    #         percentiles[0] * molar_concentration)
+    # np.save(repo_data_path + f'misc_scripts/figures_for_articles/dft-uv-vis/{gaussian_file.split("/")[-1].replace(".out", "_perc2.npy")}',
+    #         percentiles[1] * molar_concentration)
+
+
 
 if __name__ == '__main__':
-    base_folder = repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/candidates/dimer_OHplus/'
-    plot_dft_vs_pink(gaussian_file = base_folder + 'dimer_OHplus_conf2_1054kjm_uv.out',
-                     molar_concentration=1/(1e9*0.6/1.20*1.63),
-                     legend=False)
-    plt.show()
+    # base_folder = repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/candidates/dimer_OHplus/'
+    # plot_dft_vs_pink(gaussian_file = base_folder + 'dimer_OHplus_conf2_1054kjm_uv.out',
+    #                  molar_concentration=1/(1e9*0.6/1.20*1.63),
+    #                  legend=False)
+    # plt.show()
 
     base_folder = repo_data_path + 'misc_scripts/dft_molar_absorptivity_spectra/dft-calculation-results/candidates/other_candidates_uv/'
     # plot_dft_vs_pink(gaussian_file = base_folder + 'dimer_cage_anti_uv.out',
@@ -331,3 +376,8 @@ if __name__ == '__main__':
     #                  molar_concentration=12e-9, legend=False, showmolar=True)
     #
     # plt.show()
+
+    plot_dft_vs_pink_radical(gaussian_file = base_folder + 'rafrad_uv.out',
+                     molar_concentration=1e-9/0.0636*0.21, legend=True, showmolar=True)
+
+    plt.show()
