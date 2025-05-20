@@ -10,15 +10,15 @@ Volumes of stock solution pipetted into the reaction mixture prior to the reacti
 
 ## E1 reaction
 
-The file `E1/raw_yields.csv` contains the raw yields of the E1 reaction (scheme in the Figure 3S of the research paper).
+The file `E1/raw_yields.csv` contains the raw yields of the E1 reaction (scheme in the Figure 2a of the research paper).
 
 ## First SN1 reaction 
 
-The file `SN1_simple/raw_yields.csv` contains the data for the SN1 reaction shown in Figure 3B of the research paper.
+The file `SN1_simple/raw_yields.csv` contains the data for the SN1 reaction shown in Figure 2b of the research paper.
 
 ## Second SN1 reaction
 
-THe file `SN1/raw_yields.csv` contains the data for the SN1 reactions shown in Figure 4A of the research paper.
+THe file `SN1/raw_yields.csv` contains the data for the SN1 reactions shown in Figure 3a of the research paper.
 
 ## Ugi reaction
 

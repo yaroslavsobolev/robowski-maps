@@ -172,7 +172,7 @@ from the Supplementary Materials) by uncommenting the appropriate lines in the s
 
 #### SN1 reactions
 
-For kinetics fitting to the SN1 reaction (Figure 3), 
+For kinetics fitting to the SN1 reaction (Figure 2), 
 run the `robowski/visualize_results/examples/animated-viewer-singlecube-simpleSN1-2023-08-21.py` script.
 
 #### Ugi reaction
@@ -225,7 +225,9 @@ folder.
 
 ### Reproducing other figures from the accompanying research article
 
-To reproduce the main-text Figure 5J, run the `robowski/visualize_results/visualize_results.py` script.
+To reproduce the main-text Figure 4j, run the `robowski/visualize_results/visualize_results.py` script.
+
+To reproduce the main-text figure 5b, run the `robowski/misc_scripts/figures_for_articles/all_hantzsch_spectra_figure5b.py` script.
 
 To reproduce the Figure S17 and recalculating the uncertainty map of the NanoDrop spectrophotometer,
 run the `robowski/uv-vis-absorption-spectroscopy/absorbance_errorbar_model.py` script.
