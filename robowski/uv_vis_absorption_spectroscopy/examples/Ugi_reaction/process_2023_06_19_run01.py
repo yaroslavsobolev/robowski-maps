@@ -71,41 +71,43 @@ def process_run_by_shortname(run_shortname):
     concentrations_df.to_csv(data_folder + run_name + 'results/' + 'product_concentration.csv', index=False)
 
 if __name__ == '__main__':
-    run_shortname = '2023-07-04-run01'
-    process_run_by_shortname(run_shortname)
 
-    # list_of_runs = tuple(['2023-06-20-run01',
-    #                       '2023-06-21-run01',
-    #                       '2023-06-21-run02',
-    #                       '2023-06-22-run01',
-    #                       '2023-06-22-run02',
-    #                       '2023-06-22-run03',
-    #                       '2023-06-23-run01',
-    #                       '2023-06-23-run02',
-    #                       '2023-06-26-run01',
-    #                       '2023-06-26-run02',
-    #                       '2023-06-27-run01',
-    #                       '2023-06-27-run02',
-    #                       '2023-06-27-run03',
-    #                       '2023-06-28-run01',
-    #                       '2023-06-28-run02',
-    #                       '2023-06-28-run03'])
-    # #
-    # # for i, run_name in enumerate(list_of_runs):
-    # #     if i < 13:
-    # #         print('skipping')
-    # #         continue
-    # #     print('Processing run ' + run_name)
-    # #     process_run_by_shortname(run_name)
-    #
-    # df_results = organize_run_results.join_data_from_runs([f'multicomp-reactions/{run}/' for run in list_of_runs])
-    # substances = ['ic001', 'am001', 'ald001', 'ptsa']
-    # substance_titles = ['Isocyanide', 'Amine', 'Aldehyde', 'p-TSA']
-    # # substance_titles = ['', '', '', '']
-    #
-    # padding_rows_count = (df_results[substances] == 0).all(axis=1).sum()
-    # print(f"There are {padding_rows_count} padding rows (with zero concentrations of substrates).")
-    # df_results = df_results[(df_results[substances] != 0).any(axis=1)]
-    #
-    # destination_run = 'multicomp-reactions/2023-06-19-run01/'
-    # df_results.to_csv(data_folder + destination_run + 'results/' + 'product_concentration.csv', index=False)
+    # processing the main runs
+    list_of_runs = tuple(['2023-06-20-run01',
+                          '2023-06-21-run01',
+                          '2023-06-21-run02',
+                          '2023-06-22-run01',
+                          '2023-06-22-run02',
+                          '2023-06-22-run03',
+                          '2023-06-23-run01',
+                          '2023-06-23-run02',
+                          '2023-06-26-run01',
+                          '2023-06-26-run02',
+                          '2023-06-27-run01',
+                          '2023-06-27-run02',
+                          '2023-06-27-run03',
+                          '2023-06-28-run01',
+                          '2023-06-28-run02',
+                          '2023-06-28-run03'])
+
+    for i, run_name in enumerate(list_of_runs):
+        if i < 13:
+            print('skipping')
+            continue
+        print('Processing run ' + run_name)
+        process_run_by_shortname(run_name)
+
+    df_results = organize_run_results.join_data_from_runs([f'multicomp-reactions/{run}/' for run in list_of_runs])
+    substances = ['ic001', 'am001', 'ald001', 'ptsa']
+    substance_titles = ['Isocyanide', 'Amine', 'Aldehyde', 'p-TSA']
+    # substance_titles = ['', '', '', '']
+
+    padding_rows_count = (df_results[substances] == 0).all(axis=1).sum()
+    print(f"There are {padding_rows_count} padding rows (with zero concentrations of substrates).")
+    df_results = df_results[(df_results[substances] != 0).any(axis=1)]
+
+    destination_run = 'multicomp-reactions/2023-06-19-run01/'
+    df_results.to_csv(data_folder + destination_run + 'results/' + 'product_concentration.csv', index=False)
+
+
+

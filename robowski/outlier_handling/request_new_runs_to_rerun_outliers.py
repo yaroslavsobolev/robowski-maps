@@ -3,8 +3,8 @@ import os
 import pandas as pd
 import openpyxl as xl
 
-def request_outliers(run_name, destination_run, known_outliers_filename, manual_outliers_filename,
-                     n_repetitions_of_manual_outliers=2):
+def create_new_runs_from_known_outliers(run_name, destination_run, known_outliers_filename, manual_outliers_filename,
+                                        n_repetitions_of_manual_outliers=2, run_with_source_excel = 'multicomp-reactions/2023-06-20-run01/'):
 
     #load outliers
     df_manual_outliers = pd.read_csv(data_folder + run_name + f'results/outliers/{manual_outliers_filename}.csv')
@@ -29,14 +29,13 @@ def request_outliers(run_name, destination_run, known_outliers_filename, manual_
                                      pad_df],
                                     ignore_index=True, sort=False)
 
-    # save to excel  file certain columns
+    # save to excel file certain columns
     destination_excel_filename = data_folder + destination_run + f'{destination_run.split("/")[-2]}.xlsx'
     columns_for_outV_excel = ['reactions', 'DMF', 'ald001', 'ptsa', 'ptsa_dil_x_5', 'am001', 'ic001']
     df_all_outliers[columns_for_outV_excel].to_excel(destination_excel_filename,
                                                         index=False, sheet_name='reactions')
 
     # copy second sheet
-    run_with_source_excel = 'multicomp-reactions/2023-06-20-run01/'
     path1 = data_folder + run_with_source_excel + f'{run_with_source_excel.split("/")[-2]}.xlsx'
     path2 = destination_excel_filename
 
@@ -53,14 +52,14 @@ def request_outliers(run_name, destination_run, known_outliers_filename, manual_
     wb2.save(path2)
 
 if __name__ == '__main__':
-    # request_outliers(run_name='multicomp-reactions/2023-06-19-run01/',
-    #                  destination_run='multicomp-reactions/2023-06-30-run01/',
-    #                  known_outliers_filename='known_outliers',
-    #                  manual_outliers_filename='manual_outliers',
-    #                  n_repetitions_of_manual_outliers=2)
+    create_new_runs_from_known_outliers(run_name='multicomp-reactions/2023-06-19-run01/',
+                                        destination_run='multicomp-reactions/2023-06-30-run01/',
+                                        known_outliers_filename='known_outliers',
+                                        manual_outliers_filename='manual_outliers',
+                                        n_repetitions_of_manual_outliers=2)
 
-    request_outliers(run_name='multicomp-reactions/2023-06-19-run01/',
-                     destination_run='multicomp-reactions/2023-07-04-run01/',
-                     known_outliers_filename=False,
-                     manual_outliers_filename='manual_outliers_2',
-                     n_repetitions_of_manual_outliers=3)
+    create_new_runs_from_known_outliers(run_name='multicomp-reactions/2023-06-19-run01/',
+                                        destination_run='multicomp-reactions/2023-07-04-run01/',
+                                        known_outliers_filename=False,
+                                        manual_outliers_filename='manual_outliers_2',
+                                        n_repetitions_of_manual_outliers=3)
