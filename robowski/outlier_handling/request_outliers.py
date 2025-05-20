@@ -3,8 +3,6 @@ import os
 import pandas as pd
 import openpyxl as xl
 
-data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-
 def request_outliers(run_name, destination_run, known_outliers_filename, manual_outliers_filename,
                      n_repetitions_of_manual_outliers=2):
 

@@ -4,8 +4,6 @@ import numpy as np
 import os
 import robowski.visualize_results.visualize_results as visualize_results
 
-data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
-
 run_name = 'multicomp-reactions/2023-06-19-run01/'
 
 list_of_runs = tuple(['2023-06-20-run01',

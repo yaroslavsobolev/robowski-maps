@@ -2,7 +2,6 @@ from robowski.settings import *
 import pandas as pd
 import numpy as np
 import os
-
 import robowski.misc_scripts.organize_run_results as organize_run_results
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'

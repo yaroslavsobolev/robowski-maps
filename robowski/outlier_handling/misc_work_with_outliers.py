@@ -1,8 +1,6 @@
 from robowski.settings import *
-
 from matplotlib import pyplot as plt
-
-from organize_run_results import *
+from robowski.misc_scripts.organize_run_results import *
 
 df_output, yield_lists = merge_repeated_outliers(original_run = 'multicomp-reactions/2023-06-19-run01/',
                         outlier_runs=['multicomp-reactions/2023-06-30-run01/',
