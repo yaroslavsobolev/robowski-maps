@@ -4,14 +4,16 @@ Utilities for spectral processing and unmixing of UV-Vis absorption spectra from
 This module provides functionality for:
 1. Loading spectral data from different sources (CRAIC microspectrometer, NanoDrop spectrophotometer)
 2. Processing and correcting raw spectral data
-3. Calibrating using reference spectra and known concentrations
+3. Calibrating using reference spectra and known concentrations should be performed
+    with robowski.uv_vis_absorption_spectroscopy.calibrator module instead of this one.
+    Though for backward compatibility with old scripts, this module contains the methods for constructing calibration.
 4. Unmixing multi-component spectra to determine individual component concentrations
 5. Calculating stoichiometric relationships between products and substrates
 
 The main workflow involves:
 1. Creating a SpectraProcessor object
 2. Loading spectral data from files
-3. Creating calibration references using known standards
+3. Creating calibration references using known standards (with robowski.uv_vis_absorption_spectroscopy.calibrator module instead of this module)
 4. Processing unknown samples to determine component concentrations
 """
 
@@ -640,10 +642,15 @@ class SpectraProcessor:
         return spectrum
 
 
+    ####################### OBSOLETE METHOD RETAINED ONLY FOR BACKWARD COMPATIBILITY WITH OLDER CODE.
+    ####################### FOR NEW CODE, USE METHODS IN robowski.uv_vis_absorption_spectroscopy.calibrator INSTEAD
     def construct_reference_for_calibrant(self, calibrant_shortname,
                                           calibration_folder, ref_concentration,
                                           do_plot=True, lower_limit_of_absorbance=0.05, do_reference_refinements=True):
         """
+        OBSOLETE METHOD RETAINED ONLY FOR BACKWARD COMPATIBILITY WITH OLDER CODE.
+        FOR NEW CODE, USE METHODS IN robowski.uv_vis_absorption_spectroscopy.calibrator
+
         Construct a reference spectrum for a calibrant and save it for later use.
 
         This method creates a reference spectrum, optionally refines it, and establishes
@@ -865,7 +872,7 @@ class SpectraProcessor:
         return coeff_to_concentration_interpolator, reference_interpolator, bkg_spectrum
 
     def load_calibration_for_one_calibrant(self, calibrant_shortname, calibration_folder, use_line_fit=False,
-                                           do_savgol_filtering=False, ignore_acetic_dependence=True):
+                                           do_savgol_filtering=False):
         """
         Load calibration data for a calibrant from saved files.
 
@@ -879,8 +886,6 @@ class SpectraProcessor:
             Whether to use a linear fit for the calibration curve, defaults to False
         do_savgol_filtering : bool, optional
             Whether to apply Savitzky-Golay filtering to the reference spectrum, defaults to False
-        ignore_acetic_dependence : bool, optional
-            Whether to ignore acetic acid influence on the spectrum, defaults to True
 
         Returns
         -------
@@ -906,22 +911,12 @@ class SpectraProcessor:
             coeff_to_concentration_interpolator = interpolate.interp1d(new_xs, new_ys,
                                                                           fill_value='extrapolate')
 
-        # if there is a file called 'acetic_acid_influence.pkl' then open it
-        if os.path.isfile(calibration_folder + f'references/{calibrant_shortname}/acetic_acid_influence.pkl') and (not ignore_acetic_dependence):
-            with open(calibration_folder + f'references/{calibrant_shortname}/acetic_acid_influence.pkl', 'rb') as f:
-                array_of_wavelengths, acetic_acid_concentrations, spectral_2d_grid = pickle.load(f)
-            reference_interpolator = RegularGridInterpolator((array_of_wavelengths, acetic_acid_concentrations), spectral_2d_grid,
-                                             bounds_error=False, fill_value=None)
-        else:
-            ref_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy')
-            # assert len(ref_spectrum) == 381
-            wavelength_indices = np.arange(ref_spectrum.shape[0])
-            if do_savgol_filtering:
-                plt.plot(ref_spectrum)
-                ref_spectrum = savgol_filter(ref_spectrum, 7, 3)
-                plt.plot(ref_spectrum)
-                plt.show()
-            reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
+        ref_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy')
+        # assert len(ref_spectrum) == 381
+        wavelength_indices = np.arange(ref_spectrum.shape[0])
+        if do_savgol_filtering:
+            ref_spectrum = savgol_filter(ref_spectrum, 7, 3)
+        reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
         return coeff_to_concentration_interpolator, reference_interpolator, bkg_spectrum
 
     def load_concentration_to_coeff_for_one_calibrant(self, calibrant_shortname, calibration_folder, use_line_fit=False):
