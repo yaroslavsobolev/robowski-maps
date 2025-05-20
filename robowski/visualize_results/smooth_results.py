@@ -74,7 +74,6 @@ for substance in substances:
     print(f'{substance} max: {np.max(df_results[substance].to_numpy())}')
     print(f'{substance} unique: {sorted(df_results[substance].unique())}')
 
-
 minimal_concentration_of_substrates = np.min(np.array([xs0, ys0, zs0]))
 
 unique_cats = sorted(list(set(list(cats))))
@@ -83,7 +82,7 @@ print(f'{len(unique_cats)} unique cats: {unique_cats}')
 npoints_over_catalyst_range = 100
 new_cats = np.linspace(df_results[catalyst_name].min(), df_results[catalyst_name].max(), npoints_over_catalyst_range)
 
-df_combinations = df_results.groupby(['ic001', 'am001', 'ald001']).size().reset_index().rename(columns={0:'count'})
+df_combinations = df_results.groupby(['ic001', 'am001', 'ald001']).size().reset_index().rename(columns={0: 'count'})
 
 df_interpolated = df_results.drop(df_results.index)
 df_interpolated = df_interpolated[substances + ['yield'] + ['v3_model_yield']]
@@ -92,8 +91,8 @@ for index, row in df_combinations.iterrows():
     print(row)
     # find all the rows from df_results that have this combination of concentrations
     df_this_combination = df_results[(df_results['ic001'] == row['ic001']) &
-                                (df_results['am001'] == row['am001']) &
-                                (df_results['ald001'] == row['ald001'])]
+                                     (df_results['am001'] == row['am001']) &
+                                     (df_results['ald001'] == row['ald001'])]
     # if there is only one row in df_this_combination, then there is no need to interpolate
     if len(df_this_combination) == 1:
         df_temporary = df_interpolated.drop(df_interpolated.index)
@@ -123,7 +122,8 @@ for index, row in df_combinations.iterrows():
     ynew = row['am001']
     znew = row['ald001']
     for catalyst_concentration in unique_cats:
-        if catalyst_concentration < catalyst_concentration_limits_here[0] or catalyst_concentration > catalyst_concentration_limits_here[1]:
+        if catalyst_concentration < catalyst_concentration_limits_here[0] or catalyst_concentration > \
+                catalyst_concentration_limits_here[1]:
             mask = (cats == catalyst_concentration)
             xs = xs0[mask]
             ys = ys0[mask]
@@ -141,7 +141,8 @@ for index, row in df_combinations.iterrows():
                 wnew = 0
             # append one row to df_this_combination with wnew as yield and catalyst_concentration as ptsa
             df_temporary = df_interpolated.drop(df_interpolated.index)
-            dictionary_for_this_row = {substance: row[substance] for substance in substances if not (substance == catalyst_name)}
+            dictionary_for_this_row = {substance: row[substance] for substance in substances if
+                                       not (substance == catalyst_name)}
             dictionary_for_this_row['yield'] = wnew
             dictionary_for_this_row[catalyst_name] = catalyst_concentration
             df_temporary.loc[0] = dictionary_for_this_row
@@ -156,7 +157,7 @@ for index, row in df_combinations.iterrows():
     ys = df_this_combination['yield'].to_numpy()
     yerr = df_this_combination['yield'].to_numpy() * relative_std
 
-    f1 = plt.figure(1, figsize=(5,4))
+    f1 = plt.figure(1, figsize=(5, 4))
     plt.errorbar(xs, ys, yerr=yerr, linestyle='None', marker='x', capsize=3, label='data', alpha=0.5, color='black')
     # tck = make_spline(xs, ys, yerr, do_plot=do_plot, spline_smoothing_factor=0.05)
     tck = make_spline(xs, ys, yerr, do_plot=(plot_interpolants), spline_smoothing_factor=0.0005,
@@ -179,8 +180,8 @@ for index, row in df_combinations.iterrows():
     # xs_model, ys_model = zip(*sorted(zip(xs_model, ys_model)))
     # plt.plot(xs_model, ys_model, color='C0', linewidth=5, alpha=0.3)
 
-
-    xs_new = new_cats[np.where((new_cats >= catalyst_concentration_limits_here[0]) & (new_cats <= catalyst_concentration_limits_here[1]))]
+    xs_new = new_cats[np.where(
+        (new_cats >= catalyst_concentration_limits_here[0]) & (new_cats <= catalyst_concentration_limits_here[1]))]
     ys_new = splev(xs_new, tck)
 
     # compute ys_model_new using linear interpolation for xs_new using the x-y data of xs_model and ys_model
@@ -188,13 +189,15 @@ for index, row in df_combinations.iterrows():
 
     df_temporary = df_interpolated.drop(df_interpolated.index)
     for i, ptsa_new in enumerate(xs_new):
-        dictionary_for_this_row = {substance: row[substance] for substance in substances if not (substance == catalyst_name)}
+        dictionary_for_this_row = {substance: row[substance] for substance in substances if
+                                   not (substance == catalyst_name)}
         dictionary_for_this_row['yield'] = ys_new[i]
         dictionary_for_this_row['v3_model_yield'] = ys_model_new[i]
         dictionary_for_this_row[catalyst_name] = ptsa_new
         df_temporary.loc[i] = dictionary_for_this_row.copy()
     df_interpolated = df_interpolated.append(df_temporary, ignore_index=True)
-    plt.title(f"Subtrate concentrations: isocyanide {row['ic001']} M,\namine:{row['am001']} M, aldehyde:{row['ald001']} M")
+    plt.title(
+        f"Subtrate concentrations: isocyanide {row['ic001']} M,\namine:{row['am001']} M, aldehyde:{row['ald001']} M")
     plt.xlabel('Catalyst (p-TSA) concentration (mol/L)')
     plt.ylabel('Yield (%)')
     # force the y limits to be from 0 to 0.19
@@ -211,4 +214,6 @@ for index, row in df_combinations.iterrows():
         plt.close()
 
 # save to file
-df_interpolated.to_csv(data_folder + run_name + f'results/interpolated_product_concentration_together_with_model_2025-02-16.csv', index=False)
+df_interpolated.to_csv(
+    data_folder + run_name + f'results/interpolated_product_concentration_together_with_model_2025-02-16.csv',
+    index=False)
