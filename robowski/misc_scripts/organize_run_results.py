@@ -718,7 +718,8 @@ def outV_to_outC_by_lookup(experiment_name, lookup_run):
 
 
 def merge_repeated_outliers(original_run, outlier_runs,
-                            output_csv_filename='product_concentration_after_substituting_outliers.csv'):
+                            output_csv_filename='product_concentration_after_substituting_outliers.csv',
+                            substrate_names = tuple(['ic001', 'ald001', 'am001', 'ptsa'])):
     # find rows in outliers run that have same conditions as in the original run
     df_results_original = pd.read_csv(data_folder + original_run + 'results/product_concentration.csv')
     if 'Unnamed: 0' in df_results_original.columns:
@@ -730,7 +731,6 @@ def merge_repeated_outliers(original_run, outlier_runs,
     # remove known outliers
     df_results_concatenated = df_results_concatenated[df_results_concatenated['is_outlier'] == 0]
     df_results_concatenated.reset_index(inplace=True, drop=True)
-    substrate_names = ['ic001', 'ald001', 'am001', 'ptsa']
     substrate_vectors_concatenated = df_results_concatenated[substrate_names].to_numpy()
     distances = pairwise_distances(substrate_vectors_concatenated,
                                    substrate_vectors_concatenated, metric='euclidean')
