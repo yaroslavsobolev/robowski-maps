@@ -45,15 +45,24 @@ like `19d_c_HPLC_[M]`, where `19d` is the substance code (same as in the researc
 The columns containing the yields are named similarly, but with `_y_` instead
 of `_c_`. For example: `19d_y_HPLC_[%]`.
 
-# Preprocessing the datasets for interactive 3D viewer format (YipMan)
+# Preprocessing the datasets for the interactive viewer (YipMan)
 
-The preprocessing (converting the data to the format suitable for YipMan) is done by
+## 3D datasets
+
+The preprocessing (converting the 3D data to the format suitable for YipMan) is done by
 the `convert_dataset_to_3dviewer_yipman_format.py` script. The commands we used to do this preprocessing were
 executed in this folder (`summary_of_reaction_yield_data`) and are:
 
 ```bash
-python convert_dataset_to_3dviewer_yipman_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_yipman.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield' --Xscale=1000 --Yscale=1000 --Zscale=1 --Xrename='[SN10H01](mM)' --Yrename='[HBr](mM)'
-python convert_dataset_to_3dviewer_yipman_format.py --input_csv=SN1/resampled_SN1_yield.csv --output_csv=SN1/resampled_SN1_yield_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='Yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
-python convert_dataset_to_3dviewer_yipman_format.py --input_csv=SN1/resampled_SN1_yield_15d.csv --output_csv=SN1/resampled_SN1_yield_15d_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='yield of 15d' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_yipman.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield' --Xscale=1000 --Yscale=1000 --Zscale=1 --Xrename='[SN10H01](mM)' --Yrename='[HBr](mM)'
+python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/resampled_SN1_yield.csv --output_csv=SN1/resampled_SN1_yield_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='Yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/resampled_SN1_yield_15d.csv --output_csv=SN1/resampled_SN1_yield_15d_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='yield of 15d' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+```
 
+## 4D datasets
+
+The Ugi reaction yields were converted to the format suitable for YipMan using the `convert4d.py` script:
+
+```bash
+python convert_4d_dataset_to_yipman_format.py --input_csv=Ugi/postprocessed_yields.csv --output_name=Ugi/ugi_postprocessed_yields_yipman/ugi_yipman --prefix_of_relative_dir='../CSV/ugi_postprocessed_yields_yipman/' --X='am001' --Y='ald001' --Z='ic001' --T='ptsa' --V='yield' --Xrename='[amine](mM)' --Yrename='[aldehyde](mM)' --Zrename='[isocyanide](mM)' --Xscale=1000 --Yscale=1000 --Zscale=1000 --Tlabel_prefix='[pTSA]=' --Tlabel_suffix=' M'
 ```
