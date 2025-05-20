@@ -367,9 +367,18 @@ class SpectraProcessor:
         self.nanodrop_lower_cutoff_of_wavelengths = 250
         self.nanodrop_upper_cutoff_of_wavelengths = 600
 
-        self.thresh_w_indices = [0, 2000]
-        # self.thresh_as = [100.0, 100.0]
-        self.thresh_as = [1.0, 1.0]
+        if spectrum_data_type == 'craic':
+            self.thresh_w_indices = [0, 25, 127, 2000]
+            self.thresh_as = [0.67, 0.75, 1.6, 1.6]
+        elif spectrum_data_type == 'nanodrop':
+            self.thresh_w_indices = [0, 2000]
+            self.thresh_as = [1.0, 1.0]
+        else:
+            print(f"Unknown spectrum data type: {spectrum_data_type}. Disabling the absorbance thresholds.")
+            self.thresh_w_indices = [0, 20000]
+            self.thresh_as = [100.0, 100.0]
+
+
         self.lower_limit_of_absorbance = 0
         self.use_instrumental_sigmas = False
         with open(sigma_interpolator_filename, 'rb') as f:
@@ -1014,67 +1023,24 @@ class SpectraProcessor:
         list or tuple
             List of calculated concentrations, or tuple of (concentrations, errors) if return_errors=True
         """
-        calibrants = []
-        for calibrant_shortname in calibrant_shortnames:
-            dict_here = dict()
-            dict_here['coeff_to_concentration_interpolator'], dict_here['reference_interpolator'], dict_here[
-                'bkg_spectrum'] = \
-                self.load_calibration_for_one_calibrant(calibrant_shortname, calibration_folder)
-            calibrants.append(dict_here.copy())
+        self.lower_limit_of_absorbance = lower_limit_of_absorbance
+
+        calibrants = self.load_dictionary_of_calibrants_from_files(calibrant_shortnames, calibration_folder,
+                                                                   use_linear_calibration=False)
 
         bkg_spectrum = calibrants[0]['bkg_spectrum']
         wavelengths = bkg_spectrum[:, 0]
         target_spectrum = target_spectrum_input - bkg_spectrum[:, 1]
         wavelength_indices = np.arange(calibrants[0]['bkg_spectrum'].shape[0])
-
-        thresh_w_indices = [0, 25, 127, 2000]
-        thresh_as = [0.67, 0.75, 1.6, 1.6]
-        threshold_interpolator = interpolate.interp1d(thresh_w_indices, thresh_as, fill_value='extrapolate')
-
-        if not ignore_abs_threshold:
-            mask = np.logical_and(target_spectrum < threshold_interpolator(wavelength_indices),
-                                  wavelength_indices > cut_from)
-        else:
-            mask = wavelength_indices > cut_from
-
-        if cut_to:
-            mask = np.logical_and(mask, wavelength_indices <= cut_to)
-
-        mask = np.logical_and(mask,
-                              target_spectrum > np.min(target_spectrum) + lower_limit_of_absorbance)
-
-        if not ignore_pca_bkg:
-            xxx = np.load(background_model_folder + f'component_0.npy')
-            yyy = np.load(background_model_folder + f'component_1.npy')
-            background_interpolators = [interpolate.interp1d(wavelength_indices,
-                                                          np.load(background_model_folder + f'component_{i}.npy'),
-                                                          fill_value='extrapolate')
-                                     for i in range(2)]
-        else:
-            background_interpolators = [interpolate.interp1d(wavelength_indices,
-                                                             np.ones_like(wavelength_indices),
-                                                             fill_value='extrapolate')
-                                        for i in range(2)]
+        mask = self.mask_the_spectrum(wavelength_indices, target_spectrum, cut_from,
+                                      ignore_abs_threshold=ignore_abs_threshold, cut_to=cut_to)
+        background_interpolators = self.load_background_interpolators(background_model_folder, ignore_pca_bkg,
+                                                                      wavelength_indices, number_of_pca_components=2)
 
         if len(wavelength_indices[mask]) == 0:
             print('There is no data that is within mask. Returning zeros.')
             return [0 for i in range(4)]
 
-        ## old implementation
-        # if len(calibrant_shortnames) == 2:
-        #     def func(xs, a, b, c, d, e, f):
-        #         return a * calibrants[0]['reference_interpolator'](xs) + b * calibrants[1]['reference_interpolator'](xs) + c \
-        #                + d*xs + e * background_interpolators[0](xs) + f * background_interpolators[1](xs)
-        # elif len(calibrant_shortnames) == 3:
-        #     def func(xs, a1, a2, a3, c, d, e, f):
-        #         return a1 * calibrants[0]['reference_interpolator'](xs) + \
-        #                a2 * calibrants[1]['reference_interpolator'](xs) + \
-        #                a3 * calibrants[2]['reference_interpolator'](xs)\
-        #                + c + d * xs + e * background_interpolators[0](xs) + f * background_interpolators[1](xs)
-        # else:
-        #     raise NotImplementedError
-
-        ## New implementation
         def func(*args):
             xs = args[0]
             c,d,e,f = args[-4:]
@@ -1082,12 +1048,6 @@ class SpectraProcessor:
             return sum([calibrant_coefficients[i] * calibrants[i]['reference_interpolator'](xs) for i in range(len(calibrant_coefficients))]) \
                       + c + d * xs + e * background_interpolators[0](xs) + f * background_interpolators[1](xs)
 
-        # p0 = tuple(0.5 if upper_bounds[0] is np.inf else upper_bounds[0],
-        #       0.5 if upper_bounds[1] is np.inf else upper_bounds[1],
-        #       0,
-        #       0,
-        #       0,
-        #       0)
         p0 = tuple([0.5 if upper_bound is np.inf else upper_bound for upper_bound in upper_bounds] + [0] * 4)
         if use_line:
             linebounds = [-np.inf, np.inf]
@@ -1426,7 +1386,7 @@ class SpectraProcessor:
             plate_id = index // 54
             well_id = index % 54
             print(f'{plate_id}-{well_id}')
-            spectrum = sp.load_msp_by_id(
+            spectrum = self.load_msp_by_id(
                 plate_folder=experiment_folder + f"microspectrometer_data/timepoint_{timepoint_id:03d}/plate-{plate_id:02d}/",
                 well_id=well_id)[:, 1]
             concentrations_here = self.spectrum_to_concentration(target_spectrum_input=spectrum,
@@ -1505,8 +1465,9 @@ class SpectraProcessor:
 
         Returns
         -------
-        tuple
-            (masked_wavelength_indices, masked_target_spectrum)
+        numpy.ndarray
+            Boolean mask indicating which indices to keep
+
         """
         threshold_interpolator = interpolate.interp1d(self.thresh_w_indices, self.thresh_as,
                                                       fill_value='extrapolate')
@@ -1523,7 +1484,8 @@ class SpectraProcessor:
         mask = np.logical_and(mask,
                               target_spectrum > np.min(target_spectrum) + self.lower_limit_of_absorbance)
 
-        return wavelength_indices[mask], target_spectrum[mask]
+
+        return mask
 
 
     def mask_multispectrum(self, wavelength_indices, target_spectrum,
@@ -1649,18 +1611,8 @@ class SpectraProcessor:
             depending on return_errors and return_report values
         """
         t0 = time.time()
-        calibrants = []
-        for calibrant_shortname in calibrant_shortnames:
-            dict_here = dict()
-            dict_here['coeff_to_concentration_interpolator'], dict_here['reference_interpolator'], dict_here[
-                'bkg_spectrum'] = \
-                self.load_calibration_for_one_calibrant(calibrant_shortname, calibration_folder,
-                                                        use_line_fit=use_linear_calibration,
-                                                        do_savgol_filtering=False)
-            dict_here['concentration_to_coeff_interpolator'], _, _ = \
-                self.load_concentration_to_coeff_for_one_calibrant(calibrant_shortname, calibration_folder,
-                                                                     use_line_fit=use_linear_calibration)
-            calibrants.append(dict_here.copy())
+        calibrants = self.load_dictionary_of_calibrants_from_files(calibrant_shortnames, calibration_folder,
+                                                                   use_linear_calibration)
 
         if plot_calibrant_references:
             for i, calibrant in enumerate(calibrants):
@@ -1724,16 +1676,8 @@ class SpectraProcessor:
         number_of_calibrants = len(calibrant_shortnames)
         number_of_spectra = len(target_spectrum_inputs)
 
-        if not ignore_pca_bkg:
-            background_interpolators = [interpolate.interp1d(wavelength_indices,
-                                                          np.load(background_model_folder + f'component_{i}.npy'),
-                                                          fill_value='extrapolate')
-                                     for i in range(1)]
-        else:
-            background_interpolators = [interpolate.interp1d(wavelength_indices,
-                                                             np.ones_like(wavelength_indices),
-                                                             fill_value='extrapolate')
-                                        for i in range(1)]
+        background_interpolators = self.load_background_interpolators(background_model_folder, ignore_pca_bkg,
+                                                                      wavelength_indices, number_of_pca_components=1)
 
         def func_prelim(*args):
             xs = args[0]
@@ -2018,6 +1962,36 @@ class SpectraProcessor:
             return concentrations_here, fit_report
         else:
             return concentrations_here
+
+    def load_background_interpolators(self, background_model_folder, ignore_pca_bkg,
+                                      wavelength_indices, number_of_pca_components=1):
+        if not ignore_pca_bkg:
+            background_interpolators = [interpolate.interp1d(wavelength_indices,
+                                                             np.load(background_model_folder + f'component_{i}.npy'),
+                                                             fill_value='extrapolate')
+                                        for i in range(number_of_pca_components)]
+        else:
+            background_interpolators = [interpolate.interp1d(wavelength_indices,
+                                                             np.ones_like(wavelength_indices),
+                                                             fill_value='extrapolate')
+                                        for i in range(number_of_pca_components)]
+        return background_interpolators
+
+    def load_dictionary_of_calibrants_from_files(self, calibrant_shortnames, calibration_folder,
+                                                 use_linear_calibration):
+        calibrants = []
+        for calibrant_shortname in calibrant_shortnames:
+            dict_here = dict()
+            dict_here['coeff_to_concentration_interpolator'], dict_here['reference_interpolator'], dict_here[
+                'bkg_spectrum'] = \
+                self.load_calibration_for_one_calibrant(calibrant_shortname, calibration_folder,
+                                                        use_line_fit=use_linear_calibration,
+                                                        do_savgol_filtering=False)
+            dict_here['concentration_to_coeff_interpolator'], _, _ = \
+                self.load_concentration_to_coeff_for_one_calibrant(calibrant_shortname, calibration_folder,
+                                                                   use_line_fit=use_linear_calibration)
+            calibrants.append(dict_here.copy())
+        return calibrants
 
     def uncertainty_of_measured_absorbance(self, wavelength, absorbance, lower_threshold_of_sigma=0.005):
         """

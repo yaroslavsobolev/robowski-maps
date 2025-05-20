@@ -132,6 +132,7 @@ def test_concentrations_for_one_plate_end2end(datadir):
             folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                                             '2022-12-01/interpolator-dataset/')
         sp.nanodrop_lower_cutoff_of_wavelengths = 250
+        sp.spectrum_data_type = 'nanodrop'
         run_name = 'simple-reactions/2023-09-06-run01/'
         concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
                                                               plate_folder=data_folder + 'simple-reactions/2023-09-06-run01/nanodrop_spectra/2023-09-06_20-29-24_plate_50.csv',
