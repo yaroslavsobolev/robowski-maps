@@ -291,6 +291,7 @@ def diluted_vials_only(list_of_vials_on_plate):
     """
     return list_of_vials_on_plate[[i + j for i in [9, 27, 45] for j in range(9)]]
 
+
 class SpectraProcessor:
     """
     Process and analyze spectral data from microspectrometers and spectrophotometers.
@@ -737,6 +738,7 @@ class SpectraProcessor:
             new_ref_spectrum = np.copy(ref_spectrum)
             new_ref_spectrum[mask_containing_entire_tail] = (target_spectrum[mask_containing_entire_tail] - popt[
                 1]) / slope
+            new_ref_spectrum -= new_ref_spectrum[-1]
 
             ### PLOTTING
             fig1 = plt.figure(1)
@@ -761,7 +763,6 @@ class SpectraProcessor:
             else:
                 plt.clf()
 
-            new_ref_spectrum -= new_ref_spectrum[-1]
 
             fig2 = plt.figure(2)
             plt.title(
@@ -2161,202 +2162,6 @@ def plot_differential_absorbances_for_plate(craic_exp_name,
 
 
 if __name__ == '__main__':
-
-    sp = SpectraProcessor(folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
-                                                         '2022-12-01/interpolator-dataset/')
-    sp.nanodrop_lower_cutoff_of_wavelengths = 220
-    sp.use_instrumental_sigmas = True
-
-    # print('>>>>>>>>>')
-    # print(sp.uncertainty_of_measured_absorbance(221, 0.37))
-
-    # x = sp.load_nanodrop_csv_for_one_plate(plate_folder=data_folder + 'BPRF/2024-01-08-run01/nanodrop_spectra/2024-01-10_12-51-07_UV-Vis_plate_71.csv')
-
-    # well_id = 44
-    well_id = 9
-    substances_for_fitting = ['methoxybenzaldehyde', 'HRP01', 'dm35_8', 'dm35_9', 'dm36', 'dm37', 'dm40_12', 'dm40_10', 'ethyl_acetoacetate', 'EAB', 'bb017', 'bb021', 'dm70', 'dm053', 'dm088_4', 'bb021_f2']
-    # cut_from = 40
-    cut_from = 0
-    # Condition 154
-    # plate_folder = data_folder + 'BPRF/2024-01-08-run01/nanodrop_spectra/2024-01-10_12-51-07_UV-Vis_plate_71.csv'
-    # plate_folder = data_folder + 'BPRF/2024-01-08-run02/nanodrop_spectra/2024-01-10_17-10-28_UV-Vis_plate_61.csv'
-    # plate_folder = data_folder + 'BPRF/2024-01-17-run01/nanodrop_spectra/2024-01-19_12-22-47_UV-Vis_plate_66.csv'
-    plate_folder = data_folder + 'BPRF/2024-03-06-run01/nanodrop_spectra/2024-03-08_10-22-22_UV-Vis_plate_92.csv'
-    # plate_folder = data_folder + 'BPRF/2024-02-16-run01/nanodrop_spectra/2024-02-18_17-48-07_UV-Vis_plate74.csv'
-    spectrum1 = sp.load_msp_by_id(
-        plate_folder=plate_folder,
-        well_id=well_id)[:, 1]
-
-    # plate_folder = data_folder + 'BPRF/2024-01-08-run01/nanodrop_spectra/2024-01-10_13-48-13_UV-Vis_plate_73.csv'
-    # plate_folder = data_folder + 'BPRF/2024-01-08-run02/nanodrop_spectra/2024-01-10_17-55-20_UV-Vis_plate_66.csv'
-    # plate_folder = data_folder + 'BPRF/2024-01-17-run01/nanodrop_spectra/2024-01-19_13-00-17_UV-Vis_plate_67.csv'
-    plate_folder = data_folder + 'BPRF/2024-03-06-run01/nanodrop_spectra/2024-03-08_10-44-22_UV-Vis_plate_93.csv'
-    # plate_folder = data_folder + 'BPRF/2024-02-16-run01/nanodrop_spectra/2024-02-18_18-02-42_UV-Vis_plate76.csv'
-    spectrum2 = sp.load_msp_by_id(
-        plate_folder=plate_folder,
-        well_id=well_id)[:, 1]
-
-    plt.plot(spectrum1*20)
-    plt.plot(spectrum2*200)
-    # plt.plot(spectrum1)
-    # plt.plot(spectrum2)
-    print('len of spectrum1', len(spectrum1))
-    plt.show()
-
-    concentrations = sp.multispectrum_to_concentration(target_spectrum_inputs=[spectrum1, spectrum2],
-                                                       dilution_factors=[20, 200],
-                                                       calibration_folder=data_folder + 'BPRF/2024-01-17-run01/' + 'microspectrometer_data/calibration/',
-                                                       calibrant_shortnames=substances_for_fitting,
-                                                       background_model_folder=data_folder + 'BPRF/cross_conamination_and_backgound_test/ethanol_background_model/',
-                                                       upper_bounds=[np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf],
-                                                       do_plot=False, cut_from=cut_from, cut_to=250,
-                                                       ignore_abs_threshold=False, ignore_pca_bkg=False,
-                                                       plot_calibrant_references=False,
-                                                       upper_limit_of_absorbance=0.95,
-                                                       obey_stoichiometric_inequalities=False)
-
-    print(concentrations)
-    print('Done!')
-
-    # sp.load_single_nanodrop_spectrum(plate_folder=data_folder + 'simple-reactions/2023-08-21-run01/nanodrop_spectra/2023-08-23_23-50-41_plate_51.csv',
-    #                                  well_id=0)
+    pass
 
 
-    # process_run_by_shortname(run_name)
-    # plot_differential_absorbances_for_plate(
-    #         craic_exp_name='2023-06-14_21-11-36__plate0000036__four-dye-dil-2023-06-13-run01',
-    #         wavelength=420,
-    #         ref_wavelengths=[525]
-    #         )
-
-    # ##### =================================== 2023-01-18-run01 ========================================================
-    # experiment_name = 'multicomp-reactions/2023-01-18-run01/'
-    # # ##### This constructs the calibration for the product 'IIO029A' and saves for later. Do not rerun unless you know what you do. #######
-    # # sp.construct_reference_for_calibrant(calibrant_shortname='IIO029A',
-    # #                                      calibration_folder=data_folder + experiment_name + 'microspectrometer_data/calibration/',
-    # #                                      ref_concentration=0.00011,
-    # #                                      do_plot=True, do_reference_refinements=True)
-    #
-    # # #### This constructs the calibration for the substrate 'ald001' and saves for later. Do not rerun unless you know what you do. #######
-    # # sp.construct_reference_for_calibrant(calibrant_shortname='ald001',
-    # #                                      calibration_folder=data_folder + experiment_name + 'microspectrometer_data/calibration/',
-    # #                                      ref_concentration=0.0384048,
-    # #                                      do_plot=True, do_reference_refinements=True)
-    #
-    # ##### This extracts concentrations from unknown reaction mixtures. You can rerun this. Do rerun this with different experiments in the future. #####
-    # reaction_results = sp.concentrations_for_all_plates(timepoint_id=1,
-    #                                                     experiment_folder=data_folder + experiment_name,
-    #                                                     calibration_folder=data_folder + experiment_name + 'microspectrometer_data/calibration/',
-    #                                                     calibrant_shortnames=['IIO029A', 'ald001'],
-    #                                                     calibrant_upper_bounds=[np.inf, 2],
-    #                                                     path_to_input_compositions_csv=data_folder + experiment_name + 'input_compositions/' + '20230110RF029_concentrations_in_reaction_mixtures.csv',
-    #                                                     do_plot=False)
-
-    ##### =================================== 2023-03-20-run01 ========================================================
-    # dilution_factor = 200
-    # experiment_name = 'multicomp-reactions/2023-03-20-run01/'
-    # # ##### This constructs the calibration for the product 'IIO029A' and saves for later. Do not rerun unless you know what you do. #######
-    # # sp.construct_reference_for_calibrant(calibrant_shortname='IIO029A',
-    # #                                      calibration_folder=data_folder + 'multicomp-reactions/2023-01-18-run01/' + 'microspectrometer_data/calibration/',
-    # #                                      ref_concentration=0.00011,
-    # #                                      do_plot=True, do_reference_refinements=True)
-    #
-    # # #### This constructs the calibration for the substrate 'ald001' and saves for later. Do not rerun unless you know what you do. #######
-    # # sp.construct_reference_for_calibrant(calibrant_shortname='ald001',
-    # #                                      calibration_folder=data_folder + 'multicomp-reactions/2023-01-18-run01/' + 'microspectrometer_data/calibration/',
-    # #                                      ref_concentration=0.0192096,
-    # #                                      do_plot=True, do_reference_refinements=False)
-    #
-    # craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
-    # df = pd.read_csv(craic_folder + 'database_about_these_folders.csv')
-    # df = df.loc[df['exp_name'] == '-'].copy().reset_index()
-    #
-    # concentrations_df = pd.read_csv(data_folder + experiment_name + 'outVandC/' + 'outCRF038202303201421.csv')
-    #
-    # # make sure that number of rows in concentrations dataframe is number of rows in df times 27 experiments per plate
-    # assert len(concentrations_df.index) == len(df.index) * 27
-    #
-    # # add a column for the product concentration, fill it with zeros, then fill with measured values
-    # concentrations_df['IIO029A'] = concentrations_df['ptsa'] * 0
-    # for index, row in df.iterrows():
-    #     concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + experiment_name,
-    #                                                           plate_folder=craic_folder + row['folder'] + '/',
-    #                                                           calibration_folder=data_folder + 'multicomp-reactions/2023-01-18-run01/' + 'microspectrometer_data/calibration/',
-    #                                                           calibrant_shortnames=['IIO029A', 'ald001'],
-    #                                                           background_model_folder=data_folder + 'multicomp-reactions/2023-03-20-run01/microspectrometer_data/background_model/',
-    #                                                           calibrant_upper_bounds=[np.inf, 1e-10],
-    #                                                           do_plot=False)
-    #     diluted_vials = diluted_vials_only(concentrations_here) * dilution_factor
-    #     concentrations_df.at[index * 27:(index + 1) * 27 - 1, 'IIO029A'] = diluted_vials
-    #
-    # concentrations_df.to_csv(data_folder + experiment_name + 'results/' + 'product_concentration.csv', index=False)
-    #
-    # substrates = ['ald001', 'am001', 'ic001']
-    # concentrations_df['yield'] = concentrations_df['IIO029A'] * 0
-    # for index, row in concentrations_df.iterrows():
-    #     substrate_concentrations_min = min([concentrations_df.at[index, substrate] for substrate in substrates])
-    #     yield_here = concentrations_df.at[index, 'IIO029A'] / substrate_concentrations_min
-    #     concentrations_df.at[index, 'yield'] = yield_here
-    #
-    # concentrations_df.to_csv(data_folder + experiment_name + 'results/' + 'product_concentration.csv', index=False)
-
-    # craic_folder = data_folder + 'craic_microspectrometer_measurements/absorbance/'
-    # sp.show_all_spectra(craic_folder + '2023-05-23_01-14-40__plate0000018__simple-reactions-2023-05-22-run01_calibration/')
-    # sp.show_all_spectra(
-    #     craic_folder + '2023-05-23_01-36-33__plate0000019__simple-reactions-2023-05-22-run01_calibration/')
-    # sp.show_all_spectra(craic_folder + '2023-05-23_01-51-15__plate0000020__simple-reactions-2023-05-22-run01_calibration/')
-
-    # sp.show_all_spectra(craic_folder + '2023-07-05_19-25-51__plate0000057__simple_reactions_2023-07-05-run01_dil/')
-    # sp.show_all_spectra(craic_folder + '2023-07-05_18-02-13__plate0000054__simple_reactions_2023-07-05-run01/')
-    # sp.show_all_spectra(craic_folder + '2023-07-05_18-02-13__plate0000054__simple_reactions_2023-07-05-run01/')
-    # sp.show_all_spectra(craic_folder + '2023-07-05_18-02-13__plate0000054__simple_reactions_2023-07-05-run01/')
-    # sp.show_all_spectra(craic_folder + '2023-06-15_15-49-38__plate0000037__pure-dmf-bkg-test/', specific_well_ids=range(10))
-    # plt.legend()
-
-    # sp.show_all_spectra(craic_folder + '2023-07-10_23-38-15__plate0000055__simple_reaction_2023-07-10_run02/')
-    # sp.show_all_spectra(
-    #     craic_folder + '2023-06-13_14-42-05__plate0000040__multicomponent-reactions-2023-06-13-pigments/')
-    # sp.show_all_spectra(craic_folder + '2023-05-23_01-51-15__plate0000020__simple-reactions-2023-05-22-run01_calibration/')
-    # plt.show()
-    # wavelengths = sp.load_msp_by_id(craic_folder + '2023-04-08_16-06-36__plate0000021__2023-04-07-run01-diluted/', well_id=0)[:, 0]
-    # pass
-
-    # conc = sp.get_absorbance_at_single_wavelength_for_one_plate(craic_folder + '2023-04-08_16-06-36__plate0000021__2023-04-07-run01-diluted/',
-    #                                                             wavelength_id=98,
-    #                                                             ref_wavelength_id=198)
-
-    ###################### SIMPLE SN1 REACTIONS ######################
-
-    # plate_folder = data_folder + 'nanodrop-spectrophotometer-measurements/reference_for_simple_SN1/2023-09-07_22-46-02_E1_ref_and_etoh_hbr_aac.csv'
-    # # # sp.show_all_spectra(data_folder + 'simple-reactions/2023-08-21-run01/nanodrop_spectra/2023-08-23_23-50-41_plate_51.csv',
-    # # #                     specific_well_ids=range(10))
-    # sp.show_all_spectra(plate_folder, specific_well_ids=range(7, 14, 1))
-    # plt.legend()
-    # plt.show()
-
-    # sp.nanodrop_lower_cutoff_of_wavelengths = 250
-    # run_name = 'simple-reactions/2023-08-21-run01/'
-    # concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
-    #                                                       plate_folder=data_folder + 'simple-reactions/2023-08-21-run01/nanodrop_spectra/2023-08-23_23-52-13_plate_51.csv',
-    #                                                       calibration_folder=data_folder + 'simple-reactions/2023-08-21-run01/' + 'microspectrometer_data/calibration/',
-    #                                                       calibrant_shortnames=['SN1Br03', 'SN1OH03', 'HBr'],
-    #                                                       background_model_folder=data_folder + 'simple-reactions/2023-08-21-run01/microspectrometer_data/background_model/',
-    #                                                       calibrant_upper_bounds=[np.inf, np.inf, np.inf],
-    #                                                       do_plot=True, return_all_substances=True,
-    #                                                       cut_from=50, cut_to=False,
-    #                                                       ignore_abs_threshold=True)
-    # print(concentrations_here)
-
-    # ###################### E1 REACTIONS ######################
-    # sp.nanodrop_lower_cutoff_of_wavelengths = 250
-    # run_name = 'simple-reactions/2023-09-06-run01/'
-    # concentrations_here = sp.concentrations_for_one_plate(experiment_folder=data_folder + run_name,
-    #                                                       plate_folder=data_folder + 'simple-reactions/2023-09-06-run01/nanodrop_spectra/2023-09-06_20-29-24_plate_50.csv',
-    #                                                       calibration_folder=data_folder + 'simple-reactions/2023-09-06-run01/' + 'microspectrometer_data/calibration/',
-    #                                                       calibrant_shortnames=['E1DB02', 'E1OH02'],
-    #                                                       background_model_folder=data_folder + 'simple-reactions/2023-09-06-run01/microspectrometer_data/background_model/',
-    #                                                       calibrant_upper_bounds=[np.inf, np.inf],
-    #                                                       do_plot=False, return_all_substances=True,
-    #                                                       cut_from=50, cut_to=False,
-    #                                                       ignore_abs_threshold=True, ignore_pca_bkg=True)
-    # print(concentrations_here)

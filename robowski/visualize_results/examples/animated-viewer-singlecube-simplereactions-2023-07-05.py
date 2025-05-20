@@ -111,37 +111,38 @@ zs = df_results['Temperature'].to_numpy()
 # df_results[substrates[1]] = df_results[substrates[1]].apply(lambda x: x * yscale)
 
 xs0, ys0, zs0 = [df_results[substance].to_numpy() for substance in substances]
-# yields = df_results['yield'].to_numpy()
-yields = df_results['pc#carbocat'].to_numpy()*10
+yields = df_results['yield'].to_numpy()
+# yields_carbocat = df_results['pc#carbocat'].to_numpy()*10
 
 print(f'Max concentrations of substrates: {[print(max(x)) for x in [xs0, ys0, zs0]]}')
 print(f'Yields - min: {min(yields)}, max: {max(yields)}')
 
-# animated_viewer_static.plot_3d_dataset_as_cube(xs, ys, zs, yields,
-#                             substance_titles=('Alcohol,\nmM', 'HBr,\nmM', 'Temperature,\n°C'),
-#                             colorbar_title='Conversion:',
-#                             npoints=50, sparse_npoints=7, rbf_epsilon=1,
-#                             rbf_smooth=0.05,
-#                             interpolator_choice='rbf',
-#                             data_for_spheres='interpolated',
-#                             rbf_function='multiquadric',
-#                             axes_ticks_format='%.0f',
-#                             axes_font_factor=1.3,
-#                             contours=[0.2, 0.4, 0.7, 0.85])
-
 animated_viewer_static.plot_3d_dataset_as_cube(xs, ys, zs, yields,
-                            substance_titles=('', '', ''),
-                            colorbar_title='Carbocation abundance',
-                            npoints=50, sparse_npoints=5, rbf_epsilon=0.2,
+                            substance_titles=('Alcohol,\nmM', 'HBr,\nmM', 'Temperature,\n°C'),
+                            colorbar_title='Conversion:',
+                            npoints=50, sparse_npoints=5, rbf_epsilon=1,
                             rbf_smooth=0.05,
-                            interpolator_choice='rbf',
-                            data_for_spheres='raw',
+                            interpolator_choice='linear',
+                            data_for_spheres='interpolated',
                             rbf_function='multiquadric',
                             axes_ticks_format='%.0f',
                             axes_font_factor=1.3,
-                            contours=[0.1, 0.3, 0.4, 2],
-                            contour_opacity=0.001,
-                            transparent=True)
+                            contours=[0.2, 0.4, 0.7, 0.85],
+                            contour_opacity=0.3)
+
+# animated_viewer_static.plot_3d_dataset_as_cube(xs, ys, zs, yields_carbocat,
+#                             substance_titles=('', '', ''),
+#                             colorbar_title='Carbocation abundance',
+#                             npoints=50, sparse_npoints=5, rbf_epsilon=0.2,
+#                             rbf_smooth=0.05,
+#                             interpolator_choice='rbf',
+#                             data_for_spheres='raw',
+#                             rbf_function='multiquadric',
+#                             axes_ticks_format='%.0f',
+#                             axes_font_factor=1.3,
+#                             contours=[0.1, 0.3, 0.4, 2],
+#                             contour_opacity=0.001,
+#                             transparent=True)
 
 # df_results.loc[df_results['yield#SN1Br01s1'] < 0, 'yield#SN1Br01s1'] = 0
 # df_results.loc[df_results['yield#SN1Br01s1'] > 1, 'yield#SN1Br01s1'] = 1
