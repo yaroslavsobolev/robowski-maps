@@ -1,17 +1,14 @@
 from robowski.settings import *
-
 import os
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
 import pandas as pd
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 
 # what_to_plot = 'model'
 what_to_plot = 'data'
-
-import robowski.misc_scripts.organize_run_results as organize_run_results
-import robowski.visualize_results.animated_viewer_static as avs
-data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 experiment_name = 'multicomp-reactions/2023-06-19-run01/'
 if what_to_plot == 'model':
