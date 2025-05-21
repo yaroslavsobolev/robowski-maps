@@ -1,20 +1,29 @@
-from robowski.settings import *
+'''
+This script is used to visualize the results of a Hantzsch reaction based on the spectral unmixing of UV spectra.
+These concentration values are extremely unreliable: too many components in the unmixing model make it unstable,
+causing large uncertainties in the concentration values. Therefore, these plots of concentrations were never presented
+in the accompanying research article. You can plot it out of curiosity, but don't expect it to be useful for anything.
+The maps of yield plotted in Figure 5 of the article are based on the HPLC measurements, not on unmixing of UV-Vis
+spectra.
+'''
 
+from robowski.settings import *
 import os
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
-
 import robowski.misc_scripts.organize_run_results as organize_run_results
 import robowski.visualize_results.animated_viewer_static as avs
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
+
+
+############ CHOOSE THE EXPERIMENTAL DATA TO PLOT ############
 
 # list_of_runs = tuple([
 #     '2023-11-08-run01',
 #     '2023-11-13-run01',
 #     '2023-11-14-run01',
 #     '2023-11-21-run01'])
-column_to_plot = 'yield'
 
 # 80 degrees
 #
@@ -50,9 +59,11 @@ for substance in substances:
     df_results[substance] = df_results[substance].round(6).astype(np.float64)
 
 
-# find top 2 percentile of the 'rmse' column
-rmse_thresh = 1000 #df_results['rmse'].quantile(0.95)
+# Filtering out the possible outliers. Find top 2 percentile of the 'rmse' column
+# rmse_thresh = df_results['rmse'].quantile(0.95)
 # df_results = df_results[df_results['rmse'] < rmse_thresh]
+
+############ CHOOSE THE VALUE TO PLOT ON THE 3D MAP. UNCOMMENT THE ONE YOU WANT TO PLOT ####
 
 # target_substance = 'HRP01'
 # column_to_plot = 'yield#HRP01'
@@ -80,10 +91,13 @@ rmse_thresh = 1000 #df_results['rmse'].quantile(0.95)
 
 
 # target_substance = 'dm40'
-column_to_plot = 'yield#HRP01'
+# column_to_plot = 'yield#HRP01'
 column_to_plot = 'yield#bb017'
 
 substrates = ['ethyl_acetoacetate',  'methoxybenzaldehyde', 'ammonium_acetate']
+
+#### Calculate yields for each product. Uncomment as needed. ####
+
 # product_name = 'bb021'
 # for index, row in df_results.iterrows():
 #     product_concentration = df_results.loc[index, f'pc#{product_name}']
@@ -201,11 +215,6 @@ for index, row in df_results.iterrows():
     #     for substrate_name in substrates if substrate_name != 'ammonium_acetate']
     # df_results.loc[index, f'yield#{product_name}'] = np.max(candidate_yields)
 
-# plotting
-
-# df_results = df_results[df_results[column_to_plot] <= 0.009]
-
-print(len(df_results))
 
 # convert from mol/L to mM
 for substrate in substances:
