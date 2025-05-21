@@ -8,6 +8,11 @@ are given in the column starting with `pc#` followed by the substance identifier
 Volumes of stock solution pipetted into the reaction mixture prior to the reaction are given in the column starting with
 `vol#` followed by the substance identifier: for example, `vol#Acetonitrile`
 
+In the case of Hantzsch reaction, the concentrations of components as measured by HPLC after the reaction are named like
+`19d_c_HPLC_[M]`, where `19d` is the substance code (same as in the research article, consult Figure 5 there),
+`c_HPLC_[M]` means concentration by HPLC in mol/L. The columns containing the yields are named similarly, but with `_y_`
+instead of `_c_`. For example: `19d_y_HPLC_[%]`.
+
 ## E1 reaction
 
 The file `E1/raw_yields.csv` contains the raw yields of the E1 reaction (scheme in the Figure 2a of the research paper).
@@ -36,7 +41,7 @@ in the Supplementary Materials Section 5.3.
 
 The files `Hantzsch/Hantzsch_26deg_results_HPLC.csv` and `Hantzsch/Hantzsch_80deg_results_HPLC.csv` contain
 the Hantzsch reaction yield data for 26 and 80 degrees Celcius, respectively. 
-Hantzsch reaction scheme is shown Figure 6 in the research article.
+Hantzsch reaction scheme is shown Figure 5 in the research article.
 
 The columns containing concentrations of components as measured by HPLC after the reaction are named
 like `19d_c_HPLC_[M]`, where `19d` is the substance code (same as in the research article, consult Figure 6 there),
@@ -45,24 +50,27 @@ like `19d_c_HPLC_[M]`, where `19d` is the substance code (same as in the researc
 The columns containing the yields are named similarly, but with `_y_` instead
 of `_c_`. For example: `19d_y_HPLC_[%]`.
 
-# Preprocessing the datasets for the interactive viewer (YipMan)
+# Preprocessing the datasets for the Hyperspace Viewer
 
 ## 3D datasets
 
-The preprocessing (converting the 3D data to the format suitable for YipMan) is done by
-the `convert_dataset_to_3dviewer_yipman_format.py` script. The commands we used to do this preprocessing were
+The preprocessing (converting the 3D data to the format suitable for HyperspaceViewer) is done by
+the `convert_dataset_to_3dviewer_hyvu_format.py` script. The commands we used to do this preprocessing were
 executed in this folder (`summary_of_reaction_yield_data`) and are:
 
 ```bash
-python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_yipman.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield' --Xscale=1000 --Yscale=1000 --Zscale=1 --Xrename='[SN10H01](mM)' --Yrename='[HBr](mM)'
-python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/resampled_SN1_yield.csv --output_csv=SN1/resampled_SN1_yield_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='Yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
-python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/resampled_SN1_yield_15d.csv --output_csv=SN1/resampled_SN1_yield_15d_yipman.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='yield of 15d' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_hyvu.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield' --Xscale=1000 --Yscale=1000 --Zscale=1 --Xrename='[SN10H01](mM)' --Yrename='[HBr](mM)'
+python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/resampled_SN1_yield.csv --output_csv=SN1/resampled_SN1_yield_hyvu.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='Yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/resampled_SN1_yield_15d.csv --output_csv=SN1/resampled_SN1_yield_15d_hyvu.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='yield of 15d' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
+
+python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1_simple/raw_yields.csv --output_csv=SN1_simple/simpleSN1_raw_yields_hyvu.csv --X='c#SN1OH03' --Y='temperature' --Z='c#HBr' --V='yield' --Xscale=1000 --Yscale=1 --Zscale=1000 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
+
 ```
 
 ## 4D datasets
 
-The Ugi reaction yields were converted to the format suitable for YipMan using the `convert4d.py` script:
+The Ugi reaction yields were converted to the format suitable for HyperspaceViewer using the `convert4d.py` script:
 
 ```bash
-python convert_4d_dataset_to_yipman_format.py --input_csv=Ugi/postprocessed_yields.csv --output_name=Ugi/ugi_postprocessed_yields_yipman/ugi_yipman --prefix_of_relative_dir='../CSV/ugi_postprocessed_yields_yipman/' --X='am001' --Y='ald001' --Z='ic001' --T='ptsa' --V='yield' --Xrename='[amine](mM)' --Yrename='[aldehyde](mM)' --Zrename='[isocyanide](mM)' --Xscale=1000 --Yscale=1000 --Zscale=1000 --Tlabel_prefix='[pTSA]=' --Tlabel_suffix=' M'
+python convert_4d_dataset_to_hyvu_format.py --input_csv=Ugi/postprocessed_yields.csv --output_name=Ugi/ugi_postprocessed_yields_hyvu/ugi_hyvu --prefix_of_relative_dir='../CSV/ugi_postprocessed_yields_hyvu/' --X='am001' --Y='ald001' --Z='ic001' --T='ptsa' --V='yield' --Xrename='[amine](mM)' --Yrename='[aldehyde](mM)' --Zrename='[isocyanide](mM)' --Xscale=1000 --Yscale=1000 --Zscale=1000 --Tlabel_prefix='[pTSA]=' --Tlabel_suffix=' M'
 ```

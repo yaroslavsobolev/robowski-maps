@@ -3,7 +3,7 @@ import argparse
 
 def main():
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Convert 4D dataset into the format of interactive 3D viewer (YipMan).")
+    parser = argparse.ArgumentParser(description="Convert 4D dataset into the format of interactive 3D viewer (HyperspaceViewer).")
     parser.add_argument("--input_csv", required=True, help="Path to the input CSV file.")
     parser.add_argument("--output_name", required=True, help="Path to the output CSV file.")
     parser.add_argument("--prefix_of_relative_dir", required=True, help="Path to the output CSV file.")

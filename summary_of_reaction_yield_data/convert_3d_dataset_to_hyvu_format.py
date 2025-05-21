@@ -5,7 +5,7 @@
 # to the table and filled with 'C:\' string in all rows.
 #
 # Example command:
-# python convert_3d_dataset_to_yipman_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_yipman.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield'
+# python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/raw_yields.csv --output_csv=SN1/SN1_raw_yields_hyvu.csv --X='c#SN1OH01' --Y='c#HBr' --Z='Temperature' --V='yield'
 #
 # Sequence of columns in the original .CSV:
 # reactions,DMF,SN1OH01,SN1OH01_dil_x_100,HBr,HBr_dil_x_10,HBr_dil_x_10000,vial_id,reaction_plate_id,diluted_plate_id,craic_folder,is_outlier,craic_folder_undil,c#SN1OH01,c#HBr,Temperature,pc#SN1OH01,pc#SN1Br01s1,pc#carbocat,yield,yield#SN1Br01,yield#SN1Br01s1,run_name
@@ -18,7 +18,7 @@ import argparse
 
 def main():
     # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Reorder columns in a CSV file for compliance with the format of interactive 3D viewer (YipMan).")
+    parser = argparse.ArgumentParser(description="Reorder columns in a CSV file for compliance with the format of interactive 3D viewer (HyperspaceViewer).")
     parser.add_argument("--input_csv", required=True, help="Path to the input CSV file.")
     parser.add_argument("--output_csv", required=True, help="Path to the output CSV file.")
     parser.add_argument("--X", required=True, help="Column name for X coordinate.")
