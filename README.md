@@ -35,8 +35,8 @@ see the `requirements.txt` file in the `zeus-pipetter` folder and the `README.md
 
 For the rest of the repository, the installation procedure is as follows:
 
-### Installing Microsoft Visual C++ 14.0 or greater (required for [Mayavi](https://docs.enthought.com/mayavi/mayavi/))
-After downloading vs_buildtools.exe from [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/): 
+### Installing Microsoft Visual C++ 14.0 or greater (required only for [Mayavi](https://docs.enthought.com/mayavi/mayavi/))
+After downloading `vs_buildtools.exe` from [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/): 
 When installing, click "Modify" near the "Visual Studio Build Tools" and check the "Desktop development with C++" option
 in the opened window, then click "Modify" button in the lower right corner. 
 
