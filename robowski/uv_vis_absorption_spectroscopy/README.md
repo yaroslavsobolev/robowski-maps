@@ -4,21 +4,20 @@ This module provides tools for processing and analyzing UV-Vis absorption spectr
 
 ## Overview
 
-The main functionality is in the `process_wellplate_spectra.py` module, which provides:
+The main functionality is in the `process_wellplate_spectra.py` and `calibrator.py` modules, which provide:
 
-1. **Data Loading**: Load spectral data from various sources (CRAIC microspectrometer, NanoDrop spectrophotometer)
-2. **Spectral Processing**: Apply corrections, filtering, and masking to raw spectral data
-3. **Calibration**: Create reference spectra and calibration curves for known compounds
-4. **Spectral Unmixing**: Determine component concentrations in complex mixtures
-5. **Stoichiometric Analysis**: Calculate substrate requirements based on product concentrations
+1. **Data Loading**: Load spectral data from various sources (CRAIC microspectrometer, NanoDrop spectrophotometer).
+2. **Spectral Processing**: Apply corrections, filtering, and masking to raw spectral data.
+3. **Calibration**: Create reference spectra and calibration curves for known compounds. 
+4. **Spectral Unmixing**: Determine component concentrations in complex mixtures based on absorption spectra.
 
 ## Key Concepts
 
 ### Data Sources
 
 The system supports two main data sources:
-- **CRAIC Microspectrometer**: Provides absorption spectra from well plates
-- **NanoDrop Spectrophotometer**: Provides high-quality absorption spectra for individual samples
+- **CRAIC Microspectrometer**: Developed for microspectroscopy. High price (>$200k). Poor performance in UV.
+- **NanoDrop Spectrophotometer**: Developed (and commonly used) for UV-Vis spectroscopy of biological samples. Lower price (~$10k). High performance in UV. 
 
 ### Spectral Unmixing
 
