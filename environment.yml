@@ -1,4 +1,4 @@
-name: roboenv
+name: robowski
 channels:
   - viscid-hub
   - conda-forge
