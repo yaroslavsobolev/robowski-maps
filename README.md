@@ -147,7 +147,7 @@ Interactive viewer of 3D datasets is implemented in `visualize_results/animated_
 based on `mayavi` library. It allows the user to rotate the 3D plot, zoom in and out, and offers various
 options for visualizing the data.
 
-For interactive visualization of 4D datasets, see the scripts whose names starting with `animated-viewer-singlecube0...` in 
+For interactive visualization of 4D datasets, see the scripts whose names starting with `animated-viewer-singlecube...` in 
 the `visualize_results/examples` folder. Some of these scripts also perform fitting of kinetic models to the data
 prior to the visualization.
 
