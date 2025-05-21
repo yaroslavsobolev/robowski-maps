@@ -64,6 +64,8 @@ python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/resampled_SN1_yield.
 python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/resampled_SN1_yield_15d.csv --output_csv=SN1/resampled_SN1_yield_15d_hyvu.csv --X='Alcohol(mM)' --Y='HBr(mM)' --Z='Temperature(°C)' --V='yield of 15d' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='[HBr](mM)'
 
 python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1_simple/raw_yields.csv --output_csv=SN1_simple/simpleSN1_raw_yields_hyvu.csv --X='c#SN1OH03' --Y='temperature' --Z='c#HBr' --V='yield' --Xscale=1000 --Yscale=1 --Zscale=1000 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
+python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1_simple/simpleSN1_resampled_yields.csv --output_csv=SN1_simple/simpleSN1_resampled_yields_hyvu.csv --X='Alcohol(mM)' --Y='Temperature(°C)' --Z='HBr(mM)' --V='yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
+python convert_3d_dataset_to_hyvu_format.py --input_csv=E1/E1_resampled_yields.csv --output_csv=E1/E1_resampled_yields_hyvu.csv --X='Alcohol(mM)' --Y='Temperature(°C)' --Z='HBr(mM)' --V='yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
 
 ```
 
@@ -74,3 +76,4 @@ The Ugi reaction yields were converted to the format suitable for HyperspaceView
 ```bash
 python convert_4d_dataset_to_hyvu_format.py --input_csv=Ugi/postprocessed_yields.csv --output_name=Ugi/ugi_postprocessed_yields_hyvu/ugi_hyvu --prefix_of_relative_dir='../CSV/ugi_postprocessed_yields_hyvu/' --X='am001' --Y='ald001' --Z='ic001' --T='ptsa' --V='yield' --Xrename='[amine](mM)' --Yrename='[aldehyde](mM)' --Zrename='[isocyanide](mM)' --Xscale=1000 --Yscale=1000 --Zscale=1000 --Tlabel_prefix='[pTSA]=' --Tlabel_suffix=' M'
 ```
+
