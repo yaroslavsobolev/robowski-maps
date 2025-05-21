@@ -1,3 +1,17 @@
+'''
+This script is used to evaluate the precision of determining the concentrations in the
+Hantzsch reaction by comparing the results obtained from different methods:
+ 1. UV-VIS (by spectral unmixing)
+ 2. NMR (by standard method involving the integration of the peaks in the spectrum)
+
+The conclusion is that the UV-VIS method is unreliable for determining the concentrations of products in this
+reaction. The results for substances other than Hantzsch ester and product 19e (in the notation of the research article)
+are entirely hopeless. The results for Hantzsch ester and piperidone don't look so hopeless on this plot, but subsequent
+comparisons (UV-VIS vs. NMR) we performed at other conditions show that the concentrations by the UV-VIS method are
+not reliable at all for the Hantzsch reaction: too many components in the unmixing model make it unstable,
+causing large uncertainties in the concentration values.
+'''
+
 from robowski.settings import *
 import numpy as np
 import pandas as pd
