@@ -1,7 +1,7 @@
 from robowski.settings import *
 from matplotlib import pyplot as plt
 from robowski.misc_scripts.organize_run_results import *
-from robowski.uv_vis_absorption_spectroscopy.examples.Ugi_reaction.process_2023_06_19_run01 import process_run_by_shortname
+from robowski.uv_vis_absorption_spectroscopy.examples.Ugi_reaction.process_ugi_from_2023_06_19_run01_to_2023_06_28_run03 import process_run_by_shortname
 
 # this should be executed after experiments for this run have been completed
 
