@@ -215,7 +215,6 @@ def test_multispectrum_to_concentration_end2end(datadir):
                                                                               np.inf, np.inf, np.inf, np.inf],
                                                                 do_plot=False, cut_from=cut_from, cut_to=250,
                                                                 ignore_abs_threshold=False, ignore_pca_bkg=False,
-                                                                plot_calibrant_references=False,
                                                                 upper_limit_of_absorbance=0.95,
                                                                 obey_stoichiometric_inequalities=False)
 
@@ -417,7 +416,6 @@ def test_multispectrum_to_concentration_multiple_wells(datadir, setup_processor,
             cut_to=250,
             ignore_abs_threshold=False,
             ignore_pca_bkg=False,
-            plot_calibrant_references=False,
             upper_limit_of_absorbance=0.95,
             obey_stoichiometric_inequalities=False
         )
@@ -465,7 +463,6 @@ def test_multispectrum_to_concentration_with_report(datadir, setup_processor, re
             cut_to=250,
             ignore_abs_threshold=False,
             ignore_pca_bkg=False,
-            plot_calibrant_references=False,
             upper_limit_of_absorbance=0.95,
             obey_stoichiometric_inequalities=False,
             return_report=return_report

@@ -47,5 +47,4 @@ concentrations = sp.multispectrum_to_concentration(target_spectrum_inputs=[spect
                                                                  np.inf, np.inf, np.inf],
                                                    do_plot=True, cut_from=cut_from, cut_to=250,
                                                    ignore_abs_threshold=False, ignore_pca_bkg=False,
-                                                   plot_calibrant_references=True,
                                                    upper_limit_of_absorbance=0.95)

@@ -1222,12 +1222,12 @@ class SpectraProcessor:
         #     data_folder + experiment_name + f'results/timepoint{timepoint_id:03d}-reaction_results.csv', index=False)
         return np.array(concentrations)
 
-
     def multispectrum_concentrations_for_one_plate(self, experiment_folder, plate_folder_1,
                                                    plate_folder_2, dilution_factors,
-                                      calibration_folder, calibrant_shortnames, calibrant_upper_bounds,
-                                     background_model_folder, do_plot=False, return_all_substances=False,
-                                     cut_from = 200, cut_to=False, ignore_abs_threshold=False, ignore_pca_bkg=False,
+                                                   calibration_folder, calibrant_shortnames, calibrant_upper_bounds,
+                                                   background_model_folder, do_plot=False, return_all_substances=False,
+                                                   cut_from=200, cut_to=False, ignore_abs_threshold=False,
+                                                   ignore_pca_bkg=False,
                                                    return_report=False, upper_limit_of_absorbance=1000,
                                                    list_of_starting_concentration_dicts=None,
                                                    obey_stoichiometric_inequalities=True):
@@ -1537,12 +1537,33 @@ class SpectraProcessor:
         return wavelength_indices[mask], target_spectrum[mask]
 
 
+    def plot_calibrant_references(self,calibration_folder, calibrant_shortnames, calibrant_labels_on_the_plot):
+        calibrants = self.load_dictionary_of_calibrants_from_files(calibrant_shortnames, calibration_folder,
+                                                                   use_linear_calibration=True)
+        for i, calibrant in enumerate(calibrants):
+            if i < 10:
+                linestyle = '-'
+            else:
+                linestyle = '--'
+            xs = 220 + np.linspace(0, 400, 400)
+            # xs = 220 + np.linspace(150, 400, 400)
+            plt.plot(xs, calibrant['reference_interpolator'](xs - 220),
+                     label=calibrant_labels_on_the_plot[calibrant_shortnames[i]],
+                     linestyle=linestyle)
+        plt.legend()
+        plt.xlabel('Wavelength, nm')
+        plt.ylabel('Absorbance')
+        plt.xlim(220, 500)
+        plt.ylim(0, 1.4)
+        plt.show()
+
+
     def multispectrum_to_concentration(self, target_spectrum_inputs, calibration_folder, calibrant_shortnames,
                                        background_model_folder, dilution_factors,
-                                       upper_limit_of_absorbance=1000, fig_filename='temp', do_plot=False,  #lower_limit_of_absorbance=0.02
+                                       upper_limit_of_absorbance=1000, fig_filename='temp', do_plot=False,
                                        upper_bounds=[np.inf, np.inf], use_line=False, cut_from = 200, ignore_abs_threshold=False,
                                        cut_to = False, ignore_pca_bkg=False, return_errors=False,
-                                       use_linear_calibration=True, plot_calibrant_references=False,
+                                       use_linear_calibration=True,
                                        return_report=False, sigma_of_absorbance=0.01,
                                        starting_concentration_dict=None, second_dilution_factor_bound_range=0.1,
                                        maximum_wavelength_offset=1.5,
@@ -1614,22 +1635,6 @@ class SpectraProcessor:
         calibrants = self.load_dictionary_of_calibrants_from_files(calibrant_shortnames, calibration_folder,
                                                                    use_linear_calibration)
 
-        if plot_calibrant_references:
-            for i, calibrant in enumerate(calibrants):
-                if i<10:
-                    linestyle='-'
-                else:
-                    linestyle='--'
-                xs = 220+np.linspace(0, 400, 400)
-                # xs = 220 + np.linspace(150, 400, 400)
-                plt.plot(xs, calibrant['reference_interpolator'](xs-220),
-                         label=calibrant_shortnames[i], linestyle=linestyle)
-            plt.legend()
-            plt.xlabel('Wavelength, nm')
-            plt.ylabel('Absorbance')
-            plt.xlim(220, 500)
-            plt.ylim(0, 1.4)
-            plt.show()
         print(f'N calibrants: {len(calibrants)}')
 
         if ignore_pca_bkg:
@@ -1679,7 +1684,7 @@ class SpectraProcessor:
         background_interpolators = self.load_background_interpolators(background_model_folder, ignore_pca_bkg,
                                                                       wavelength_indices, number_of_pca_components=1)
 
-        def func_prelim(*args):
+        def preliminary_model_without_stoichiometric_inequalities(*args):
             xs = args[0]
             separate_spectra = np.split(xs, indices_for_splitting)
             calibrants_concentrations = args[1:number_of_calibrants + 1]
@@ -1709,97 +1714,39 @@ class SpectraProcessor:
                 separate_predicted_spectra.append(predicted_spectrum)
             comboY = np.concatenate(separate_predicted_spectra)
 
-            # if stoich_callable is not None:
-            #     stoich_penalization_of_cost = stoich_callable(calibrants_concentrations)
-            #     comboY[-2] += stoich_penalization_of_cost * 1e-2
-            #     comboY[-1] -= stoich_penalization_of_cost * 1e-2
-
             return comboY
 
-        def func(*args):
+        def model_with_stoichiometric_inequalities(*args):
             calibrants_concentrations = args[1:number_of_calibrants + 1]
-            comboY = func_prelim(*args)
+            comboY = preliminary_model_without_stoichiometric_inequalities(*args)
             if starting_concentration_dict is not None:
                 stoich_penalization_of_cost = self.stoich_cost(calibrants_concentrations, calibrant_shortnames, starting_concentration_dict)
                 comboY[-2] += stoich_penalization_of_cost * combo_sigmas[-2] / self.uncertainty_of_stoichiometric_overspending_ratio
                 comboY[-1] -= stoich_penalization_of_cost * combo_sigmas[-1] / self.uncertainty_of_stoichiometric_overspending_ratio
-
             return comboY
 
-        p0 = []
-        lower_bounds = []
-        upper_bounds = []
-        x_scale = []
+        bounds, p0, x_scale = self.prepare_initial_guess_and_bounds_and_xscale(calibrant_shortnames, dilution_factors,
+                                                                               ignore_pca_bkg,
+                                                                               maximum_wavelength_offset,
+                                                                               number_of_calibrants, number_of_spectra,
+                                                                               obey_stoichiometric_inequalities,
+                                                                               second_dilution_factor_bound_range,
+                                                                               starting_concentration_dict)
 
-        # it stoichiometry is obeyed, limit the upper bound of calibrant concentration to two times the possible
-        # concentration if all the starting material is used to make this calibrant only
-        if obey_stoichiometric_inequalities:
-            calibrant_concentration_upper_bounds = []
-            for i, substance_for_fitting in enumerate(calibrant_shortnames):
-                limits_here = []
-                for s in self.substrates:
-                    if self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0] == 0:
-                        continue
-                    limit_by_this_substrate = starting_concentration_dict[s] / self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0]
-                    limits_here.append(limit_by_this_substrate)
-                calibrant_concentration_upper_bounds.append(min(limits_here))
-            print(f'Limits: {calibrant_concentration_upper_bounds}')
-
-
-        for i in range(number_of_calibrants):
-            # if calibrant_shortnames[i] == 'bb017':
-            #     p0.append(0.0068)
-            #     lower_bounds.append(0.0068)
-            #     upper_bounds.append(1)
-            # else:
-            p0.append(1e-7)
-            x_scale.append(1e-3)
-            # if calibrant_shortnames[i] == 'dm37':
-            #     lower_bounds.append(-1*np.inf)
-            # else:
-            lower_bounds.append(0)
-            if obey_stoichiometric_inequalities:
-                upper_bounds.append(max([2e-7, 2 * calibrant_concentration_upper_bounds[i]]))
-            else:
-                upper_bounds.append(np.inf)
-
-        for i in range(number_of_spectra - 1):
-            p0.append(dilution_factors[i+1])
-            x_scale.append(dilution_factors[i+1])
-            lower_bounds.append(dilution_factors[i+1]*(1-second_dilution_factor_bound_range))
-            upper_bounds.append(dilution_factors[i+1]*(1+second_dilution_factor_bound_range))
-
-        for i in range(number_of_spectra): # these are offsets
-            p0.append(0)
-            x_scale.append(0.01)
-            lower_bounds.append(-np.inf)
-            upper_bounds.append(np.inf)
-
-        if ignore_pca_bkg:
-            max_bkg_pca_weight = 1e-12
-        else:
-            max_bkg_pca_weight = 0.5
-
-        for i in range(number_of_spectra): # these are weights for PCA componetns of the background
-            p0.append(0)
-            x_scale.append(max_bkg_pca_weight)
-            lower_bounds.append(-1*max_bkg_pca_weight)
-            upper_bounds.append(max_bkg_pca_weight)
-
-        for i in range(number_of_spectra): # these are wavelength offsets (shifts) of individual spectra
-            p0.append(0)
-            x_scale.append(1)
-            lower_bounds.append(-1*maximum_wavelength_offset)
-            upper_bounds.append(maximum_wavelength_offset)
-
-        bounds = (lower_bounds, upper_bounds)
-        popt, pcov = curve_fit(func_prelim, comboX, comboY, method='trf',
+        popt, pcov = curve_fit(preliminary_model_without_stoichiometric_inequalities, comboX, comboY, method='trf',
                                p0=p0, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                maxfev=100000, ftol=1e-15, xtol=1e-15, gtol=1e-15, verbose=1, x_scale=x_scale)
+
+        # if stoichiometric inequalities must be obeyed, try to fit the model with them,
+        # using the previous fit as a starting point.
+        # Because the scipy.curve_fit is implemented in a way that exceeding the maximum number of function evaluations
+        # throws an error, we try to fit the model with relaxed tolerances and smaller number of function evaluations
+        # first. And only go to larger number of function evaluations if it fails. On average, this saves computational
+        # resources,and increases precision.
         if obey_stoichiometric_inequalities:
             print('prelim done')
             try:
-                popt, pcov = curve_fit(func, comboX, comboY,
+                popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY,
                                        p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                        maxfev=100, ftol=1e-15, xtol=1e-15, gtol=1e-15, verbose=1,
                                        x_scale=x_scale)
@@ -1808,7 +1755,7 @@ class SpectraProcessor:
                 print(f'RuntimeError, hopefully max_nfev')
                 print('Trying again with 1e-12 tolerances')
                 try:
-                    popt, pcov = curve_fit(func, comboX, comboY, method='trf',
+                    popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY, method='trf',
                                            p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                            maxfev=100, ftol=1e-12, xtol=1e-12, gtol=1e-12, verbose=1,
                                            x_scale=x_scale)
@@ -1816,14 +1763,14 @@ class SpectraProcessor:
                     print(f'RuntimeError, hopefully max_nfev')
                     print('Trying again with 1e-10 tolerances')
                     try:
-                        popt, pcov = curve_fit(func, comboX, comboY, method='trf',
+                        popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY, method='trf',
                                                p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                                maxfev=100, ftol=1e-10, xtol=1e-10, gtol=1e-10, verbose=1,
                                                x_scale=x_scale)
                     except RuntimeError:
                         print(f'RuntimeError, hopefully max_nfev')
                         print('Trying again with 1e-6 tolerances')
-                        popt, pcov = curve_fit(func, comboX, comboY, method='trf',
+                        popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY, method='trf',
                                                p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                                maxfev=100, ftol=1e-6, xtol=1e-6, gtol=1e-6, verbose=1,
                                                x_scale=x_scale)
@@ -1849,7 +1796,7 @@ class SpectraProcessor:
         fitted_offsets = popt[number_of_calibrants + number_of_spectra - 1: number_of_calibrants + number_of_spectra - 1 + number_of_spectra]
         fitted_wavelength_offsets = popt[number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra:
                                       number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra + number_of_spectra]
-        print(f'Fitted wavelength offsets: {fitted_wavelength_offsets}')
+        logging.debug(f'Fitted wavelength offsets: {fitted_wavelength_offsets}')
         logging.debug('Fitted concentrations:', concentrations_here)
         logging.debug('Fitted dilution factors:', fitted_dilution_factors)
         logging.debug('Fitted offsets:', fitted_offsets)
@@ -1863,10 +1810,8 @@ class SpectraProcessor:
             concentration_errors = [upper_confidence_limit[i] - concentrations_here[i] for i in range(len(concentrations_here))]
             return concentrations_here, concentration_errors
 
-        # plot the fit vs the data
-
         # make number of subplots equal to number of spectra
-        predicted_comboY = func_prelim(comboX, *popt)
+        predicted_comboY = preliminary_model_without_stoichiometric_inequalities(comboX, *popt)
 
         fit_report = dict()
         for calibrant_id, calibrant_shortname in enumerate(calibrant_shortnames):
@@ -1874,20 +1819,15 @@ class SpectraProcessor:
 
         fit_report['rmse'] = np.sqrt(np.mean((predicted_comboY - comboY) ** 2))
         fit_report['maxresidual'] = np.max(np.abs(predicted_comboY - comboY))
+        fit_report['fitted_dilution_factor_2'] = fitted_dilution_factors[0]
+
+        weights_of_background_components = popt[number_of_calibrants + number_of_spectra - 1 + number_of_spectra:
+                                                number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra]
+        print(f'weights_of_background_components: {weights_of_background_components}')
 
         separate_predicted_spectra = np.split(predicted_comboY, indices_for_splitting)
         separate_sigmas = np.split(combo_sigmas, indices_for_splitting)
-        fig1, axs = plt.subplots(len(target_spectrum_inputs), 1, figsize=(10, 10), sharex=True)
         for spectrum_index in range(number_of_spectra):
-            axs[spectrum_index].plot(220+target_spectra_wavelength_indices_masked[spectrum_index],
-                                     target_spectra_amplitudes_masked[spectrum_index], color='red',
-                                     label='Data', alpha=0.7)
-            axs[spectrum_index].fill_between(x=220 + target_spectra_wavelength_indices_masked[spectrum_index],
-                                     y1=target_spectra_amplitudes_masked[spectrum_index] - separate_sigmas[spectrum_index],
-                                     y2=target_spectra_amplitudes_masked[spectrum_index] + separate_sigmas[spectrum_index],
-                                     color='gold', alpha=0.15)
-            axs[spectrum_index].plot(220+target_spectra_wavelength_indices_masked[spectrum_index],
-                                     separate_predicted_spectra[spectrum_index], color='black', label='Fit', alpha=0.7)
             residuals_here = separate_predicted_spectra[spectrum_index] - target_spectra_amplitudes_masked[spectrum_index]
             lag = len(residuals_here) // 5
             lb_df = sm.stats.acorr_ljungbox(residuals_here, lags=[lag])
@@ -1897,42 +1837,127 @@ class SpectraProcessor:
                 # take values from first row of dataframe lb_pvalue
                 fit_report[f'LB_pvalue_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_pvalue']
                 fit_report[f'LB_stat_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_stat']
-            # axs[spectrum_index].legend()
 
+        self.plot_result_of_multispectrum_unmixing(background_interpolators, calibrant_shortnames, comboX, do_plot,
+                                                   fig_filename, indices_for_splitting,
+                                                   model_with_stoichiometric_inequalities, number_of_calibrants,
+                                                   number_of_spectra, os_string, popt, separate_predicted_spectra,
+                                                   separate_sigmas, target_spectra_amplitudes_masked,
+                                                   target_spectra_wavelength_indices_masked, target_spectrum_inputs,
+                                                   weights_of_background_components)
+
+        print(f'Time spent for this unmixing: {time.time() - t0} seconds.')
+
+        if return_report:
+            return concentrations_here, fit_report
+        else:
+            return concentrations_here
+
+    def prepare_initial_guess_and_bounds_and_xscale(self, calibrant_shortnames, dilution_factors, ignore_pca_bkg,
+                                                    maximum_wavelength_offset, number_of_calibrants, number_of_spectra,
+                                                    obey_stoichiometric_inequalities,
+                                                    second_dilution_factor_bound_range, starting_concentration_dict):
+        p0 = []
+        lower_bounds = []
+        upper_bounds = []
+        x_scale = []
+        # it stoichiometry is obeyed, limit the upper bound of calibrant concentration to two times the possible
+        # concentration if all the starting material is used to make this calibrant only
+        if obey_stoichiometric_inequalities:
+            calibrant_concentration_upper_bounds = []
+            for i, substance_for_fitting in enumerate(calibrant_shortnames):
+                limits_here = []
+                for s in self.substrates:
+                    if self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0] == 0:
+                        continue
+                    limit_by_this_substrate = starting_concentration_dict[s] / self.df_stoich.loc[
+                        self.df_stoich['Names'] == substance_for_fitting, s].values[0]
+                    limits_here.append(limit_by_this_substrate)
+                calibrant_concentration_upper_bounds.append(min(limits_here))
+            print(f'Limits: {calibrant_concentration_upper_bounds}')
+        for i in range(number_of_calibrants):
+            p0.append(1e-7)
+            x_scale.append(1e-3)
+            lower_bounds.append(0)
+            if obey_stoichiometric_inequalities:
+                upper_bounds.append(max([2e-7, 2 * calibrant_concentration_upper_bounds[i]]))
+            else:
+                upper_bounds.append(np.inf)
+        for i in range(number_of_spectra - 1):
+            p0.append(dilution_factors[i + 1])
+            x_scale.append(dilution_factors[i + 1])
+            lower_bounds.append(dilution_factors[i + 1] * (1 - second_dilution_factor_bound_range))
+            upper_bounds.append(dilution_factors[i + 1] * (1 + second_dilution_factor_bound_range))
+        for i in range(number_of_spectra):  # these are offsets
+            p0.append(0)
+            x_scale.append(0.01)
+            lower_bounds.append(-np.inf)
+            upper_bounds.append(np.inf)
+        if ignore_pca_bkg:
+            max_bkg_pca_weight = 1e-12
+        else:
+            max_bkg_pca_weight = 0.5
+        for i in range(number_of_spectra):  # these are weights for PCA componetns of the background
+            p0.append(0)
+            x_scale.append(max_bkg_pca_weight)
+            lower_bounds.append(-1 * max_bkg_pca_weight)
+            upper_bounds.append(max_bkg_pca_weight)
+        for i in range(number_of_spectra):  # these are wavelength offsets (shifts) of individual spectra
+            p0.append(0)
+            x_scale.append(1)
+            lower_bounds.append(-1 * maximum_wavelength_offset)
+            upper_bounds.append(maximum_wavelength_offset)
+        bounds = (lower_bounds, upper_bounds)
+        return bounds, p0, x_scale
+
+    def plot_result_of_multispectrum_unmixing(self, background_interpolators, calibrant_shortnames, comboX, do_plot,
+                                              fig_filename, indices_for_splitting,
+                                              model_with_stoichiometric_inequalities, number_of_calibrants,
+                                              number_of_spectra, os_string, popt, separate_predicted_spectra,
+                                              separate_sigmas, target_spectra_amplitudes_masked,
+                                              target_spectra_wavelength_indices_masked, target_spectrum_inputs,
+                                              weights_of_background_components):
+        fig1, axs = plt.subplots(len(target_spectrum_inputs), 1, figsize=(10, 10), sharex=True)
+        for spectrum_index in range(number_of_spectra):
+            axs[spectrum_index].plot(220 + target_spectra_wavelength_indices_masked[spectrum_index],
+                                     target_spectra_amplitudes_masked[spectrum_index], color='red',
+                                     label='Data', alpha=0.7)
+            axs[spectrum_index].fill_between(x=220 + target_spectra_wavelength_indices_masked[spectrum_index],
+                                             y1=target_spectra_amplitudes_masked[spectrum_index] - separate_sigmas[
+                                                 spectrum_index],
+                                             y2=target_spectra_amplitudes_masked[spectrum_index] + separate_sigmas[
+                                                 spectrum_index],
+                                             color='gold', alpha=0.15)
+            axs[spectrum_index].plot(220 + target_spectra_wavelength_indices_masked[spectrum_index],
+                                     separate_predicted_spectra[spectrum_index], color='black', label='Fit', alpha=0.7)
         for calibrant_index in range(len(calibrant_shortnames)):
             if calibrant_index <= 9:
                 linestyle_here = '-'  # solid line
             else:
-                linestyle_here = '--' # dashed line
+                linestyle_here = '--'  # dashed line
             cpopt = popt.copy()
             for i in range(number_of_calibrants):
                 if i != calibrant_index:
                     cpopt[i] = 0
-            predicted_comboY = func(comboX, *cpopt)
+            predicted_comboY = model_with_stoichiometric_inequalities(comboX, *cpopt)
             separate_predicted_spectra = np.split(predicted_comboY, indices_for_splitting)
             for spectrum_index in range(number_of_spectra):
-                axs[spectrum_index].plot(220+target_spectra_wavelength_indices_masked[spectrum_index], separate_predicted_spectra[spectrum_index],
+                axs[spectrum_index].plot(220 + target_spectra_wavelength_indices_masked[spectrum_index],
+                                         separate_predicted_spectra[spectrum_index],
                                          label=calibrant_shortnames[calibrant_index], linestyle=linestyle_here)
-
-        weights_of_background_components = popt[number_of_calibrants + number_of_spectra - 1 + number_of_spectra:
-                                                number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra]
-        print(f'weights_of_background_components: {weights_of_background_components}')
         for spectrum_index in range(number_of_spectra):
             # plot background
-            axs[spectrum_index].plot(220+target_spectra_wavelength_indices_masked[spectrum_index],
-                                     background_interpolators[0](target_spectra_wavelength_indices_masked[spectrum_index]) * weights_of_background_components[spectrum_index],
+            axs[spectrum_index].plot(220 + target_spectra_wavelength_indices_masked[spectrum_index],
+                                     background_interpolators[0](
+                                         target_spectra_wavelength_indices_masked[spectrum_index]) *
+                                     weights_of_background_components[spectrum_index],
                                      label='Bkg. PC1', linestyle=':')
         # for spectrum_index in range(number_of_spectra):
         #     axs[spectrum_index].legend()
         axs[0].legend()
-
         plt.xlabel('Wavelength, nm')
         plt.ylabel('Absorbance')
-
         axs[0].set_title(os_string)
-
-        fit_report['fitted_dilution_factor_2'] = fitted_dilution_factors[0]
-
         # plot covariance matrix
         # # plt.legend()
         # plt.show()
@@ -1947,21 +1972,13 @@ class SpectraProcessor:
         # plt.colorbar(orientation='vertical', fraction=0.046)
         # plt.tight_layout()
         # plt.show()
-
         fig1.savefig(f"{fig_filename}.png")
-
-        print(f'Time spent for this unmixing: {time.time() - t0} seconds.')
         if do_plot:
             plt.show()
         else:
             plt.close(fig1)
             plt.close('all')
             plt.clf()
-
-        if return_report:
-            return concentrations_here, fit_report
-        else:
-            return concentrations_here
 
     def load_background_interpolators(self, background_model_folder, ignore_pca_bkg,
                                       wavelength_indices, number_of_pca_components=1):
@@ -2126,8 +2143,6 @@ def plot_differential_absorbances_for_plate(craic_exp_name,
     plt.title(f'{craic_exp_name}.\nRel. STD: {np.std(diff) / np.mean(diff)}')
     plt.show()
     return diff
-
-
 
 
 if __name__ == '__main__':
