@@ -27,14 +27,12 @@ experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Cla
 #     experiment_name=experiment_name,
 # )
 
-plate_folder = 'D:\Docs\Dropbox\robochem\data\craic_microspectrometer_measurements\absorbance\2023-06-23_10-16-05__plate0000049__multicomp_reactions_2023-06-22-run02'
-
 sp = process_wellplate_spectra.SpectraProcessor(
     folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
                                    '2022-12-01/interpolator-dataset/')
 sp.nanodrop_lower_cutoff_of_wavelengths = 220
 calibration_folder = data_folder + experiment_name + 'microspectrometer_data/calibration/'
-process_plate(sp, dilution_factor=500,
+df = process_plate(sp, dilution_factor=500,
               plate_folder=f'{data_folder}{experiment_name}2023-10-12_14-51-59_UV-Vis_crude.csv',
               well_ids=range(5),
               cut_from=5,
@@ -43,3 +41,11 @@ process_plate(sp, dilution_factor=500,
               calibration_folder=calibration_folder,
               experiment_name=experiment_name,
               do_plot=True)
+
+# save df as 'Claisen_WaiShing_results.pickle' in the folder 'robowski/uv_vis_absorption_spectroscopy/examples/versatility/Claisen_WaiShing/'
+# df.to_pickle(f'{repo_data_path}uv_vis_absorption_spectroscopy/examples/versatility/Claisen_WaiShing_results.pickle')
+
+# assert that the df and the one loaded from pickle are equal
+from pandas.testing import assert_frame_equal
+df_loaded = pd.read_pickle(f'{repo_data_path}uv_vis_absorption_spectroscopy/examples/versatility/Claisen_WaiShing_results.pickle')
+assert_frame_equal(df, df_loaded, check_exact=False, check_like=True)

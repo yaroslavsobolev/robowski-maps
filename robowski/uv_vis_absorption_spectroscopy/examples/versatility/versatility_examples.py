@@ -69,8 +69,10 @@ def construct_calibrant(
 
     np.save(calibration_folder + f'background//bkg_spectrum.npy', bkg_spectrum)
 
-    def reference_for_one_calibrant(calibrant_shortname, ref_concentration, min_concentration=0, max_concentration=1000,
-                                    do_plot=True):
+    for i, calibrant_shortname in enumerate(calibrant_shortnames):
+        ref_concentration = ref_concentrations[i]
+        max_concentration = max_concentrations[i]
+        min_concentration = 0
         process_wellplate_spectra.create_folder_unless_it_exists(calibration_folder + f'references/{calibrant_shortname}')
         one_calibrant_df = all_calibrants_df[all_calibrants_df['substance'] == calibrant_shortname]
 
@@ -168,10 +170,6 @@ def construct_calibrant(
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy',
                 concentrations)
-
-    for i, calibrant_shortname in enumerate(calibrant_shortnames):
-        reference_for_one_calibrant(calibrant_shortname, ref_concentration=ref_concentrations[i],
-                                    max_concentration=max_concentrations[i], do_plot=do_plot)
 
 
 def process_plate(sp, dilution_factor,
