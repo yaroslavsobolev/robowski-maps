@@ -1,5 +1,7 @@
 from robowski.settings import *
-from versatility_examples import *
+from versatility_examples import process_plate
+from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Beckmann_WaiShing/'
 
@@ -15,7 +17,10 @@ construct_calibrant(
     ref_concentrations=[0.0005],
     max_concentrations=[0.00025],
     experiment_name=experiment_name,
-    no_right_edge_subtraction=True
+    no_right_edge_subtraction=True,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 
@@ -30,6 +35,9 @@ construct_calibrant(
     max_concentrations=[1],
     experiment_name=experiment_name,
     no_right_edge_subtraction=True,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 construct_calibrant(
@@ -43,6 +51,9 @@ construct_calibrant(
     max_concentrations=[1],
     experiment_name=experiment_name,
     no_right_edge_subtraction=True,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 

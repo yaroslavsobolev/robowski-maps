@@ -6,6 +6,7 @@ from pandas.testing import assert_frame_equal
 import os
 import matplotlib.pyplot as plt
 import robowski.uv_vis_absorption_spectroscopy.examples.versatility.versatility_examples as versatility_examples
+import robowski.uv_vis_absorption_spectroscopy.calibrator as calibrator
 
 plt.ioff()  # Turn off interactive plotting for testing
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
@@ -38,7 +39,7 @@ def test_unmixing_for_claisen(datadir):
         data_folder = ''
         experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Claisen_WaiShing/'
 
-        versatility_examples.construct_calibrant(
+        calibrator.construct_calibrant(
             cut_from=5,
             lower_limit_of_absorbance=0.007,
             concentration_column_name='concentration',
@@ -48,9 +49,12 @@ def test_unmixing_for_claisen(datadir):
             ref_concentrations=[0.0002],
             max_concentrations=[0.0006],
             experiment_name=experiment_name,
+            upper_limit_of_absorbance=1e6,
+            artefact_generating_upper_limit_of_absorbance=1e6,
+            do_smoothing_at_low_absorbance=None
         )
 
-        versatility_examples.construct_calibrant(
+        calibrator.construct_calibrant(
             cut_from=5,
             lower_limit_of_absorbance=0.007,
             concentration_column_name='concentration',
@@ -60,6 +64,9 @@ def test_unmixing_for_claisen(datadir):
             ref_concentrations=[0.0002, 0.0003],
             max_concentrations=[0.001, 0.001],
             experiment_name=experiment_name,
+            upper_limit_of_absorbance=1e6,
+            artefact_generating_upper_limit_of_absorbance=1e6,
+            do_smoothing_at_low_absorbance=None
         )
 
         sp = process_wellplate_spectra.SpectraProcessor(

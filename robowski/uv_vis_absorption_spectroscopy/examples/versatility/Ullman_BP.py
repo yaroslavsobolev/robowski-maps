@@ -1,5 +1,7 @@
 from robowski.settings import *
-from versatility_examples import *
+from versatility_examples import process_plate
+from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Ullman_BP/'
 
@@ -14,7 +16,10 @@ construct_calibrant(
     calibrant_shortnames=['carbazole', '4-bromobenzaldehyde'],
     ref_concentrations=[0.0004, 0.0010],
     max_concentrations=[0.1, 0.1],
-    experiment_name=experiment_name
+    experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 
@@ -28,6 +33,9 @@ construct_calibrant(
     ref_concentrations=[0.0003],
     max_concentrations=[0.1],
     experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 sp = process_wellplate_spectra.SpectraProcessor(

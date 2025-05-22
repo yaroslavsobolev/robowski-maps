@@ -1,5 +1,7 @@
 from robowski.settings import *
-from versatility_examples import *
+from versatility_examples import process_plate
+from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Imine_RF/'
 
@@ -15,7 +17,10 @@ construct_calibrant(
     ref_concentrations=[0.0005],
     max_concentrations=[0.0011],
     experiment_name=experiment_name,
-    custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Imine_RF/microspectrometer_data/calibration/references/ald01/bkg_spectrum.npy'
+    custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Imine_RF/microspectrometer_data/calibration/references/ald01/bkg_spectrum.npy',
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 construct_calibrant(
@@ -28,6 +33,9 @@ construct_calibrant(
     ref_concentrations=[0.0002],
     max_concentrations=[0.01],
     experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 sp = process_wellplate_spectra.SpectraProcessor(

@@ -1,5 +1,7 @@
 from robowski.settings import *
-from versatility_examples import *
+from versatility_examples import process_plate
+from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Suzuki_JC/'
 calibration_source_filename = '2023-10-11_15-28-13_sub_and_prod_calib_curve_good'
@@ -17,6 +19,9 @@ construct_calibrant(
     ref_concentrations=ref_concentrations,
     max_concentrations=max_concentrations,
     experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 sp = process_wellplate_spectra.SpectraProcessor(

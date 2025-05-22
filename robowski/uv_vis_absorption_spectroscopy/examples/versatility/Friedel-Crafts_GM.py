@@ -1,21 +1,26 @@
 from robowski.settings import *
-from versatility_examples import *
+from versatility_examples import process_plate
+from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/'
 
 cut_from = 150
 
-# construct_calibrant(
-#     cut_from=cut_from,
-#     lower_limit_of_absorbance=0.007,
-#     concentration_column_name='concentration',
-#     do_plot=True,
-#     calibration_source_filename='2023-10-13_15-31-26_UV-Vis_ferrocene',
-#     calibrant_shortnames=['ferrocene'],
-#     ref_concentrations=[0.00118],
-#     max_concentrations=[0.1],
-#     experiment_name=experiment_name
-# )
+construct_calibrant(
+    cut_from=cut_from,
+    lower_limit_of_absorbance=0.007,
+    concentration_column_name='concentration',
+    do_plot=True,
+    calibration_source_filename='2023-10-13_15-31-26_UV-Vis_ferrocene',
+    calibrant_shortnames=['ferrocene'],
+    ref_concentrations=[0.00118],
+    max_concentrations=[0.1],
+    experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
+)
 
 construct_calibrant(
     cut_from=cut_from,
@@ -26,22 +31,28 @@ construct_calibrant(
     calibrant_shortnames=['ferrocene'],
     ref_concentrations=[0.03],
     max_concentrations=[0.1],
-    experiment_name=experiment_name
+    experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
-# construct_calibrant(
-#     cut_from=cut_from,
-#     lower_limit_of_absorbance=0.007,
-#     concentration_column_name='concentration',
-#     do_plot=False,
-#     calibration_source_filename='2023-10-18_18-46-41_UV-Vis_acetylferrocene_new',
-#     calibrant_shortnames=['acetylferrocene'],
-#     ref_concentrations=[0.02925],
-#     max_concentrations=[0.1],
-#     experiment_name=experiment_name,
-#     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
-#     no_right_edge_subtraction=True
-# )
+construct_calibrant(
+    cut_from=cut_from,
+    lower_limit_of_absorbance=0.007,
+    concentration_column_name='concentration',
+    do_plot=False,
+    calibration_source_filename='2023-10-18_18-46-41_UV-Vis_acetylferrocene_new',
+    calibrant_shortnames=['acetylferrocene'],
+    ref_concentrations=[0.02925],
+    max_concentrations=[0.1],
+    experiment_name=experiment_name,
+    custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
+    no_right_edge_subtraction=True,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
+)
 
 construct_calibrant(
     cut_from=cut_from,
@@ -54,7 +65,10 @@ construct_calibrant(
     max_concentrations=[0.1],
     experiment_name=experiment_name,
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
-    no_right_edge_subtraction=True
+    no_right_edge_subtraction=True,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 construct_calibrant(
@@ -67,7 +81,10 @@ construct_calibrant(
     ref_concentrations=[0.01],
     max_concentrations=[0.1],
     experiment_name=experiment_name,
-    custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy'
+    custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 

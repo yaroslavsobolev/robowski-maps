@@ -1,5 +1,6 @@
 from robowski.settings import *
-from versatility_examples import *
+from versatility_examples import process_plate
+from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Click_DM/'
 
@@ -15,7 +16,10 @@ construct_calibrant(
     calibrant_shortnames=['1-ethynyl-4-nitrobenzene', 'BnN3', 'triazole'],
     ref_concentrations=[0.0005, 0.0005, 0.0005],
     max_concentrations=[0.1, 0.1, 0.1],
-    experiment_name=experiment_name
+    experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 construct_calibrant(
@@ -27,7 +31,10 @@ construct_calibrant(
     calibrant_shortnames=['CuI'],
     ref_concentrations=[0.00025],
     max_concentrations=[0.1],
-    experiment_name=experiment_name
+    experiment_name=experiment_name,
+    upper_limit_of_absorbance=1e6,
+    artefact_generating_upper_limit_of_absorbance=1e6,
+    do_smoothing_at_low_absorbance=None
 )
 
 
