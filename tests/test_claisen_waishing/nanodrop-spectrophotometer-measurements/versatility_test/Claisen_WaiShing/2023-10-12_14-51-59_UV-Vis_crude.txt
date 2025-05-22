@@ -1,0 +1,6 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+0,crude,1,ethanol,0
+1,crude,1,ethanol,0
+2,crude,1,ethanol,0
+3,crude,1,ethanol,0
+4,crude,1,ethanol,0

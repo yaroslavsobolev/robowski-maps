@@ -1,0 +1,4 @@
+anisaldehyde 100 mM
+acetophenone 100 mM
+methoxychalcone ?
+dilution factor = 500
