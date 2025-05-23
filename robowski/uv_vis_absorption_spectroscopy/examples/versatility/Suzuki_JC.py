@@ -20,7 +20,7 @@ construct_calibrant(
     max_concentrations=max_concentrations,
     experiment_name=experiment_name,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 

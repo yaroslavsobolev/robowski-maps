@@ -19,7 +19,7 @@ construct_calibrant(
     experiment_name=experiment_name,
     no_right_edge_subtraction=True,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -37,7 +37,7 @@ construct_calibrant(
     no_right_edge_subtraction=True,
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Glaser_WaiShing/microspectrometer_data/calibration/references/phenylacetylene/bkg_spectrum.npy',
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -55,7 +55,7 @@ construct_calibrant(
     no_right_edge_subtraction=False,
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Glaser_WaiShing/microspectrometer_data/calibration/references/phenylacetylene/bkg_spectrum.npy',
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 

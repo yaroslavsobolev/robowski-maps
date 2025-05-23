@@ -19,7 +19,7 @@ construct_calibrant(
     experiment_name=experiment_name,
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Imine_RF/microspectrometer_data/calibration/references/ald01/bkg_spectrum.npy',
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -34,7 +34,7 @@ construct_calibrant(
     max_concentrations=[0.01],
     experiment_name=experiment_name,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 

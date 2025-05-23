@@ -1,3 +1,56 @@
+"""
+Spectral calibration utilities for UV-Vis absorption spectroscopy.
+
+This module provides functionality for creating calibration references used in spectral
+unmixing of UV-Vis absorption spectra from multi-component chemical mixtures. The main
+workflow involves processing known standard samples to establish the relationship between
+component concentrations and their spectra.
+
+Key Functions:
+    construct_calibrant: Main entry point for creating calibration data from standard samples
+    _process_single_calibrant: Core processing workflow for individual calibrants
+    _calculate_concentration_coefficients: Establishes concentration-to-coefficient relationships
+    _apply_reference_stitching: Improves reference spectra using high-concentration calibration samples
+    _apply_reference_smoothing: Applies noise reduction to reference spectra
+
+The calibration process typically involves:
+1. Loading spectral data from NanoDrop spectrophotometer measurements
+2. Background subtraction and spectral preprocessing
+3. Creating reference spectra from known standard concentrations
+4. Optional spectrum enhancement (stitching, smoothing, external reference integration)
+5. Fitting concentration-coefficient relationships for each calibrant
+6. Saving calibration data for use in spectral unmixing workflows
+
+The resulting calibration files are used by the spectral unmixing algorithms in
+`process_wellplate_spectra.py` to determine component concentrations in unknown mixtures.
+
+Example:
+    calibrator.construct_calibrant(
+        cut_from=5,
+        concentration_column_name='concentration',
+        do_plot=False,
+        experiment_name='my_experiment/',
+        calibration_source_filename='standards_data',
+        calibrant_shortnames=['compound_A', 'compound_B'],
+        ref_concentrations=[0.001, 0.002],
+        max_concentrations=[0.01, 0.02]
+    )
+
+Note:
+    This module requires external spectral data files and follows the data organization
+    structure defined in the robowski package documentation.
+
+    This module is intentionally written in functional style, instead of Object-Oriented style.
+    **Reasons:**
+
+    1. **Clear dependencies**: Each function signature explicitly shows what data it needs
+    2. **No hidden coupling**: Easy to see exactly what each function depends on
+    3. **Simple testing**: Pass individual values rather than constructing objects
+    4. **Functional purity**: Functions remain pure with explicit inputs/outputs
+    5. **Easy modification**: Can change individual parameters without object restructuring
+
+"""
+
 import logging
 from robowski.settings import *
 import matplotlib.pyplot as plt
@@ -9,11 +62,12 @@ from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 from robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra import create_folder_unless_it_exists
-from dataclasses import dataclass, field
-from typing import Optional, Tuple, List, Dict
-
-nanodrop_errorbar_folder = data_folder + 'nanodrop-spectrophotometer-measurements/nanodrop_errorbar_folder_2024-03-16/raw_residuals/'
+from typing import Optional, Tuple, List
 import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
+
+nanodrop_errorbar_folder = (data_folder + 'nanodrop-spectrophotometer-measurements/' +
+                            'nanodrop_errorbar_folder_2024-03-16/raw_residuals/')
+
 
 def construct_calibrant(
         cut_from,
@@ -29,7 +83,7 @@ def construct_calibrant(
         no_right_edge_subtraction=False,
         upper_limit_of_absorbance=1000,
         do_reference_stitching=False,
-        artefact_generating_upper_limit_of_absorbance=1.5,
+        artefactogenic_upper_limit_of_absorbance=1.5,
         cut_to=None,
         bkg_multiplier=1,
         do_smoothing_at_low_absorbance=0.005,
@@ -63,9 +117,6 @@ def construct_calibrant(
     create_folder_unless_it_exists(calibration_folder + 'background')
 
     all_calibrants_df['nanodrop_col_name'] = all_calibrants_df['nanodrop_col_name'].astype(str)
-
-    # load background from different file
-    # bkg_spectrum = np.load(calibration_folder + f'background/bkg_spectrum.npy')
     nanodrop_df = sp.load_nanodrop_csv_for_one_plate(plate_folder)
     nanodrop_df['wavelength'] = nanodrop_df['wavelength'] + nanodrop_wavelength_shift
     wavelengths = nanodrop_df['wavelength'].to_numpy()
@@ -101,7 +152,7 @@ def construct_calibrant(
             cut_from=cut_from,
             no_right_edge_subtraction=no_right_edge_subtraction,
             upper_limit_of_absorbance=upper_limit_of_absorbance,
-            artefact_generating_upper_limit_of_absorbance=artefact_generating_upper_limit_of_absorbance,
+            artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
             do_reference_stitching=do_reference_stitching,
             do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
             savgol_window=savgol_window,
@@ -130,7 +181,7 @@ def _process_single_calibrant(
         cut_from: int,
         no_right_edge_subtraction: bool,
         upper_limit_of_absorbance: float,
-        artefact_generating_upper_limit_of_absorbance: float,
+        artefactogenic_upper_limit_of_absorbance: float,
         do_reference_stitching: bool,
         do_smoothing_at_low_absorbance: Optional[float],
         savgol_window: int,
@@ -192,7 +243,7 @@ def _process_single_calibrant(
             cut_from=cut_from,
             cut_to=cut_to,
             upper_limit_of_absorbance=upper_limit_of_absorbance,
-            artefact_generating_upper_limit_of_absorbance=artefact_generating_upper_limit_of_absorbance,
+            artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
             no_right_edge_subtraction=no_right_edge_subtraction,
             calibrant_shortname=calibrant_shortname,
             do_plot=do_plot
@@ -217,7 +268,7 @@ def _process_single_calibrant(
         cut_from=cut_from,
         cut_to=cut_to,
         upper_limit_of_absorbance=upper_limit_of_absorbance,
-        artefact_generating_upper_limit_of_absorbance=artefact_generating_upper_limit_of_absorbance,
+        artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
         no_right_edge_subtraction=no_right_edge_subtraction,
         do_record_residuals=do_record_residuals,
         dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
@@ -294,13 +345,13 @@ def _apply_reference_smoothing(
         Tuple of (smoothed_ref_spectrum, updated_reference_interpolator)
     """
     original_spectrum = np.copy(ref_spectrum)
-    savgol_smoothed_signal = savgol_filter(ref_spectrum, window_length=savgol_window, polyorder=4)
+    savgol_smoothed_spectrum = savgol_filter(ref_spectrum, window_length=savgol_window, polyorder=4)
 
     # Create exponential weight between smoothed and original data
     exponential_decay_constant = do_smoothing_at_low_absorbance * np.max(ref_spectrum)
     exponential_weight = np.exp(-1 * ref_spectrum / exponential_decay_constant)
 
-    ref_spectrum = savgol_smoothed_signal * exponential_weight + ref_spectrum * (1 - exponential_weight)
+    ref_spectrum = savgol_smoothed_spectrum * exponential_weight + ref_spectrum * (1 - exponential_weight)
     ref_spectrum = ref_spectrum - np.min(ref_spectrum)
 
     wavelength_indices = np.arange(ref_spectrum.shape[0])
@@ -308,7 +359,7 @@ def _apply_reference_smoothing(
                                                   fill_value='extrapolate')
 
     if do_plot:
-        _plot_smoohting_comparison(wavelengths, original_spectrum, ref_spectrum, savgol_smoothed_signal)
+        _plot_smoohting_comparison(wavelengths, original_spectrum, ref_spectrum, savgol_smoothed_spectrum)
 
     return ref_spectrum, reference_interpolator
 
@@ -325,7 +376,7 @@ def _apply_reference_stitching(
         cut_from: int,
         cut_to: Optional[int],
         upper_limit_of_absorbance: float,
-        artefact_generating_upper_limit_of_absorbance: float,
+        artefactogenic_upper_limit_of_absorbance: float,
         no_right_edge_subtraction: bool,
         calibrant_shortname: str,
         do_plot: bool
@@ -351,7 +402,7 @@ def _apply_reference_stitching(
 
         mask = _create_spectrum_mask(
             wavelength_indices, target_spectrum, cut_from, cut_to,
-            upper_limit_of_absorbance, artefact_generating_upper_limit_of_absorbance
+            upper_limit_of_absorbance, artefactogenic_upper_limit_of_absorbance
         )
 
         popt, pcov = _fit_spectrum_to_reference(
@@ -392,14 +443,14 @@ def _calculate_concentration_coefficients(
         cut_from: int,
         cut_to: Optional[int],
         upper_limit_of_absorbance: float,
-        artefact_generating_upper_limit_of_absorbance: float,
+        artefactogenic_upper_limit_of_absorbance: float,
         no_right_edge_subtraction: bool,
         do_record_residuals: bool,
         dont_save_residuals_below_cut_to: bool,
         calibrant_shortname: str,
         calibration_folder: str,
         do_plot: bool
-) -> Tuple[List[float], List[float], List[np.ndarray]]:
+) -> List[float]:
     """
     Calculate coefficients relating concentration to spectral scaling factors.
 
@@ -420,12 +471,12 @@ def _calculate_concentration_coefficients(
 
         mask = _create_spectrum_mask(
             wavelength_indices, target_spectrum, cut_from, cut_to,
-            upper_limit_of_absorbance, artefact_generating_upper_limit_of_absorbance
+            upper_limit_of_absorbance, artefactogenic_upper_limit_of_absorbance
         )
 
         # Get artifact mask separately for residuals recording
         artifact_mask = _create_artifact_mask(
-            wavelength_indices, target_spectrum, artefact_generating_upper_limit_of_absorbance
+            wavelength_indices, target_spectrum, artefactogenic_upper_limit_of_absorbance
         )
 
         popt, pcov = _fit_spectrum_to_reference(
@@ -529,7 +580,7 @@ def _save_calibration_data(
 def _create_artifact_mask(
         wavelength_indices: np.ndarray,
         target_spectrum: np.ndarray,
-        artefact_generating_upper_limit_of_absorbance: float
+        artefactogenic_upper_limit_of_absorbance: float
 ) -> np.ndarray:
     """
     Create a mask that excludes wavelength regions contaminated by measurement artifacts.
@@ -537,7 +588,7 @@ def _create_artifact_mask(
     Finds the highest wavelength index where absorbance exceeds the artifact threshold
     and excludes all wavelengths up to that point.
     """
-    artifact_indices = np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]
+    artifact_indices = np.where(target_spectrum > artefactogenic_upper_limit_of_absorbance)[0]
     if len(artifact_indices) == 0:
         largest_artifact_index = -1
     else:
@@ -553,7 +604,7 @@ def _create_spectrum_mask(
         cut_from: int,
         cut_to: Optional[int],
         upper_limit_of_absorbance: float,
-        artefact_generating_upper_limit_of_absorbance: float
+        artefactogenic_upper_limit_of_absorbance: float
 ) -> np.ndarray:
     """
     Create a boolean mask for spectrum fitting, excluding problematic regions.
@@ -566,7 +617,7 @@ def _create_spectrum_mask(
 
     # Exclude artifact-contaminated regions
     artifact_mask = _create_artifact_mask(
-        wavelength_indices, target_spectrum, artefact_generating_upper_limit_of_absorbance
+        wavelength_indices, target_spectrum, artefactogenic_upper_limit_of_absorbance
     )
     mask = np.logical_and(mask, artifact_mask)
 

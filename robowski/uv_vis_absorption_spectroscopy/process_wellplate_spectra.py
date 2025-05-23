@@ -1491,7 +1491,7 @@ class SpectraProcessor:
     def mask_multispectrum(self, wavelength_indices, target_spectrum,
                            cut_from, ignore_abs_threshold=False, cut_to=False,
                            upper_limit_of_absorbance=0.95,
-                           artefact_generating_upper_limit_of_absorbance=1.5):
+                           artefactogenic_upper_limit_of_absorbance=1.5):
         """
         Apply masking to a spectrum for multispectrum analysis.
 
@@ -1512,7 +1512,7 @@ class SpectraProcessor:
             Wavelength index to end the analysis at, defaults to False
         upper_limit_of_absorbance : float, optional
             Upper limit for absorbance values, defaults to 0.95
-        artefact_generating_upper_limit_of_absorbance : float, optional
+        artefactogenic_upper_limit_of_absorbance : float, optional
             Threshold for identifying artefact-generating regions, defaults to 1.5
 
         Returns
@@ -1525,11 +1525,11 @@ class SpectraProcessor:
             mask = np.logical_and(mask, wavelength_indices < cut_to)
         mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
 
-        # find the largest index where target_spectrum is above the artefact_generating_upper_limit_of_absorbance
-        if len(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]) == 0:
+        # find the largest index where target_spectrum is above the artefactogenic_upper_limit_of_absorbance
+        if len(np.where(target_spectrum > artefactogenic_upper_limit_of_absorbance)[0]) == 0:
             largest_index_above_2 = -1
         else:
-            largest_index_above_2 = np.max(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0])
+            largest_index_above_2 = np.max(np.where(target_spectrum > artefactogenic_upper_limit_of_absorbance)[0])
         # mask all the indices smaller than largest_index_above_1.5
         mask2 = wavelength_indices > largest_index_above_2
         mask = np.logical_and(mask, mask2)

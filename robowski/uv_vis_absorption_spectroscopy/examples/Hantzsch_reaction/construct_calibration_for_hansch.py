@@ -46,26 +46,26 @@ cut_from = 5
 #     do_record_residuals=True
 # )
 
-# calibrator.construct_calibrant(
-#     cut_from=cut_from,
-#     lower_limit_of_absorbance=0.007,
-#     concentration_column_name='concentration',
-#     do_plot=True,
-#     calibration_source_filename='calibrations/2024-01-16_18-28-35_UV-Vis_starting_materials',
-#     calibrant_shortnames=['methoxybenzaldehyde'],
-#     ref_concentrations=[0.006],
-#     max_concentrations=[1],
-#     min_concentrations=[4e-5],
-#     experiment_name=experiment_name,
-#     upper_limit_of_absorbance=0.95,
-#     do_reference_stitching=True,
-#     do_smoothing_at_low_absorbance=None,
-#     # forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/other-hantzsch/pure_benzald.csv',
-#     # cary_column_name='pure_benzald_10ul_in_3mL_cuvette_stock_10uL_in_5mL_c1_rep1_1',
-#     forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/other-hantzsch/methoxybenzald.csv',
-#     cary_column_name='methoxybenzald__c1_rep1_2',
-#     nanodrop_wavelength_shift = -1
-# )
+calibrator.construct_calibrant(
+    cut_from=cut_from,
+    lower_limit_of_absorbance=0.007,
+    concentration_column_name='concentration',
+    do_plot=True,
+    calibration_source_filename='calibrations/2024-01-16_18-28-35_UV-Vis_starting_materials',
+    calibrant_shortnames=['methoxybenzaldehyde'],
+    ref_concentrations=[0.006],
+    max_concentrations=[1],
+    min_concentrations=[4e-5],
+    experiment_name=experiment_name,
+    upper_limit_of_absorbance=0.95,
+    do_reference_stitching=True,
+    do_smoothing_at_low_absorbance=None,
+    # forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/other-hantzsch/pure_benzald.csv',
+    # cary_column_name='pure_benzald_10ul_in_3mL_cuvette_stock_10uL_in_5mL_c1_rep1_1',
+    forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/other-hantzsch/methoxybenzald.csv',
+    cary_column_name='methoxybenzald__c1_rep1_2',
+    nanodrop_wavelength_shift = -1
+)
 
 # calibrator.construct_calibrant(
 #     cut_from=cut_from,
@@ -267,7 +267,7 @@ cut_from = 5
 # )
 
 
-############### Stitchine EAB spectra from Cary
+############### Stitching EAB spectra from Cary
 # data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 # agilent_cary_file = data_folder + f'BPRF/2024-01-17-run01/' + 'calibrations/spectrophotometer_data/other-hantzsch/EAB.csv'
 # cary_column_name = 'EAB__c1_rep1'
@@ -386,27 +386,24 @@ cut_from = 5
 #     # nanodrop_wavelength_shift = +3
 # )
 
-calibrator.construct_calibrant(
-    cut_from=0,
-    lower_limit_of_absorbance=0.007,
-    concentration_column_name='concentration',
-    do_plot=True,
-    calibration_source_filename='calibrations/2024_04_0_UV-Vis_bb021_F2',
-    calibrant_shortnames=['bb021_f2'],
-    ref_concentrations=[0.0005],
-    max_concentrations=[0.0004],
-    min_concentrations=[0.0001],
-    experiment_name=experiment_name,
-    upper_limit_of_absorbance=0.95,
-    do_reference_stitching=False,
-    do_smoothing_at_low_absorbance=None,
-    forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/Hantzsch_other_2/bb021_f2_c2_rep1.csv',
-    cary_column_name='bb021f2_c2_rep1_2',
-    # forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/Hantzsch_other_2/bb021_f1_rep2.csv',
-    # cary_column_name='bb021f1_c1_rep2_2',
-    cut_to=None
-    # nanodrop_wavelength_shift = +3
-)
+# calibrator.construct_calibrant(
+#     cut_from=0,
+#     lower_limit_of_absorbance=0.007,
+#     concentration_column_name='concentration',
+#     do_plot=True,
+#     calibration_source_filename='calibrations/2024_04_0_UV-Vis_bb021_F2',
+#     calibrant_shortnames=['bb021_f2'],
+#     ref_concentrations=[0.0005],
+#     max_concentrations=[0.0004],
+#     min_concentrations=[0.0001],
+#     experiment_name=experiment_name,
+#     upper_limit_of_absorbance=0.95,
+#     do_reference_stitching=False,
+#     do_smoothing_at_low_absorbance=None,
+#     forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/Hantzsch_other_2/bb021_f2_c2_rep1.csv',
+#     cary_column_name='bb021f2_c2_rep1_2',
+#     cut_to=None
+# )
 
 
 # plate_folder = data_folder + 'BPRF/2024-01-17-run01/calibrations/2024-03-14_20-52-15_UV-Vis_dm088_4.csv'

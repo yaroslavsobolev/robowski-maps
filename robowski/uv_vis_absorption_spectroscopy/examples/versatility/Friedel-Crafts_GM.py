@@ -18,7 +18,7 @@ construct_calibrant(
     max_concentrations=[0.1],
     experiment_name=experiment_name,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -33,7 +33,7 @@ construct_calibrant(
     max_concentrations=[0.1],
     experiment_name=experiment_name,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -50,7 +50,7 @@ construct_calibrant(
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
     no_right_edge_subtraction=True,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -67,7 +67,7 @@ construct_calibrant(
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
     no_right_edge_subtraction=True,
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
@@ -83,7 +83,7 @@ construct_calibrant(
     experiment_name=experiment_name,
     custom_bkg_spectrum_npy_file=data_folder + 'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/microspectrometer_data/calibration/references/ferrocene/bkg_spectrum.npy',
     upper_limit_of_absorbance=1e6,
-    artefact_generating_upper_limit_of_absorbance=1e6,
+    artefactogenic_upper_limit_of_absorbance=1e6,
     do_smoothing_at_low_absorbance=None
 )
 
