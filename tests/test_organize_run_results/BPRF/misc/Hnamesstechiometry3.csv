@@ -1,0 +1,15 @@
+Names,Short_names,methoxybenzaldehyde,ethyl_acetoacetate,ammonium_acetate
+HRP01,HRP01,1,2,1
+dm35_8,HRP02,2,2,1
+dm35_9,HRP02,2,2,1
+dm36,remove,1,2,1
+dm37,HRP03,2,2,1
+dm70,HRP03,2,2,1
+bb017,HRP04,2,1,2
+dm40_12,HRI01,1,1,0
+dm40_10,HRI02,1,1,0
+EAB,HRI03,0,1,1
+bb021,HRI04,2,1,0
+bb021_f2,HRI04,2,1,0
+dm088_4,HRI05,1,1,1
+dm053,HRP05,1,2,1
