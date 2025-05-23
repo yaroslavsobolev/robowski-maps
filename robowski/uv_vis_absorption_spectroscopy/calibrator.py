@@ -374,31 +374,19 @@ def _apply_reference_stitching(
         target_spectrum = _load_and_process_spectrum_by_metadata_row(
             df_row_here, nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
 
-        # Create mask for fitting
-        mask = wavelength_indices > cut_from
-        if cut_to is not None:
-            mask = np.logical_and(mask, wavelength_indices < cut_to)
-        mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
+        mask = _create_spectrum_mask(
+            wavelength_indices, target_spectrum, cut_from, cut_to,
+            upper_limit_of_absorbance, artefact_generating_upper_limit_of_absorbance
+        )
 
-        # Handle artifacts at very high absorbance
-        if len(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]) == 0:
-            largest_index_above_2 = -1
-        else:
-            largest_index_above_2 = np.max(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0])
-        mask2 = wavelength_indices > largest_index_above_2
-        mask = np.logical_and(mask, mask2)
-
-        # Fit target spectrum to reference
-        def func(xs, a, b):
-            return a * reference_interpolator(xs) + b
-
-        p0 = (concentration / ref_concentration, 0)
-        bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
-        popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
-                               p0=p0, bounds=bounds)
+        popt, pcov = _fit_spectrum_to_reference(
+            wavelength_indices, target_spectrum, reference_interpolator,
+            mask, initial_scale_guess=concentration / ref_concentration  # or appropriate ratio
+        )
 
         # Plot the fit
-        _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum,
+        _plot_concentration_fit(df_row_here, do_plot, lambda xs, a, b: a * reference_interpolator(xs) + b,
+                                mask, popt, target_spectrum,
                                 wavelength_indices, concentration_column_name)
 
         # Update reference spectrum with stitched data
@@ -455,50 +443,91 @@ def _calculate_concentration_coefficients(
         target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum,
                                                                      no_right_edge_subtraction)[:, 1]
 
-        # Create mask for fitting
-        mask = wavelength_indices > cut_from
-        if cut_to is not None:
-            mask = np.logical_and(mask, wavelength_indices < cut_to)
-        mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
+        mask = _create_spectrum_mask(
+            wavelength_indices, target_spectrum, cut_from, cut_to,
+            upper_limit_of_absorbance, artefact_generating_upper_limit_of_absorbance
+        )
 
-        # Handle artifacts at high absorbance
-        if len(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]) == 0:
-            largest_index_above_2 = -1
-        else:
-            largest_index_above_2 = np.max(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0])
-        mask2 = wavelength_indices > largest_index_above_2
-        mask = np.logical_and(mask, mask2)
+        # Get artifact mask separately for residuals recording
+        artifact_mask = _create_artifact_mask(
+            wavelength_indices, target_spectrum, artefact_generating_upper_limit_of_absorbance
+        )
 
-        # Fit spectrum to reference
-        def func(xs, a, b):
-            return a * reference_interpolator(xs) + b
+        popt, pcov = _fit_spectrum_to_reference(
+            wavelength_indices, target_spectrum, reference_interpolator,
+            mask, initial_scale_guess=concentration / 0.006
+        )
 
-        p0 = (concentration / 0.006, 0)  # ref_concentration was typically 0.006
-        bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
-        popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
-                               p0=p0, bounds=bounds)
         coeffs.append(popt[0])
 
-        # Handle residuals recording
-        if do_record_residuals:
-            residuals = target_spectrum - func(wavelength_indices, *popt)
-            if dont_save_residuals_below_cut_to:
-                residuals_for_saving = np.vstack(
-                    (nanodrop_df['wavelength'].to_numpy()[mask], target_spectrum[mask], residuals[mask])).T
-            else:
-                residuals_for_saving = np.vstack(
-                    (nanodrop_df['wavelength'].to_numpy()[mask2], target_spectrum[mask2], residuals[mask2])).T
-            filename_from_calibration_source = 'dummy_filename'
-            np.save(
-                f'{nanodrop_errorbar_folder}residuals_{filename_from_calibration_source}__colname{df_row_here["nanodrop_col_name"]}.npy',
-                residuals_for_saving)
+        _record_residuals_if_needed(
+            target_spectrum=target_spectrum,
+            wavelength_indices=wavelength_indices,
+            wavelengths=nanodrop_df['wavelength'].to_numpy(),
+            reference_interpolator=reference_interpolator,
+            popt=popt,
+            mask=mask,
+            artifact_mask=artifact_mask,
+            do_record_residuals=do_record_residuals,
+            dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
+            df_row=df_row_here
+        )
 
         # Plot concentration fit
-        _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices,
+        _plot_concentration_fit(df_row_here, do_plot, lambda xs, a, b: a * reference_interpolator(xs) + b,
+                                mask, popt, target_spectrum, wavelength_indices,
                                 concentration_column_name,
                                 savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
 
     return coeffs
+
+
+def _record_residuals_if_needed(
+        target_spectrum: np.ndarray,
+        wavelength_indices: np.ndarray,
+        wavelengths: np.ndarray,
+        reference_interpolator: callable,
+        popt: np.ndarray,
+        mask: np.ndarray,
+        artifact_mask: np.ndarray,
+        do_record_residuals: bool,
+        dont_save_residuals_below_cut_to: bool,
+        df_row: pd.Series
+) -> None:
+    """
+    Record residuals from spectrum fitting if requested.
+
+    Saves residuals data for uncertainty analysis, using either the full mask
+    or just the artifact mask depending on configuration.
+    """
+    if not do_record_residuals:
+        return
+
+    # Recreate the fitting function
+    def func(xs, a, b):
+        return a * reference_interpolator(xs) + b
+
+    # Calculate residuals
+    residuals = target_spectrum - func(wavelength_indices, *popt)
+
+    # Choose which mask to use for saving
+    if dont_save_residuals_below_cut_to:
+        save_mask = mask
+    else:
+        save_mask = artifact_mask
+
+    # Stack data for saving
+    residuals_for_saving = np.vstack((
+        wavelengths[save_mask],
+        target_spectrum[save_mask],
+        residuals[save_mask]
+    )).T
+
+    # Save residuals
+    filename_from_calibration_source = 'dummy_filename'
+    np.save(
+        f'{nanodrop_errorbar_folder}residuals_{filename_from_calibration_source}__colname{df_row["nanodrop_col_name"]}.npy',
+        residuals_for_saving)
 
 
 def _save_calibration_data(
@@ -520,6 +549,78 @@ def _save_calibration_data(
     np.save(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy', ref_spectrum)
     np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
     np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy', concentrations)
+
+
+def _create_artifact_mask(
+        wavelength_indices: np.ndarray,
+        target_spectrum: np.ndarray,
+        artefact_generating_upper_limit_of_absorbance: float
+) -> np.ndarray:
+    """
+    Create a mask that excludes wavelength regions contaminated by measurement artifacts.
+
+    Finds the highest wavelength index where absorbance exceeds the artifact threshold
+    and excludes all wavelengths up to that point.
+    """
+    artifact_indices = np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]
+    if len(artifact_indices) == 0:
+        largest_artifact_index = -1
+    else:
+        largest_artifact_index = np.max(artifact_indices)
+
+    artifact_mask = wavelength_indices > largest_artifact_index
+    return artifact_mask
+
+
+def _create_spectrum_mask(
+    wavelength_indices: np.ndarray,
+    target_spectrum: np.ndarray,
+    cut_from: int,
+    cut_to: Optional[int],
+    upper_limit_of_absorbance: float,
+    artefact_generating_upper_limit_of_absorbance: float
+) -> np.ndarray:
+    """
+    Create a boolean mask for spectrum fitting, excluding problematic regions.
+    """
+    # Basic wavelength and absorbance filtering
+    mask = wavelength_indices > cut_from
+    if cut_to is not None:
+        mask = np.logical_and(mask, wavelength_indices < cut_to)
+    mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
+
+    # Exclude artifact-contaminated regions
+    artifact_mask = _create_artifact_mask(
+        wavelength_indices, target_spectrum, artefact_generating_upper_limit_of_absorbance
+    )
+    mask = np.logical_and(mask, artifact_mask)
+
+    return mask
+
+
+def _fit_spectrum_to_reference(
+        wavelength_indices: np.ndarray,
+        target_spectrum: np.ndarray,
+        reference_interpolator: callable,
+        mask: np.ndarray,
+        initial_scale_guess: float
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Fit target spectrum to reference spectrum using linear scaling.
+
+    Returns:
+        Tuple of (fit_parameters, parameter_covariance)
+    """
+
+    def func(xs, a, b):
+        return a * reference_interpolator(xs) + b
+
+    p0 = (initial_scale_guess, 0)
+    bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
+    popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
+                           p0=p0, bounds=bounds)
+
+    return popt, pcov
 
 
 def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum", semilog=False):
