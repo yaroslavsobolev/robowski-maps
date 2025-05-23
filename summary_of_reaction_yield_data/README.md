@@ -50,6 +50,21 @@ like `19d_c_HPLC_[M]`, where `19d` is the substance code (same as in the researc
 The columns containing the yields are named similarly, but with `_y_` instead
 of `_c_`. For example: `19d_y_HPLC_[%]`.
 
+## Reaction with Prussian Blue Analogs (PBA)
+
+- Table `PBA/Dataset_PBA_composition.csv`  
+  Contents:
+  - Sample index (column `index`).
+  - Ratio of different metals in PBA used for the sample. Column `Mn` to column `Cu` stand for the ratio on metal 
+  B site, which add up to 1; column `M1-Fe` and column `M1-Co` stand for the ratio on metal A site, which also add up to 1.
+
+
+- Table `PBA/Spectra_unmixing_result.csv`  
+  Contents:
+  - Column `Index` is the sample's index.
+  - Column `ref1` to column `ref3`: fitted concentration values for the 3 reference compounds for each sample.
+  - Column `yield_epox` and column `yield_alde`: yield of styrene oxide and benzaldehyde for each sample.
+
 # Preprocessing the datasets for the Hyperspace Viewer
 
 ## 3D datasets
@@ -65,8 +80,8 @@ python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1/resampled_SN1_yield_
 
 python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1_simple/raw_yields.csv --output_csv=SN1_simple/simpleSN1_raw_yields_hyvu.csv --X='c#SN1OH03' --Y='temperature' --Z='c#HBr' --V='yield' --Xscale=1000 --Yscale=1 --Zscale=1000 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
 python convert_3d_dataset_to_hyvu_format.py --input_csv=SN1_simple/simpleSN1_resampled_yields.csv --output_csv=SN1_simple/simpleSN1_resampled_yields_hyvu.csv --X='Alcohol(mM)' --Y='Temperature(°C)' --Z='HBr(mM)' --V='yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
-python convert_3d_dataset_to_hyvu_format.py --input_csv=E1/E1_resampled_yields.csv --output_csv=E1/E1_resampled_yields_hyvu.csv --X='Alcohol(mM)' --Y='Temperature(°C)' --Z='HBr(mM)' --V='yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
 
+python convert_3d_dataset_to_hyvu_format.py --input_csv=E1/E1_resampled_yields.csv --output_csv=E1/E1_resampled_yields_hyvu.csv --X='Alcohol(mM)' --Y='Temperature(°C)' --Z='HBr(mM)' --V='yield' --Xscale=1 --Yscale=1 --Zscale=1 --Xrename='[Alcohol](mM)' --Yrename='Temperature(°C)' --Zrename='[HBr](mM)'
 ```
 
 ## 4D datasets

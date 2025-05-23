@@ -1,13 +1,46 @@
-# Instructions for data and script used in PBA project
+# Description of code and data files for the Prussian Blue Analogs (PBA) analysis
 
-## data folder contains all spectra datas
-"PBA_reference_calibration_spectra.csv" file contains solvent background spectra; calibration spectra for 3 references, each have 5 different concentrations.
-"PBA_sample_spectra.csv" file contains all the sample UV spectra (220-600 nm), each sample spectrum is assigned with specific index.
+## 📁 `data/` — Experimental data
 
-## result folder contains the fiting results
-"Dataset_PBA_composition.csv" file contains the chemical composition of PBAs used for each sample based on their sample index.
-"Spectra_unmixing_result.csv" file contains the fitting result for all samples, including the concentration of 3 reference, yield of styrene oxide, yield of benzaldehyde for each sample.
-Image files are the comparison between fitting spectrum and experimental spectrum for each sample. Each image contains the results for 20 samples sorted by their sample index.
+- Table `PBA_reference_calibration_spectra.csv`  
+  Contains:
+  - Spectra wavelength in nanometers (column `Wavelength`).
+  - Solvent background spectrum (column `bkg`: ).
+  - Calibration spectra for 3 references (each at 5 concentrations). Column names refer to the reference type and their 
+concentration, for example, `ref2_c2` column contains the calibration spectrum for reference substance #2 of its second concentration
+  - (see concentration details in the script).
 
-## "UV_spectra_unmixing_PBA.ipynb" is the demo script used for spectra unmixing for PBA part.
+- `PBA_sample_spectra.csv`  
+  Contents:
+  - Spectra wavelength in nanometers (Column `Wavelength`).
+  - Each column corresponds spectrum to a sample, column name is a unique index assigned to each sample (from 0 to 755).
 
+---
+
+## 📁 `result/` — Results of the analysis
+
+- Table `Dataset_PBA_composition.csv`  
+  Contents:
+  - Sample index (column `index`).
+  - Ratio of different metals in PBA used for the sample. Column `Mn` to column `Cu` stand for the ratio on metal 
+  B site, which add up to 1; column `M1-Fe` and column `M1-Co` stand for the ratio on metal A site, which also add up to 1.
+
+- Table `Spectra_unmixing_result.csv`  
+  Contents:
+  - Column `Index` is the sample's index.
+  - Column `ref1` to column `ref3`: fitted concentration values for the 3 reference compounds for each sample.
+  - Column `yield_epox` and column `yield_alde`: yield of styrene oxide and benzaldehyde for each sample.
+
+- `*.png` images  
+  - Each image shows the comparison between experimental and fitted UV spectra.
+  - Each image includes results for 20 samples, sorted by sample index.
+
+---
+
+## 📜 `UV_spectra_unmixing_PBA.ipynb` — Jupyter Notebook used for the analysis
+
+This Jupyter Notebook demonstrates the full workflow of:
+- Spectra preprocessing
+- SVR-based spectral unmixing
+- Plotting fits and residuals
+- Exporting and interpreting the results
