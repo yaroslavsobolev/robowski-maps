@@ -79,15 +79,6 @@ def construct_calibrant(
     if do_plot:
         _plot_diagnostic_spectrum(bkg_spectrum[:, 0], bkg_spectrum[:, 1], title="Background spectrum")
 
-    def load_spectrum_by_df_row(row):
-        wavelengths = nanodrop_df['wavelength'].to_numpy()
-        absorbances = nanodrop_df[row['nanodrop_col_name']].to_numpy()
-        spectrum = np.array([wavelengths, absorbances]).T
-        spectrum[:, 1] -= bkg_spectrum[:, 1]
-        if not no_right_edge_subtraction:
-            spectrum[:, 1] -= np.mean(spectrum[-100:, 1])
-        return spectrum
-
     if not do_not_save_data:
         np.save(calibration_folder + f'background//bkg_spectrum.npy', bkg_spectrum)
 
@@ -98,8 +89,9 @@ def construct_calibrant(
 
         # make sure that only one well for this calibrant has concentration equal to ref_concentration
         assert one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].shape[0] == 1
-        ref_spectrum = load_spectrum_by_df_row(
-            one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].iloc[0])[:, 1]
+        ref_spectrum = _load_and_process_spectrum_by_metadata_row(
+            one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].iloc[0],
+            nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
         if not no_right_edge_subtraction:
             ref_spectrum -= np.mean(ref_spectrum[-100:])
         if do_plot:
@@ -132,7 +124,7 @@ def construct_calibrant(
                     continue
 
                 df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
-                target_spectrum = load_spectrum_by_df_row(df_row_here)[:, 1]
+                target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
                 mask = wavelength_indices > cut_from
                 if cut_to is not None:
                     mask = np.logical_and(mask, wavelength_indices < cut_to)
@@ -197,7 +189,7 @@ def construct_calibrant(
                 continue
 
             df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
-            target_spectrum = load_spectrum_by_df_row(df_row_here)[:, 1]
+            target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
             spectra.append(np.copy(target_spectrum))
             mask = wavelength_indices > cut_from
             if cut_to is not None:
@@ -339,6 +331,38 @@ def _plot_calibration_curve(coeffs, concentrations, do_plot, new_xs, new_ys,
         plt.show()
     else:
         plt.clf()
+
+
+def _load_and_process_spectrum_by_metadata_row(row, nanodrop_df, bkg_spectrum, no_right_edge_subtraction=False):
+    """
+    Load and process a spectrum for a specific metadata row.
+
+    This function loads the raw spectrum data, subtracts the background,
+    and optionally applies right edge correction.
+
+    Parameters
+    ----------
+    row : pandas.Series
+        Metadata row containing 'nanodrop_col_name' column
+    nanodrop_df : pandas.DataFrame
+        DataFrame with spectral data
+    bkg_spectrum : numpy.ndarray
+        Background spectrum to subtract
+    no_right_edge_subtraction : bool, optional
+        Whether to skip right edge baseline correction
+
+    Returns
+    -------
+    numpy.ndarray
+        Processed spectrum as 2D array [wavelengths, absorbances]
+    """
+    wavelengths = nanodrop_df['wavelength'].to_numpy()
+    absorbances = nanodrop_df[row['nanodrop_col_name']].to_numpy()
+    spectrum = np.array([wavelengths, absorbances]).T
+    spectrum[:, 1] -= bkg_spectrum[:, 1]
+    if not no_right_edge_subtraction:
+        spectrum[:, 1] -= np.mean(spectrum[-100:, 1])
+    return spectrum
 
 
 def take_median_of_nanodrop_spectra(plate_folder, nanodrop_lower_cutoff_of_wavelengths = 220,
