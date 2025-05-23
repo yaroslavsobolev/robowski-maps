@@ -188,17 +188,12 @@ def _process_single_calibrant(
         calibration_folder + f'references/{calibrant_shortname}/concentration_fits')
 
     if forced_reference_from_agilent_cary_file is not None:
-        wavelengths_cary, ys = st.read_cary_agilent_csv_spectrum(forced_reference_from_agilent_cary_file,
-                                                                 column_name=cary_column_name)
-        ref_spectrum = ys
-        # copy it for later plotting
-        ref_spectrum_before_resampling = np.copy(ref_spectrum)
-        reference_interpolator = interpolate.interp1d(wavelengths_cary, ref_spectrum, fill_value='extrapolate')
-        ref_spectrum = reference_interpolator(nanodrop_df['wavelength'].to_numpy())
-        reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
-        if do_plot:
-            _plot_about_resampling(nanodrop_df['wavelength'].to_numpy(), ref_spectrum, ref_spectrum_before_resampling,
-                                   wavelengths_cary)
+        ref_spectrum, reference_interpolator = _load_reference_from_cary_file(
+            forced_reference_from_agilent_cary_file=forced_reference_from_agilent_cary_file,
+            cary_column_name=cary_column_name,
+            wavelengths=nanodrop_df['wavelength'].to_numpy(),
+            do_plot=do_plot
+        )
 
     if do_reference_stitching:
         ref_spectrum, reference_interpolator = _apply_reference_stitching(
@@ -267,6 +262,43 @@ def _process_single_calibrant(
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy',
                 concentrations)
+
+
+def _load_reference_from_cary_file(
+        forced_reference_from_agilent_cary_file: str,
+        cary_column_name: str,
+        wavelengths: np.ndarray,
+        do_plot: bool
+) -> Tuple[np.ndarray, callable]:
+    """
+    Load and resample reference spectrum from Agilent Cary CSV file.
+
+    This replaces the NanoDrop-derived reference spectrum with one from
+    a high-quality Agilent Cary spectrophotometer, resampled to match
+    the NanoDrop wavelength grid.
+
+    Returns:
+        Tuple of (resampled_ref_spectrum, updated_reference_interpolator)
+    """
+    wavelengths_cary, ys = st.read_cary_agilent_csv_spectrum(
+        forced_reference_from_agilent_cary_file, column_name=cary_column_name)
+    ref_spectrum = ys
+
+    # Store for plotting comparison
+    ref_spectrum_before_resampling = np.copy(ref_spectrum)
+
+    # Resample Cary spectrum to NanoDrop wavelength grid
+    reference_interpolator = interpolate.interp1d(wavelengths_cary, ref_spectrum, fill_value='extrapolate')
+    ref_spectrum = reference_interpolator(wavelengths)
+
+    # Create new interpolator for the resampled spectrum
+    wavelength_indices = np.arange(ref_spectrum.shape[0])
+    reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
+
+    if do_plot:
+        _plot_about_resampling(wavelengths, ref_spectrum, ref_spectrum_before_resampling, wavelengths_cary)
+
+    return ref_spectrum, reference_interpolator
 
 
 def _apply_reference_smoothing(
