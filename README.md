@@ -191,6 +191,15 @@ Covariance matrices are plotted by the `ugi_kinetics_v3_covplot.py` script based
 of the scripts whose names contain `_perr_`, meaning "parameter errors analysis".
 
 
+#### Reactions with prussian blue analogs
+
+The code for spectral unmixing of the UV-Vis absorption spectra of the crude mixture for reactions with prussian 
+blue analogs is organized as a Jupyter notebook located at 
+the `robowski/uv_vis_absorption_spectroscopy/prussian_blue_analogs_analysis_data_and_code/UV_spectra_unmixing_PBA.ipynb`
+file. The respective experimental data is located at 
+the `robowski/uv_vis_absorption_spectroscopy/prussian_blue_analogs_analysis_data_and_code/data`.
+
+
 ### Calculating proton exchange equilibrium in a complex mixture
 
 The module `robowski/kinetics_models/acid_base_equilibrium.py` contains the script for calculating
