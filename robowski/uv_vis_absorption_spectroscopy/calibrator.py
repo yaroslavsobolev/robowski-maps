@@ -8,8 +8,8 @@ from scipy import interpolate
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
-from dataclasses import dataclass
-from typing import Optional, Tuple
+from dataclasses import dataclass, field
+from typing import Optional, Tuple, List, Dict
 
 
 nanodrop_errorbar_folder = data_folder + 'nanodrop-spectrophotometer-measurements/nanodrop_errorbar_folder_2024-03-16/raw_residuals/'
@@ -56,6 +56,7 @@ def _process_single_calibrant(
     applies stitching and smoothing, and establishes concentration-coefficient
     relationships for spectral unmixing.
     """
+
     calibrant_shortname = calibrant_config.shortname
     ref_concentration = calibrant_config.ref_concentration
     min_concentration = calibrant_config.min_concentration
@@ -159,64 +160,24 @@ def _process_single_calibrant(
             _plot_smoohting_comparison(nanodrop_df['wavelength'].to_numpy(), original_spectrum, ref_spectrum,
                                        savgol_smoothed_signal)
 
-    coeffs = []
-    coeff_errs = []
-    spectra = []
-
-    for concentration in concentrations:
-        if concentration == 0:
-            coeffs.append(0)
-            coeff_errs.append(0)
-            continue
-
-        df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
-        target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum,
-                                                                     no_right_edge_subtraction)[:, 1]
-        spectra.append(np.copy(target_spectrum))
-        mask = wavelength_indices > cut_from
-        if cut_to is not None:
-            mask = np.logical_and(mask, wavelength_indices < cut_to)
-        mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
-
-        # find the largest index where target_spectrum is above the value 1.5
-        if len(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]) == 0:
-            largest_index_above_2 = -1
-        else:
-            largest_index_above_2 = np.max(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0])
-        # mask all the indices smaller than largest_index_above_1.5
-        mask2 = wavelength_indices > largest_index_above_2
-        mask = np.logical_and(mask, mask2)
-
-        def func(xs, a, b):
-            return a * reference_interpolator(xs) + b
-
-        p0 = (concentration / ref_concentration, 0)
-        bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
-        popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
-                               p0=p0, bounds=bounds)
-        perr = np.sqrt(np.diag(pcov))
-        slope = popt[0]
-        slope_error = perr[0]
-        coeffs.append(slope)
-        coeff_errs.append(slope_error)
-
-        if do_record_residuals:
-            residuals = target_spectrum - func(wavelength_indices, *popt)
-            # stack wavelengths, target_spectrum, resoduals into a single 3xN array for saving
-            if dont_save_residuals_below_cut_to:
-                residuals_for_saving = np.vstack(
-                    (nanodrop_df['wavelength'].to_numpy()[mask], target_spectrum[mask], residuals[mask])).T
-            else:
-                residuals_for_saving = np.vstack(
-                    (nanodrop_df['wavelength'].to_numpy()[mask2], target_spectrum[mask2], residuals[mask2])).T
-            filename_from_calibration_source = 'dummy_filename'  # This was derived from calibration_source_filename in original
-            np.save(
-                f'{nanodrop_errorbar_folder}residuals_{filename_from_calibration_source}__colname{df_row_here["nanodrop_col_name"]}.npy',
-                residuals_for_saving)
-
-        _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices,
-                                concentration_column_name,
-                                savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
+    coeffs, coeff_errs, spectra = _calculate_concentration_coefficients(
+        concentrations=concentrations,
+        one_calibrant_df=one_calibrant_df,
+        nanodrop_df=nanodrop_df,
+        bkg_spectrum=bkg_spectrum,
+        reference_interpolator=reference_interpolator,
+        concentration_column_name=concentration_column_name,
+        cut_from=cut_from,
+        cut_to=cut_to,
+        upper_limit_of_absorbance=upper_limit_of_absorbance,
+        artefact_generating_upper_limit_of_absorbance=artefact_generating_upper_limit_of_absorbance,
+        no_right_edge_subtraction=no_right_edge_subtraction,
+        do_record_residuals=do_record_residuals,
+        dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
+        calibrant_shortname=calibrant_shortname,
+        calibration_folder=calibration_folder,
+        do_plot=do_plot
+    )
 
     xs = coeffs
     ys = concentrations
@@ -238,6 +199,95 @@ def _process_single_calibrant(
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy',
                 concentrations)
+
+
+def _calculate_concentration_coefficients(
+        concentrations: List[float],
+        one_calibrant_df: pd.DataFrame,
+        nanodrop_df: pd.DataFrame,
+        bkg_spectrum: np.ndarray,
+        reference_interpolator: callable,
+        concentration_column_name: str,
+        cut_from: int,
+        cut_to: Optional[int],
+        upper_limit_of_absorbance: float,
+        artefact_generating_upper_limit_of_absorbance: float,
+        no_right_edge_subtraction: bool,
+        do_record_residuals: bool,
+        dont_save_residuals_below_cut_to: bool,
+        calibrant_shortname: str,
+        calibration_folder: str,
+        do_plot: bool
+) -> Tuple[List[float], List[float], List[np.ndarray]]:
+    """
+    Calculate coefficients relating concentration to spectral scaling factors.
+
+    Returns:
+        Tuple of (coefficients, coefficient_errors, spectra)
+    """
+    coeffs = []
+    coeff_errs = []
+    spectra = []
+    wavelength_indices = np.arange(bkg_spectrum.shape[0])
+
+    for concentration in concentrations:
+        if concentration == 0:
+            coeffs.append(0)
+            coeff_errs.append(0)
+            continue
+
+        df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
+        target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum,
+                                                                     no_right_edge_subtraction)[:, 1]
+        spectra.append(np.copy(target_spectrum))
+
+        # Create mask for fitting
+        mask = wavelength_indices > cut_from
+        if cut_to is not None:
+            mask = np.logical_and(mask, wavelength_indices < cut_to)
+        mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
+
+        # Handle artifacts at high absorbance
+        if len(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0]) == 0:
+            largest_index_above_2 = -1
+        else:
+            largest_index_above_2 = np.max(np.where(target_spectrum > artefact_generating_upper_limit_of_absorbance)[0])
+        mask2 = wavelength_indices > largest_index_above_2
+        mask = np.logical_and(mask, mask2)
+
+        # Fit spectrum to reference
+        def func(xs, a, b):
+            return a * reference_interpolator(xs) + b
+
+        p0 = (concentration / 0.006, 0)  # ref_concentration was typically 0.006
+        bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
+        popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
+                               p0=p0, bounds=bounds)
+        perr = np.sqrt(np.diag(pcov))
+
+        coeffs.append(popt[0])
+        coeff_errs.append(perr[0])
+
+        # Handle residuals recording
+        if do_record_residuals:
+            residuals = target_spectrum - func(wavelength_indices, *popt)
+            if dont_save_residuals_below_cut_to:
+                residuals_for_saving = np.vstack(
+                    (nanodrop_df['wavelength'].to_numpy()[mask], target_spectrum[mask], residuals[mask])).T
+            else:
+                residuals_for_saving = np.vstack(
+                    (nanodrop_df['wavelength'].to_numpy()[mask2], target_spectrum[mask2], residuals[mask2])).T
+            filename_from_calibration_source = 'dummy_filename'
+            np.save(
+                f'{nanodrop_errorbar_folder}residuals_{filename_from_calibration_source}__colname{df_row_here["nanodrop_col_name"]}.npy',
+                residuals_for_saving)
+
+        # Plot concentration fit
+        _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices,
+                                concentration_column_name,
+                                savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
+
+    return coeffs, coeff_errs, spectra
 
 
 def construct_calibrant(
