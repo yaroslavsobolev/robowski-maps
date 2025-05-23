@@ -1,22 +1,20 @@
+import logging
 from robowski.settings import *
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-
 from scipy import interpolate
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
-data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
 nanodrop_errorbar_folder = data_folder + 'nanodrop-spectrophotometer-measurements/nanodrop_errorbar_folder_2024-03-16/raw_residuals/'
-
 import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
+
 
 def construct_calibrant(
                         cut_from,
-                        lower_limit_of_absorbance,
                         concentration_column_name,
                         do_plot,
                         experiment_name,
@@ -40,7 +38,8 @@ def construct_calibrant(
                         do_record_residuals=False,
                         do_not_save_data=False,
                         skip_concentrations=tuple([]),
-                        dont_save_residuals_below_cut_to=False
+                        dont_save_residuals_below_cut_to=False,
+                        lower_limit_of_absorbance=0.007
 ):
     if min_concentrations is None:
         min_concentrations = np.zeros(len(calibrant_shortnames))
@@ -78,10 +77,7 @@ def construct_calibrant(
     bkg_spectrum[:, 1] *= bkg_multiplier
 
     if do_plot:
-        # plot bkg_spectrum
-        plt.plot(bkg_spectrum[:, 0], bkg_spectrum[:, 1])
-        plt.title('Background spectrum')
-        plt.show()
+        _plot_diagnostic_spectrum(bkg_spectrum[:, 0], bkg_spectrum[:, 1], title="Background spectrum")
 
     def load_spectrum_by_df_row(row):
         wavelengths = nanodrop_df['wavelength'].to_numpy()
@@ -107,9 +103,7 @@ def construct_calibrant(
         if not no_right_edge_subtraction:
             ref_spectrum -= np.mean(ref_spectrum[-100:])
         if do_plot:
-            plt.plot(wavelengths, ref_spectrum)
-            plt.title('Ref spectrum')
-            plt.show()
+            _plot_diagnostic_spectrum(wavelengths, ref_spectrum, title=f"Reference spectrum for {calibrant_shortname}")
 
         wavelength_indices = np.arange(ref_spectrum.shape[0])
         reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
@@ -123,13 +117,13 @@ def construct_calibrant(
         if forced_reference_from_agilent_cary_file is not None:
             wavelengths_cary, ys = st.read_cary_agilent_csv_spectrum(forced_reference_from_agilent_cary_file, column_name=cary_column_name)
             ref_spectrum = ys
-            plt.semilogy(wavelengths_cary, ref_spectrum, label='forced reference')
-            plt.title(f'Ref spectrum, forced reference')
+            # copy it for later plotting
+            ref_spectrum_before_resampling = np.copy(ref_spectrum)
             reference_interpolator = interpolate.interp1d(wavelengths_cary, ref_spectrum, fill_value='extrapolate')
             ref_spectrum = reference_interpolator(wavelengths)
             reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
-            plt.semilogy(wavelengths, ref_spectrum, label='forced reference, resampled')
-            plt.show()
+            if do_plot:
+                _plot_about_resampling(wavelengths, ref_spectrum, ref_spectrum_before_resampling, wavelengths_cary)
 
         if do_reference_stitching:
             linefit_parameters = []
@@ -167,49 +161,30 @@ def construct_calibrant(
                 slope_error = perr[0]
                 linefit_parameters.append([popt[0], popt[1]])
 
-                fig1 = plt.figure(1)
-                plt.plot(target_spectrum, label='data', color='C0', alpha=0.5)
-                mask_illustration = np.ones_like(target_spectrum) * np.max(target_spectrum)
-                mask_illustration[mask] = 0
-                plt.fill_between(x=wavelength_indices, y1=0, y2=mask_illustration, color='yellow', alpha=0.3,
-                                 label='ignored (masked) data')
-                plt.plot(func(wavelength_indices, *popt), color='r', label='fit', alpha=0.5)
-                plt.plot(func(wavelength_indices, popt[0], 0), color='C1', label='reference', alpha=0.5)
-                plt.ylim(-0.03,
-                         np.max((func(wavelength_indices, *popt)[mask])) * 2)
-                plt.title(
-                    f"conc {df_row_here[concentration_column_name]}, well {df_row_here['nanodrop_col_name']}")
-                plt.legend()
-                if do_plot:
-                    plt.show()
-                else:
-                    plt.clf()
+                _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices, concentration_column_name)
 
                 ref_spectrum[mask] = (target_spectrum[mask] - popt[1])/popt[0]
                 ref_spectrum = ref_spectrum - np.min(ref_spectrum)
                 reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum,
                                                               fill_value='extrapolate')
-                # plot new ref spectrum in semilog scale
-                plt.semilogy(wavelengths, ref_spectrum)
-                plt.title(f'Ref spectrum, concentration: {concentration}')
-                plt.show()
+                if do_plot:
+                    _plot_diagnostic_spectrum(wavelengths, ref_spectrum,
+                                              title=f"Reference spectrum for calibrant {calibrant_shortname}, concentration: {concentration}, after stitching",
+                                              semilog=True)
 
         if do_smoothing_at_low_absorbance is not None:
+            original_spectrum = np.copy(ref_spectrum)
             savgol_smoothed_signal = savgol_filter(ref_spectrum, window_length=savgol_window, polyorder=4)
             # make exponential weight between the smoothed data and the original
             exponential_decay_constant = do_smoothing_at_low_absorbance * np.max(ref_spectrum)
             exponential_weight = np.exp(-1*ref_spectrum/exponential_decay_constant)
-            plt.semilogy(wavelengths, ref_spectrum, label='original spectrum')
-            plt.semilogy(wavelengths, savgol_smoothed_signal, label='smoothed spectrum')
+
             ref_spectrum = savgol_smoothed_signal * exponential_weight + ref_spectrum * (1-exponential_weight)
             ref_spectrum = ref_spectrum - np.min(ref_spectrum)
             reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum,
                                                           fill_value='extrapolate')
-            # plot new ref spectrum in semilog scale
-            plt.semilogy(wavelengths, ref_spectrum, label='hybrid spectrum')
-            plt.title(f'Ref spectrum, savgol_smoothed')
-            plt.legend()
-            plt.show()
+            if do_plot:
+                _plot_smoohting_comparison(wavelengths, original_spectrum, ref_spectrum, savgol_smoothed_signal)
 
         coeffs = []
         coeff_errs = []
@@ -263,49 +238,18 @@ def construct_calibrant(
                 filename_from_calibration_source = calibration_source_filename.split('/')[-1]
                 np.save(f'{nanodrop_errorbar_folder}residuals_{filename_from_calibration_source}__colname{df_row_here["nanodrop_col_name"]}.npy', residuals_for_saving)
 
-            fig1 = plt.figure(1)
-            plt.plot(target_spectrum, label='data', color='C0', alpha=0.5)
-            mask_illustration = np.ones_like(target_spectrum) * np.max(target_spectrum)
-            mask_illustration[mask] = 0
-            plt.fill_between(x=wavelength_indices, y1=0, y2=mask_illustration, color='yellow', alpha=0.3,
-                             label='ignored (masked) data')
-            plt.plot(func(wavelength_indices, *popt), color='r', label='fit', alpha=0.5)
-            plt.plot(func(wavelength_indices, popt[0], 0), color='C1', label='reference', alpha=0.5)
-            plt.ylim(-0.03,
-                     np.max((func(wavelength_indices, *popt)[mask])) * 2)
-            plt.title(
-                f"conc {df_row_here[concentration_column_name]}, well {df_row_here['nanodrop_col_name']}")
-            plt.legend()
-            fig1.savefig(
-                calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
-            if do_plot:
-                plt.show()
-            else:
-                plt.clf()
+            _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices, concentration_column_name,
+                                    savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
 
-        fig3, axarr = plt.subplots(1, 2, figsize=(10, 5))
-        ax1, ax2 = axarr
-        ax2.plot(coeffs, concentrations, 'o-')
 
         xs = coeffs
         ys = concentrations
         popt, pcov = curve_fit(lambda x, a: a * x, xs, ys, p0=(1))
         new_xs = np.array([0, 1*max(xs)])
         new_ys = np.array([0, popt[0]*max(xs)])
-        ax2.plot(new_xs, new_ys, label='linear fit', color='C1')
 
-        ax2.set_xlabel('Best-fit scale coefficient')
-        ax2.set_ylabel('Concentration, mol/liter')
-        fig3.savefig(calibration_folder + f"references/{calibrant_shortname}/concentration-vs-coeff.png", dpi=300)
-
-        if do_plot:
-            plt.show()
-            plt.loglog(coeffs, concentrations, 'o-')
-            plt.xlabel('Best-fit scale coefficient')
-            plt.ylabel('Concentration, mol/liter')
-            plt.show()
-        else:
-            plt.clf()
+        _plot_calibration_curve(coeffs, concentrations, do_plot, new_xs, new_ys,
+                                savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration-vs-coeff.png")
 
         coeff_to_concentration_interpolator = interpolate.interp1d(coeffs, concentrations,
                                                                    fill_value='extrapolate')
@@ -319,6 +263,7 @@ def construct_calibrant(
             np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy',
                     concentrations)
 
+
     for i, calibrant_shortname in enumerate(calibrant_shortnames):
         reference_for_one_calibrant(calibrant_shortname, ref_concentration=ref_concentrations[i],
                                     min_concentration=min_concentrations[i],
@@ -326,8 +271,74 @@ def construct_calibrant(
                                     do_plot=do_plot)
 
 
-def construct_degenerate_calibrant():
-    pass
+def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum", semilog=False):
+    """Plot background spectrum."""
+    if semilog:
+        plt.semilogy(wavelengths, spectrum)
+    else:
+        plt.plot(wavelengths, spectrum)
+    plt.title(title)
+    plt.show()
+
+
+def _plot_about_resampling(wavelengths, ref_spectrum, ref_spectrum_before_resampling, wavelengths_cary):
+    plt.semilogy(wavelengths_cary, ref_spectrum_before_resampling, label='forced reference')
+    plt.title(f'Ref spectrum, forced reference')
+    plt.semilogy(wavelengths, ref_spectrum, label='forced reference, resampled')
+    plt.show()
+
+
+def _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices, concentration_column_name,
+                            savefigpath=None):
+    fig1 = plt.figure(1)
+    plt.plot(target_spectrum, label='data', color='C0', alpha=0.5)
+    mask_illustration = np.ones_like(target_spectrum) * np.max(target_spectrum)
+    mask_illustration[mask] = 0
+    plt.fill_between(x=wavelength_indices, y1=0, y2=mask_illustration, color='yellow', alpha=0.3,
+                     label='ignored (masked) data')
+    plt.plot(func(wavelength_indices, *popt), color='r', label='fit', alpha=0.5)
+    plt.plot(func(wavelength_indices, popt[0], 0), color='C1', label='reference', alpha=0.5)
+    plt.ylim(-0.03,
+             np.max((func(wavelength_indices, *popt)[mask])) * 2)
+    plt.title(
+        f"conc {df_row_here[concentration_column_name]}, well {df_row_here['nanodrop_col_name']}")
+    plt.legend()
+    if savefigpath is not None:
+        fig1.savefig(savefigpath)
+        print(f"Saved figure to {os.path.abspath(savefigpath)}")
+    if do_plot:
+        plt.show()
+    else:
+        plt.clf()
+
+
+def _plot_smoohting_comparison(wavelengths, original_spectrum, ref_spectrum, savgol_smoothed_signal):
+    # plot new ref spectrum in semilog scale
+    plt.semilogy(wavelengths, original_spectrum, label='original spectrum')
+    plt.semilogy(wavelengths, savgol_smoothed_signal, label='smoothed spectrum')
+    plt.semilogy(wavelengths, ref_spectrum, label='hybrid spectrum')
+    plt.title(f'Ref spectrum, savgol_smoothed')
+    plt.legend()
+    plt.show()
+
+
+def _plot_calibration_curve(coeffs, concentrations, do_plot, new_xs, new_ys,
+                            savefigpath):
+    fig3, axarr = plt.subplots(1, 2, figsize=(10, 5))
+    ax1, ax2 = axarr
+    ax2.plot(coeffs, concentrations, 'o-')
+    ax2.plot(new_xs, new_ys, label='linear fit', color='C1')
+    ax2.set_xlabel('Best-fit scale coefficient')
+    ax2.set_ylabel('Concentration, mol/liter')
+    fig3.savefig(savefigpath, dpi=300)
+    if do_plot:
+        plt.show()
+        plt.loglog(coeffs, concentrations, 'o-')
+        plt.xlabel('Best-fit scale coefficient')
+        plt.ylabel('Concentration, mol/liter')
+        plt.show()
+    else:
+        plt.clf()
 
 
 def take_median_of_nanodrop_spectra(plate_folder, nanodrop_lower_cutoff_of_wavelengths = 220,

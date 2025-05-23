@@ -7,10 +7,13 @@ import os
 import matplotlib.pyplot as plt
 import robowski.uv_vis_absorption_spectroscopy.examples.versatility.versatility_examples as versatility_examples
 import robowski.uv_vis_absorption_spectroscopy.calibrator as calibrator
+import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
+import numpy as np
+
+data_folder = ''
+import pytest
 
 plt.ioff()  # Turn off interactive plotting for testing
-import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
-import pytest
 
 # Global flag to control saving of expected outputs
 # Set this to True only when you intentionally want to generate/update expected outputs
@@ -36,7 +39,11 @@ def datadir(tmpdir, request):
 
 def test_unmixing_for_claisen(datadir):
     with datadir.as_cwd():
+        global data_folder
         data_folder = ''
+        calibrator.data_folder = ''
+        process_wellplate_spectra.data_folder = ''
+        versatility_examples.data_folder = ''
         experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Claisen_WaiShing/'
 
         calibrator.construct_calibrant(
@@ -91,3 +98,58 @@ def test_unmixing_for_claisen(datadir):
         # assert that the df and the one loaded from pickle are equal
         df_loaded = pd.read_pickle(f'Claisen_WaiShing_results.pickle')
         assert_frame_equal(df, df_loaded, check_exact=False, check_like=True)
+
+
+def test_hantzsch_calibration(datadir):
+    with datadir.as_cwd():
+        global data_folder
+        data_folder = ''
+        calibrator.data_folder = ''
+        process_wellplate_spectra.data_folder = ''
+        versatility_examples.data_folder = ''
+        experiment_name = f'BPRF/2024-01-17-run01/'
+        cut_from = 5
+        calibrator.construct_calibrant(
+            cut_from=cut_from,
+            lower_limit_of_absorbance=0.007,
+            concentration_column_name='concentration',
+            do_plot=False,
+            calibration_source_filename='calibrations/2024-01-16_18-28-35_UV-Vis_starting_materials',
+            calibrant_shortnames=['methoxybenzaldehyde'],
+            ref_concentrations=[0.006],
+            max_concentrations=[1],
+            min_concentrations=[4e-5],
+            experiment_name=experiment_name,
+            upper_limit_of_absorbance=0.95,
+            do_reference_stitching=True,
+            do_smoothing_at_low_absorbance=None,
+            # forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/other-hantzsch/pure_benzald.csv',
+            # cary_column_name='pure_benzald_10ul_in_3mL_cuvette_stock_10uL_in_5mL_c1_rep1_1',
+            forced_reference_from_agilent_cary_file=data_folder + experiment_name + 'calibrations/spectrophotometer_data/other-hantzsch/methoxybenzald.csv',
+            cary_column_name='methoxybenzald__c1_rep1_2',
+            nanodrop_wavelength_shift=-1
+        )
+
+        # assert that the .npy files from the calibration folder just created are equal to the ones in the
+        # 'test_claisen_waishing\expected_calib\references\methoxybenzaldehyde' folder
+
+        calibration_folder = data_folder + experiment_name + 'microspectrometer_data/calibration/'
+        # load the .npy files from the calibration folder
+        # and the expected ones
+        expected_calibration_folder = 'expected_calib/references/methoxybenzaldehyde/'
+        bkg_spectrum = np.load(calibration_folder + f'references/methoxybenzaldehyde/bkg_spectrum.npy')
+        expected_bkg_spectrum = np.load(expected_calibration_folder + f'bkg_spectrum.npy')
+        ref_spectrum = np.load(calibration_folder + f'references/methoxybenzaldehyde/ref_spectrum.npy')
+        expected_ref_spectrum = np.load(expected_calibration_folder + f'ref_spectrum.npy')
+        coeffs = np.load(calibration_folder + f'references/methoxybenzaldehyde/interpolator_coeffs.npy')
+        expected_coeffs = np.load(expected_calibration_folder + f'interpolator_coeffs.npy')
+        interpolator_concentrations = np.load(calibration_folder + f'references/methoxybenzaldehyde/interpolator_concentrations.npy')
+        expected_interpolator_concentrations = np.load(expected_calibration_folder + f'interpolator_concentrations.npy')
+
+        # assert that the arrays are equal
+        np.testing.assert_allclose(bkg_spectrum, expected_bkg_spectrum)
+        np.testing.assert_allclose(ref_spectrum, expected_ref_spectrum)
+        np.testing.assert_allclose(coeffs, expected_coeffs)
+        np.testing.assert_allclose(interpolator_concentrations, expected_interpolator_concentrations)
+
+
