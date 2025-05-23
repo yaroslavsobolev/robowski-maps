@@ -217,9 +217,9 @@ Some examples of the usage of this script are in the `main` function of the `aci
 ### Numerical exploration of the smoothness of the yield maps of reaction networks
 
 The scripts used as described in the Section 7.5 of the Supplementary Materials are in the
-`robowski/misc_scripts/smoothness_theory` folder. The `smoothness_analyze.py` can be used to reproduce Figures S154 and S155.
+`robowski/smoothness_theory` folder. The `smoothness_analyze.py` can be used to reproduce Figures S154 and S155.
 To reproduce the Figure S153 showing the smoothness of experimental yield maps, run the
-`robowski/misc_scripts/smoothness_theory/smoothness_from_experiments.py` script.
+`robowski/smoothness_theory/smoothness_from_experiments.py` script.
 
 
 ### Calculation of theoretical light absorption spectra from TD-DFT

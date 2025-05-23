@@ -106,7 +106,7 @@ def make_hists_for_C_cases(case ='C1'):
     plt.xlabel('Highest partial derivative for a given reaction')
     plt.ylabel('Probability\ndensity')
     plt.tight_layout()
-    f1.savefig(repo_data_path + f'misc_scripts/smoothness_theory/figures/hist_{case}.png', dpi=300)
+    f1.savefig(repo_data_path + f'smoothness_theory/figures/hist_{case}.png', dpi=300)
     plt.show()
 
     # interesting_reaction = 'reaction4ffc304e-0d60-4332-83d5-93f7f2bd0377'
@@ -147,7 +147,7 @@ def plot_hist(short_db_filename, filter_callable, output_filename):
     plt.xlabel('Highest partial derivative')
     plt.ylabel('Probability density')
     # plt.tight_layout()
-    f1.savefig(repo_data_path + f'misc_scripts/smoothness_theory/figures/{output_filename}.png', dpi=300)
+    f1.savefig(repo_data_path + f'smoothness_theory/figures/{output_filename}.png', dpi=300)
     plt.show()
     # print(f'Maximum value of max_over_ts_global: {np.max(max_over_ts_global)}')
 
