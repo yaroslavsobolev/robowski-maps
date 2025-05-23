@@ -223,7 +223,7 @@ def _process_single_calibrant(
             do_plot=do_plot
         )
 
-    coeffs, coeff_errs, spectra = _calculate_concentration_coefficients(
+    coeffs = _calculate_concentration_coefficients(
         concentrations=concentrations,
         one_calibrant_df=one_calibrant_df,
         nanodrop_df=nanodrop_df,
@@ -365,7 +365,6 @@ def _apply_reference_stitching(
         Tuple of (modified_ref_spectrum, updated_reference_interpolator)
     """
     wavelength_indices = np.arange(ref_spectrum.shape[0])
-    linefit_parameters = []
 
     for concentration in concentrations:
         if concentration < ref_concentration:
@@ -397,8 +396,6 @@ def _apply_reference_stitching(
         bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
         popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
                                p0=p0, bounds=bounds)
-        perr = np.sqrt(np.diag(pcov))
-        linefit_parameters.append([popt[0], popt[1]])
 
         # Plot the fit
         _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum,
@@ -447,20 +444,16 @@ def _calculate_concentration_coefficients(
         Tuple of (coefficients, coefficient_errors, spectra)
     """
     coeffs = []
-    coeff_errs = []
-    spectra = []
     wavelength_indices = np.arange(bkg_spectrum.shape[0])
 
     for concentration in concentrations:
         if concentration == 0:
             coeffs.append(0)
-            coeff_errs.append(0)
             continue
 
         df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
         target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum,
                                                                      no_right_edge_subtraction)[:, 1]
-        spectra.append(np.copy(target_spectrum))
 
         # Create mask for fitting
         mask = wavelength_indices > cut_from
@@ -484,10 +477,7 @@ def _calculate_concentration_coefficients(
         bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
         popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
                                p0=p0, bounds=bounds)
-        perr = np.sqrt(np.diag(pcov))
-
         coeffs.append(popt[0])
-        coeff_errs.append(perr[0])
 
         # Handle residuals recording
         if do_record_residuals:
@@ -508,7 +498,7 @@ def _calculate_concentration_coefficients(
                                 concentration_column_name,
                                 savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
 
-    return coeffs, coeff_errs, spectra
+    return coeffs
 
 
 def _save_calibration_data(
