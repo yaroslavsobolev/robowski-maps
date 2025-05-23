@@ -85,10 +85,11 @@ def construct_calibrant(
     def reference_for_one_calibrant(calibrant_shortname, ref_concentration, min_concentration=0, max_concentration=1000,
                                     do_plot=True):
         process_wellplate_spectra.create_folder_unless_it_exists(calibration_folder + f'references/{calibrant_shortname}')
-        one_calibrant_df = all_calibrants_df[all_calibrants_df['substance'] == calibrant_shortname]
 
-        # make sure that only one well for this calibrant has concentration equal to ref_concentration
-        assert one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].shape[0] == 1
+        one_calibrant_df, concentrations = _validate_and_filter_calibrant_data(
+            all_calibrants_df, calibrant_shortname, concentration_column_name,
+            ref_concentration, min_concentration, max_concentration, skip_concentrations)
+
         ref_spectrum = _load_and_process_spectrum_by_metadata_row(
             one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].iloc[0],
             nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
@@ -99,10 +100,6 @@ def construct_calibrant(
 
         wavelength_indices = np.arange(ref_spectrum.shape[0])
         reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
-
-        concentrations = one_calibrant_df[concentration_column_name].to_list()
-        concentrations = [x for x in concentrations if (min_concentration <= x <= max_concentration) and (x not in skip_concentrations)]
-        concentrations = sorted([0] + concentrations)
 
         process_wellplate_spectra.create_folder_unless_it_exists(calibration_folder + f'references/{calibrant_shortname}/concentration_fits')
 
@@ -297,7 +294,7 @@ def _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spect
     plt.legend()
     if savefigpath is not None:
         fig1.savefig(savefigpath)
-        print(f"Saved figure to {os.path.abspath(savefigpath)}")
+        logging.debug(f"Saved figure to {os.path.abspath(savefigpath)}")
     if do_plot:
         plt.show()
     else:
@@ -363,6 +360,61 @@ def _load_and_process_spectrum_by_metadata_row(row, nanodrop_df, bkg_spectrum, n
     if not no_right_edge_subtraction:
         spectrum[:, 1] -= np.mean(spectrum[-100:, 1])
     return spectrum
+
+
+def _validate_and_filter_calibrant_data(all_calibrants_df, calibrant_shortname,
+                                        concentration_column_name, ref_concentration,
+                                        min_concentration, max_concentration,
+                                        skip_concentrations):
+    """
+    Validate and filter calibrant data for a specific calibrant.
+
+    This function extracts data for a specific calibrant, validates that the reference
+    concentration exists exactly once, and filters concentrations to the specified range.
+
+    Parameters
+    ----------
+    all_calibrants_df : pandas.DataFrame
+        DataFrame containing all calibrant metadata
+    calibrant_shortname : str
+        Name of the calibrant to process
+    concentration_column_name : str
+        Name of the concentration column
+    ref_concentration : float
+        Reference concentration that must exist exactly once
+    min_concentration : float
+        Minimum concentration to include
+    max_concentration : float
+        Maximum concentration to include
+    skip_concentrations : tuple
+        Concentrations to exclude from processing
+
+    Returns
+    -------
+    tuple
+        (one_calibrant_df, filtered_concentrations)
+        - one_calibrant_df: DataFrame with data for this calibrant only
+        - filtered_concentrations: Sorted list of concentrations to process
+
+    Raises
+    ------
+    AssertionError
+        If reference concentration doesn't exist exactly once
+    """
+    # Extract data for this calibrant
+    one_calibrant_df = all_calibrants_df[all_calibrants_df['substance'] == calibrant_shortname]
+
+    # Validate that reference concentration exists exactly once
+    ref_conc_count = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].shape[0]
+    assert ref_conc_count == 1, f"Reference concentration {ref_concentration} for {calibrant_shortname} must exist exactly once, found {ref_conc_count} times"
+
+    # Filter and sort concentrations
+    concentrations = one_calibrant_df[concentration_column_name].to_list()
+    concentrations = [x for x in concentrations if
+                      (min_concentration <= x <= max_concentration) and (x not in skip_concentrations)]
+    concentrations = sorted([0] + concentrations)
+
+    return one_calibrant_df, concentrations
 
 
 def take_median_of_nanodrop_spectra(plate_folder, nanodrop_lower_cutoff_of_wavelengths = 220,
