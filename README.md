@@ -85,7 +85,7 @@ This will install all the required dependencies, but it is not guaranteed to wor
 ### Installing this package with `pip`
 
 Once the `robowski` environment is activated in `conda`, run the following command in the terminal ("Anaconda Command Prompt")
-to install this repository's code as "in-place" package:
+to install this repository's code as "in-place" package (don't miss the dot `.` at the end):
 
 ```bash
 python -m pip install --no-build-isolation --no-deps -e .

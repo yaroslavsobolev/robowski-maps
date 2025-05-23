@@ -28,7 +28,6 @@ dependencies:
   - joblib=1.3.2=pyhd8ed1ab_0
   - jpeg=9c=hfa6e2cd_1001
   - jupyter_client=7.1.2=pyhd8ed1ab_0
-  - jupyter_core=4.11.1=py37h03978a9_0
   - kiwisolver=1.2.0=py37heaa310e_0
   - libblas=3.9.0=26_win64_mkl
   - libcblas=3.9.0=26_win64_mkl
@@ -41,7 +40,6 @@ dependencies:
   - mkl=2020.4=hb70f87d_311
   - mkl-service=2.0.2=py37he774522_0
   - nest-asyncio=1.6.0=pyhd8ed1ab_0
-  - numpy=1.18.1=py37h90d3380_1
   - openssl=1.1.1f=hfa6e2cd_0
   - pandas=0.25.3=py37he350917_0
   - parso=0.8.4=pyhd8ed1ab_0
@@ -59,7 +57,6 @@ dependencies:
   - python_abi=3.7=2_cp37m
   - pytz=2024.2=pyhd8ed1ab_0
   - pywin32=227=py37hfa6e2cd_0
-  - pyzmq=19.0.0=py37h8c16cda_1
   - qt=5.9.7=vc14h73c81de_0
   - qtconsole=4.5.1=py_0
   - qtpy=1.8.0=py_0
@@ -73,7 +70,6 @@ dependencies:
   - sqlite=3.30.1=hfa6e2cd_0
   - statsmodels=0.10.0=py37h8c2d366_0
   - tomli=2.0.2=pyhd8ed1ab_0
-  - tornado=6.0.4=py37hfa6e2cd_0
   - traitlets=5.9.0=pyhd8ed1ab_0
   - uncertainties=3.1.2=py37_0
   - vc=14.1=h0510ff6_4
@@ -86,18 +82,63 @@ dependencies:
   - zipp=3.7.0=pyhd3eb1b0_0
   - zlib=1.2.11=h2fa13f4_1006
   - pip:
+    - aiofiles==22.1.0
+    - aiosqlite==0.19.0
+    - anyio==3.7.1
     - apptools==4.5.0
+    - argon2-cffi==23.1.0
+    - argon2-cffi-bindings==21.2.0
+    - arrow==1.2.3
+    - attrs==24.2.0
+    - babel==2.14.0
+    - beautifulsoup4==4.13.4
+    - bleach==6.0.0
+    - cached-property==1.5.2
+    - certifi==2025.4.26
+    - cffi==1.15.1
+    - charset-normalizer==3.4.2
     - configobj==5.0.9
     - corner==2.2.1
+    - defusedxml==0.7.1
     - emcee==3.1.6
     - envisage==4.9.2
     - et-xmlfile==1.1.0
+    - fastjsonschema==2.21.1
+    - fqdn==1.5.1
+    - idna==3.10
     - importlib-resources==5.12.0
+    - isoduration==20.11.0
+    - jinja2==3.1.6
+    - json5==0.9.16
+    - jsonpointer==3.0.0
+    - jsonschema==4.17.3
+    - jupyter-core==4.12.0
+    - jupyter-events==0.6.3
+    - jupyter-server==1.24.0
+    - jupyter-server-fileid==0.9.3
+    - jupyter-server-ydoc==0.8.0
+    - jupyter-ydoc==0.2.5
+    - jupyterlab==3.6.8
+    - jupyterlab-pygments==0.2.2
+    - jupyterlab-server==2.24.0
+    - markupsafe==2.1.5
     - mayavi==4.7.2
+    - mistune==3.0.2
     - mouseinfo==0.1.3
+    - nbclassic==1.2.0
+    - nbclient==0.7.4
+    - nbconvert==7.6.0
+    - nbformat==5.8.0
     - networkx==2.6.2
+    - notebook==6.5.7
+    - notebook-shim==0.2.4
+    - numpy==1.19.5
     - packaging==24.0
+    - pandocfilters==1.5.1
+    - pkgutil-resolve-name==1.3.10
+    - prometheus-client==0.17.1
     - pyautogui==0.9.47
+    - pycparser==2.21
     - pyface==7.1.0
     - pygetwindow==0.0.9
     - pymsgbox==1.0.9
@@ -105,8 +146,29 @@ dependencies:
     - pyqt5==5.15.0
     - pyqt5-sip==12.8.0
     - pyrect==0.2.0
+    - pyrsistent==0.19.3
     - pyscreeze==1.0.1
+    - python-json-logger==3.0.1
     - pytweening==1.2.0
+    - pywinpty==2.0.10
+    - pyyaml==6.0.1
+    - pyzmq==26.2.1
+    - requests==2.31.0
+    - rfc3339-validator==0.1.4
+    - rfc3986-validator==0.1.1
+    - send2trash==1.8.3
+    - sniffio==1.3.1
+    - soupsieve==2.4.1
+    - terminado==0.17.1
+    - tinycss2==1.2.1
+    - tornado==6.2
     - tqdm==4.64.1
     - traits==6.1.1
     - traitsui==7.1.0
+    - uri-template==1.3.0
+    - urllib3==2.0.7
+    - webcolors==1.13
+    - webencodings==0.5.1
+    - websocket-client==1.6.1
+    - y-py==0.6.2
+    - ypy-websocket==0.8.4
