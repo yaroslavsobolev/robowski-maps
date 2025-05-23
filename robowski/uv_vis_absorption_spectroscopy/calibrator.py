@@ -255,13 +255,14 @@ def _process_single_calibrant(
                                                                fill_value='extrapolate')
 
     if not do_not_save_data:
-        # Saving
-        np.save(calibration_folder + f'references/{calibrant_shortname}/bkg_spectrum.npy', bkg_spectrum)
-        np.save(calibration_folder + f'background//bkg_spectrum.npy', bkg_spectrum)
-        np.save(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy', ref_spectrum)
-        np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
-        np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy',
-                concentrations)
+        _save_calibration_data(
+            calibration_folder=calibration_folder,
+            calibrant_shortname=calibrant_shortname,
+            bkg_spectrum=bkg_spectrum,
+            ref_spectrum=ref_spectrum,
+            coeffs=coeffs,
+            concentrations=concentrations
+        )
 
 
 def _load_reference_from_cary_file(
@@ -508,6 +509,27 @@ def _calculate_concentration_coefficients(
                                 savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
 
     return coeffs, coeff_errs, spectra
+
+
+def _save_calibration_data(
+        calibration_folder: str,
+        calibrant_shortname: str,
+        bkg_spectrum: np.ndarray,
+        ref_spectrum: np.ndarray,
+        coeffs: List[float],
+        concentrations: List[float]
+) -> None:
+    """
+    Save all calibration data files to disk for later use in spectral unmixing.
+
+    Saves background spectrum, reference spectrum, coefficients, and concentrations
+    as numpy arrays in the calibration folder structure.
+    """
+    np.save(calibration_folder + f'references/{calibrant_shortname}/bkg_spectrum.npy', bkg_spectrum)
+    np.save(calibration_folder + f'background//bkg_spectrum.npy', bkg_spectrum)
+    np.save(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy', ref_spectrum)
+    np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
+    np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy', concentrations)
 
 
 def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum", semilog=False):
