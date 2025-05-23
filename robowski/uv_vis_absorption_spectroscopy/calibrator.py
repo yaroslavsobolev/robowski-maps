@@ -220,19 +220,13 @@ def _process_single_calibrant(
         )
 
     if do_smoothing_at_low_absorbance is not None:
-        original_spectrum = np.copy(ref_spectrum)
-        savgol_smoothed_signal = savgol_filter(ref_spectrum, window_length=savgol_window, polyorder=4)
-        # make exponential weight between the smoothed data and the original
-        exponential_decay_constant = do_smoothing_at_low_absorbance * np.max(ref_spectrum)
-        exponential_weight = np.exp(-1 * ref_spectrum / exponential_decay_constant)
-
-        ref_spectrum = savgol_smoothed_signal * exponential_weight + ref_spectrum * (1 - exponential_weight)
-        ref_spectrum = ref_spectrum - np.min(ref_spectrum)
-        reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum,
-                                                      fill_value='extrapolate')
-        if do_plot:
-            _plot_smoohting_comparison(nanodrop_df['wavelength'].to_numpy(), original_spectrum, ref_spectrum,
-                                       savgol_smoothed_signal)
+        ref_spectrum, reference_interpolator = _apply_reference_smoothing(
+            ref_spectrum=ref_spectrum,
+            do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
+            savgol_window=savgol_window,
+            wavelengths=nanodrop_df['wavelength'].to_numpy(),
+            do_plot=do_plot
+        )
 
     coeffs, coeff_errs, spectra = _calculate_concentration_coefficients(
         concentrations=concentrations,
@@ -273,6 +267,42 @@ def _process_single_calibrant(
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy', np.array(coeffs))
         np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy',
                 concentrations)
+
+
+def _apply_reference_smoothing(
+        ref_spectrum: np.ndarray,
+        do_smoothing_at_low_absorbance: float,
+        savgol_window: int,
+        wavelengths: np.ndarray,
+        do_plot: bool
+) -> Tuple[np.ndarray, callable]:
+    """
+    Apply Savitzky-Golay smoothing to reference spectrum at low absorbance values.
+
+    Uses exponential weighting to blend smoothed and original spectra,
+    applying more smoothing at lower absorbance values where noise is more problematic.
+
+    Returns:
+        Tuple of (smoothed_ref_spectrum, updated_reference_interpolator)
+    """
+    original_spectrum = np.copy(ref_spectrum)
+    savgol_smoothed_signal = savgol_filter(ref_spectrum, window_length=savgol_window, polyorder=4)
+
+    # Create exponential weight between smoothed and original data
+    exponential_decay_constant = do_smoothing_at_low_absorbance * np.max(ref_spectrum)
+    exponential_weight = np.exp(-1 * ref_spectrum / exponential_decay_constant)
+
+    ref_spectrum = savgol_smoothed_signal * exponential_weight + ref_spectrum * (1 - exponential_weight)
+    ref_spectrum = ref_spectrum - np.min(ref_spectrum)
+
+    wavelength_indices = np.arange(ref_spectrum.shape[0])
+    reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum,
+                                                  fill_value='extrapolate')
+
+    if do_plot:
+        _plot_smoohting_comparison(wavelengths, original_spectrum, ref_spectrum, savgol_smoothed_signal)
+
+    return ref_spectrum, reference_interpolator
 
 
 def _apply_reference_stitching(
