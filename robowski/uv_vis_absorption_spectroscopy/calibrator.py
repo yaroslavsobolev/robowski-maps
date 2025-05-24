@@ -57,7 +57,6 @@ Note:
 import logging
 import os
 from typing import Optional, Tuple, List
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -99,7 +98,7 @@ def perform_calibration(
         do_record_residuals=False,
         do_not_save_data=False,
         skip_concentrations=tuple([]),
-        dont_save_residuals_below_cut_to=False,
+        dont_save_residuals_outside_the_mask=False,
         lower_limit_of_absorbance=0.007,
         npoints_for_right_edge_subtraction=-100
 ):
@@ -275,9 +274,10 @@ def perform_calibration(
         Whether to skip saving calibration results to files. Useful for testing. Default is False.
     skip_concentrations : tuple, optional
         Concentrations to exclude from processing. Default is an empty tuple.
-    dont_save_residuals_below_cut_to : bool, optional
-        Whether to exclude low-wavelength residuals from saved residuals. Only relevant if do_record_residuals is True.
-        Default False.
+    dont_save_residuals_outside_the_mask : bool, optional
+        If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
+        If False, saves only the residuals defined by `artifact_mask`. See _create_artifact_mask() for details.
+        Defauld is False.
     lower_limit_of_absorbance : float, optional
         Deprecated parameter retained for backward compatibility. Previously used to exclude
         very low absorbance values from fitting.
@@ -377,7 +377,7 @@ def perform_calibration(
                                       do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
                                       savgol_window=savgol_window, do_plot=do_plot, do_not_save_data=do_not_save_data,
                                       do_record_residuals=do_record_residuals,
-                                      dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
+                                      dont_save_residuals_outside_the_mask=dont_save_residuals_outside_the_mask,
                                       lower_limit_of_absorbance=lower_limit_of_absorbance,
                                       npoints_for_right_edge_subtraction=npoints_for_right_edge_subtraction)
 
@@ -392,7 +392,7 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
                                   artefactogenic_upper_limit_of_absorbance: float,
                                   do_smoothing_at_low_absorbance: Optional[float], savgol_window: int, do_plot: bool,
                                   do_not_save_data: bool, do_record_residuals: bool,
-                                  dont_save_residuals_below_cut_to: bool, lower_limit_of_absorbance: float,
+                                  dont_save_residuals_outside_the_mask: bool, lower_limit_of_absorbance: float,
                                   npoints_for_right_edge_subtraction=-100) -> None:
     """
     Process complete calibration workflow for a single chemical component.
@@ -531,9 +531,10 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
         Whether to save fitting residuals for instrumental uncertainty analysis. Residuals are saved
         to enable later mapping of spectrophotometer errors as a function of wavelength and absorbance
         (see `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`).
-    dont_save_residuals_below_cut_to : bool
-        Whether to exclude low-wavelength residuals from saved data. Only relevant if do_record_residuals is True.
-        When True, only residuals above the cut_to wavelength are saved, focusing analysis on the useful spectral range.
+    dont_save_residuals_outside_the_mask : bool
+        If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
+        If False, saves only the residuals defined by `artifact_mask`. See _create_artifact_mask() for details.
+        Defauld is False.
     lower_limit_of_absorbance : float
         Deprecated parameter retained for backward compatibility. Previously used to exclude
         very low absorbance values from fitting.
@@ -631,7 +632,7 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
                                                       artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
                                                       no_right_edge_subtraction=no_right_edge_subtraction,
                                                       do_record_residuals=do_record_residuals,
-                                                      dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
+                                                      dont_save_residuals_outside_the_mask=dont_save_residuals_outside_the_mask,
                                                       calibrant_shortname=calibrant_shortname,
                                                       calibration_folder=calibration_folder, do_plot=do_plot)
 
@@ -1168,7 +1169,7 @@ def _calculate_coefficients_vs_concentration(
         artefactogenic_upper_limit_of_absorbance: float,
         no_right_edge_subtraction: bool,
         do_record_residuals: bool,
-        dont_save_residuals_below_cut_to: bool,
+        dont_save_residuals_outside_the_mask: bool,
         calibrant_shortname: str,
         calibration_folder: str,
         do_plot: bool
@@ -1263,9 +1264,10 @@ def _calculate_coefficients_vs_concentration(
         (see `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`
          and the respective section in the Supplementary Information document of the accompanying research article).
         Default is False.
-    dont_save_residuals_below_cut_to : bool
-        Whether to exclude residuals from wavelengths below cut_to when saving. Focuses residual
-        analysis on the spectroscopically useful wavelength range.
+    dont_save_residuals_outside_the_mask : bool
+        If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
+        If False, saves only the residuals defined by `artifact_mask`. See _create_artifact_mask() for details.
+        Defauld is False.
     calibrant_shortname : str
         Identifier for this calibrant, used in residual filenames and diagnostic plot titles.
     calibration_folder : str
@@ -1333,7 +1335,7 @@ def _calculate_coefficients_vs_concentration(
         ...     artefactogenic_upper_limit_of_absorbance=1.5,
         ...     no_right_edge_subtraction=False,
         ...     do_record_residuals=True,
-        ...     dont_save_residuals_below_cut_to=False,
+        ...     dont_save_residuals_outside_the_mask=False,
         ...     calibrant_shortname='methoxybenzaldehyde',
         ...     calibration_folder='/path/to/calibration/',
         ...     do_plot=True
@@ -1370,18 +1372,11 @@ def _calculate_coefficients_vs_concentration(
 
         coeffs.append(popt[0])
 
-        _record_residuals_if_needed(
-            target_spectrum=target_spectrum,
-            wavelength_indices=wavelength_indices,
-            wavelengths=nanodrop_df['wavelength'].to_numpy(),
-            reference_interpolator=reference_interpolator,
-            popt=popt,
-            mask=mask,
-            artifact_mask=artifact_mask,
-            do_record_residuals=do_record_residuals,
-            dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
-            df_row=df_row_here
-        )
+        if do_record_residuals:
+            _record_residuals(wavelengths=nanodrop_df['wavelength'].to_numpy(), wavelength_indices=wavelength_indices,
+                              target_spectrum=target_spectrum, reference_interpolator=reference_interpolator, popt=popt,
+                              save_mask=(mask if dont_save_residuals_outside_the_mask else artifact_mask),
+                              df_row=df_row_here, filename_from_calibration_source=f'{calibrant_shortname}')
 
         # Plot concentration fit
         _plot_concentration_fit(wavelength_indices, target_spectrum,
@@ -1392,26 +1387,15 @@ def _calculate_coefficients_vs_concentration(
     return coeffs
 
 
-def _record_residuals_if_needed(
-        target_spectrum: np.ndarray,
-        wavelength_indices: np.ndarray,
-        wavelengths: np.ndarray,
-        reference_interpolator: callable,
-        popt: np.ndarray,
-        mask: np.ndarray,
-        artifact_mask: np.ndarray,
-        do_record_residuals: bool,
-        dont_save_residuals_below_cut_to: bool,
-        df_row: pd.Series
-) -> None:
+def _record_residuals(wavelengths: np.ndarray, wavelength_indices: np.ndarray, target_spectrum: np.ndarray,
+                      reference_interpolator: callable, popt: np.ndarray, save_mask: np.ndarray,
+                      df_row: pd.Series, filename_from_calibration_source='dummy_filename') -> None:
     """
     Record residuals from spectrum fitting if requested.
 
     Saves residuals data for uncertainty analysis, using either the full mask
     or just the artifact mask depending on configuration.
     """
-    if not do_record_residuals:
-        return
 
     # Recreate the fitting function
     def model_function(xs, a, b):
@@ -1419,12 +1403,6 @@ def _record_residuals_if_needed(
 
     # Calculate residuals
     residuals = target_spectrum - model_function(wavelength_indices, *popt)
-
-    # Choose which mask to use for saving
-    if dont_save_residuals_below_cut_to:
-        save_mask = mask
-    else:
-        save_mask = artifact_mask
 
     # Stack data for saving
     residuals_for_saving = np.vstack((
@@ -1434,7 +1412,6 @@ def _record_residuals_if_needed(
     )).T
 
     # Save residuals
-    filename_from_calibration_source = 'dummy_filename'
     np.save(
         f'{nanodrop_errorbar_folder}residuals_{filename_from_calibration_source}__colname{df_row["nanodrop_col_name"]}.npy',
         residuals_for_saving)

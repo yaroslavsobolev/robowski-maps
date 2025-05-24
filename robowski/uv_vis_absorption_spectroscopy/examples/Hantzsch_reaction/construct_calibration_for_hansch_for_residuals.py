@@ -410,7 +410,7 @@ cut_from = 0
 #     do_record_residuals=True,
 #     do_not_save_data=True,
 #     no_right_edge_subtraction=True,
-#     dont_save_residuals_below_cut_to=True
+#     dont_save_residuals_outside_the_mask=True
 # )
 
 # experiment_name = f'Yaroslav/'
@@ -437,7 +437,7 @@ cut_from = 0
 #     do_record_residuals=True,
 #     do_not_save_data=True,
 #     no_right_edge_subtraction=True,
-#     dont_save_residuals_below_cut_to=True
+#     dont_save_residuals_outside_the_mask=True
 # )
 
 ### VERSATILITY
@@ -483,7 +483,7 @@ cut_from = 0
 #     cut_to=None,
 #     no_right_edge_subtraction=True,
 #     upper_limit_of_absorbance=0.95,
-#     dont_save_residuals_below_cut_to=True
+#     dont_save_residuals_outside_the_mask=True
 # )
 
 # experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Diels-Alder2_WaiShing/'
