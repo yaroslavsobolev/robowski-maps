@@ -9,7 +9,7 @@ experiment_name = f'BPRF/2024-01-17-run01/'
 cut_from = 5
 
 ## Without CARY
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -26,7 +26,7 @@ cut_from = 5
 # )
 
 # # With CARY
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -46,7 +46,7 @@ cut_from = 5
 #     do_record_residuals=True
 # )
 
-calibrator.construct_calibrant(
+calibrator.perform_calibration(
     cut_from=cut_from,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',
@@ -67,7 +67,7 @@ calibrator.construct_calibrant(
     nanodrop_wavelength_shift = -1
 )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -86,7 +86,7 @@ calibrator.construct_calibrant(
 #     cut_to=None
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -107,7 +107,7 @@ calibrator.construct_calibrant(
 #     custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/methoxybenzaldehyde/bkg_spectrum.npy',
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -129,7 +129,7 @@ calibrator.construct_calibrant(
 #     nanodrop_wavelength_shift = +2
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -147,7 +147,7 @@ calibrator.construct_calibrant(
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=80,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -167,7 +167,7 @@ calibrator.construct_calibrant(
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -184,7 +184,7 @@ calibrator.construct_calibrant(
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -205,7 +205,7 @@ calibrator.construct_calibrant(
 # )
 
 # # WITH CARY
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=80,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -227,7 +227,7 @@ calibrator.construct_calibrant(
 # )
 
 # # WITHOUT CARY
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=80,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -249,7 +249,7 @@ calibrator.construct_calibrant(
 # )
 
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -298,7 +298,7 @@ calibrator.construct_calibrant(
 
 
 # ##################### Calibrating EAB
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -319,7 +319,7 @@ calibrator.construct_calibrant(
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -341,7 +341,7 @@ calibrator.construct_calibrant(
 # )
 
 # ## with nanodrop
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -363,7 +363,7 @@ calibrator.construct_calibrant(
 # )
 
 # with CARY and two isomers
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -386,7 +386,7 @@ calibrator.construct_calibrant(
 #     # nanodrop_wavelength_shift = +3
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -409,7 +409,7 @@ calibrator.construct_calibrant(
 # plate_folder = data_folder + 'BPRF/2024-01-17-run01/calibrations/2024-03-14_20-52-15_UV-Vis_dm088_4.csv'
 # calibrator.take_median_of_nanodrop_spectra(plate_folder)
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -430,7 +430,7 @@ calibrator.construct_calibrant(
 #     cary_column_name='dm88__c2_rep2',
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',

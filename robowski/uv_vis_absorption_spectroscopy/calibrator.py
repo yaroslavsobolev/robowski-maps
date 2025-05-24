@@ -7,7 +7,7 @@ workflow involves processing known standard samples to establish the relationshi
 component concentrations and their spectra.
 
 Key Functions:
-    construct_calibrant: Main entry point for creating calibration data from standard samples
+    perform_calibration: Main entry point for creating calibration data from standard samples
     _process_single_calibrant: Core processing workflow for individual calibrants
     _calculate_concentration_coefficients: Establishes concentration-to-coefficient relationships
     _apply_reference_stitching: Improves reference spectra using high-concentration calibration samples
@@ -25,7 +25,7 @@ The resulting calibration files are used by the spectral unmixing algorithms in
 `process_wellplate_spectra.py` to determine component concentrations in unknown mixtures.
 
 Example:
-    calibrator.construct_calibrant(
+    calibrator.perform_calibration(
         cut_from=5,
         concentration_column_name='concentration',
         do_plot=False,
@@ -52,24 +52,26 @@ Note:
 """
 
 import logging
-from robowski.settings import *
+import os
+from typing import Optional, Tuple, List
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pandas as pd
 from scipy import interpolate
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
+
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
-from robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra import create_folder_unless_it_exists
-from typing import Optional, Tuple, List
 import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
+from robowski.settings import *
+from robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra import create_folder_unless_it_exists
 
 nanodrop_errorbar_folder = (data_folder + 'nanodrop-spectrophotometer-measurements/' +
                             'nanodrop_errorbar_folder_2024-03-16/raw_residuals/')
 
 
-def construct_calibrant(
+def perform_calibration(
         cut_from,
         concentration_column_name,
         do_plot,
@@ -95,7 +97,8 @@ def construct_calibrant(
         do_not_save_data=False,
         skip_concentrations=tuple([]),
         dont_save_residuals_below_cut_to=False,
-        lower_limit_of_absorbance=0.007
+        lower_limit_of_absorbance=0.007,
+        npoints_for_right_edge_subtraction=-100
 ):
     if min_concentrations is None:
         min_concentrations = np.zeros(len(calibrant_shortnames))
@@ -138,62 +141,37 @@ def construct_calibrant(
         np.save(calibration_folder + f'background//bkg_spectrum.npy', bkg_spectrum)
 
     for i, calibrant_shortname in enumerate(calibrant_shortnames):
-        _process_single_calibrant(
-            calibrant_shortname=calibrant_shortname,
-            ref_concentration=ref_concentrations[i],
-            min_concentration=min_concentrations[i],
-            max_concentration=max_concentrations[i],
-            do_plot=do_plot,
-            all_calibrants_df=all_calibrants_df,
-            nanodrop_df=nanodrop_df,
-            bkg_spectrum=bkg_spectrum,
-            calibration_folder=calibration_folder,
-            concentration_column_name=concentration_column_name,
-            cut_from=cut_from,
-            no_right_edge_subtraction=no_right_edge_subtraction,
-            upper_limit_of_absorbance=upper_limit_of_absorbance,
-            artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
-            do_reference_stitching=do_reference_stitching,
-            do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
-            savgol_window=savgol_window,
-            forced_reference_from_agilent_cary_file=forced_reference_from_agilent_cary_file,
-            cary_column_name=cary_column_name,
-            do_record_residuals=do_record_residuals,
-            do_not_save_data=do_not_save_data,
-            skip_concentrations=skip_concentrations,
-            dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
-            lower_limit_of_absorbance=lower_limit_of_absorbance,
-            cut_to=cut_to
-        )
+        _calibrate_a_single_calibrant(calibrant_shortname=calibrant_shortname, ref_concentration=ref_concentrations[i],
+                                      min_concentration=min_concentrations[i], max_concentration=max_concentrations[i],
+                                      skip_concentrations=skip_concentrations, cut_from=cut_from, cut_to=cut_to,
+                                      do_reference_stitching=do_reference_stitching,
+                                      all_calibrants_df=all_calibrants_df, nanodrop_df=nanodrop_df,
+                                      calibration_folder=calibration_folder, cary_column_name=cary_column_name,
+                                      concentration_column_name=concentration_column_name, bkg_spectrum=bkg_spectrum,
+                                      forced_reference_from_agilent_cary_file=forced_reference_from_agilent_cary_file,
+                                      no_right_edge_subtraction=no_right_edge_subtraction,
+                                      upper_limit_of_absorbance=upper_limit_of_absorbance,
+                                      artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
+                                      do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
+                                      savgol_window=savgol_window, do_plot=do_plot, do_not_save_data=do_not_save_data,
+                                      do_record_residuals=do_record_residuals,
+                                      dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
+                                      lower_limit_of_absorbance=lower_limit_of_absorbance,
+                                      npoints_for_right_edge_subtraction=npoints_for_right_edge_subtraction)
 
 
-def _process_single_calibrant(
-        calibrant_shortname,
-        ref_concentration,
-        min_concentration: float,
-        max_concentration: float,
-        do_plot: bool,
-        all_calibrants_df: pd.DataFrame,
-        nanodrop_df: pd.DataFrame,
-        bkg_spectrum: np.ndarray,
-        calibration_folder: str,
-        concentration_column_name: str,
-        cut_from: int,
-        no_right_edge_subtraction: bool,
-        upper_limit_of_absorbance: float,
-        artefactogenic_upper_limit_of_absorbance: float,
-        do_reference_stitching: bool,
-        do_smoothing_at_low_absorbance: Optional[float],
-        savgol_window: int,
-        forced_reference_from_agilent_cary_file: Optional[str],
-        cary_column_name: Optional[str],
-        do_record_residuals: bool,
-        do_not_save_data: bool,
-        skip_concentrations: Tuple,
-        dont_save_residuals_below_cut_to: bool,
-        lower_limit_of_absorbance: float,
-        cut_to: Optional[int]
-) -> None:
+def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_concentration: float,
+                                  max_concentration: float, skip_concentrations: Tuple, cut_from: int,
+                                  cut_to: Optional[int], do_reference_stitching: bool, all_calibrants_df: pd.DataFrame,
+                                  nanodrop_df: pd.DataFrame, calibration_folder: str, cary_column_name: Optional[str],
+                                  concentration_column_name: str, bkg_spectrum: np.ndarray,
+                                  forced_reference_from_agilent_cary_file: Optional[str],
+                                  no_right_edge_subtraction: bool, upper_limit_of_absorbance: float,
+                                  artefactogenic_upper_limit_of_absorbance: float,
+                                  do_smoothing_at_low_absorbance: Optional[float], savgol_window: int, do_plot: bool,
+                                  do_not_save_data: bool, do_record_residuals: bool,
+                                  dont_save_residuals_below_cut_to: bool, lower_limit_of_absorbance: float,
+                                  npoints_for_right_edge_subtraction=-100) -> None:
     """
     Process a single calibrant to create reference spectrum and calibration curve.
 
@@ -203,15 +181,19 @@ def _process_single_calibrant(
     """
     create_folder_unless_it_exists(calibration_folder + f'references/{calibrant_shortname}')
 
-    one_calibrant_df, concentrations = _validate_and_filter_calibrant_data(
-        all_calibrants_df, calibrant_shortname, concentration_column_name,
-        ref_concentration, min_concentration, max_concentration, skip_concentrations)
+    one_calibrant_df, concentrations = _isolate_data_for_a_single_calibrant_from_dataframe(all_calibrants_df,
+                                                                                           calibrant_shortname,
+                                                                                           concentration_column_name,
+                                                                                           ref_concentration,
+                                                                                           min_concentration,
+                                                                                           max_concentration,
+                                                                                           skip_concentrations)
 
-    ref_spectrum = _load_and_process_spectrum_by_metadata_row(
-        one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].iloc[0],
-        nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
+    ref_spectrum = _load_and_process_spectrum_by_row_in_metadata_dataframe(
+        one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == ref_concentration].iloc[0], nanodrop_df,
+        bkg_spectrum, no_right_edge_subtraction)[:, 1]
     if not no_right_edge_subtraction:
-        ref_spectrum -= np.mean(ref_spectrum[-100:])
+        ref_spectrum -= np.mean(ref_spectrum[npoints_for_right_edge_subtraction:])
     if do_plot:
         _plot_diagnostic_spectrum(nanodrop_df['wavelength'].to_numpy(), ref_spectrum,
                                   title=f"Reference spectrum for {calibrant_shortname}")
@@ -231,64 +213,43 @@ def _process_single_calibrant(
         )
 
     if do_reference_stitching:
-        ref_spectrum, reference_interpolator = _apply_reference_stitching(
-            ref_spectrum=ref_spectrum,
-            reference_interpolator=reference_interpolator,
-            concentrations=concentrations,
-            ref_concentration=ref_concentration,
-            one_calibrant_df=one_calibrant_df,
-            nanodrop_df=nanodrop_df,
-            bkg_spectrum=bkg_spectrum,
-            concentration_column_name=concentration_column_name,
-            cut_from=cut_from,
-            cut_to=cut_to,
-            upper_limit_of_absorbance=upper_limit_of_absorbance,
+        ref_spectrum, reference_interpolator = _stitch_reference_spectrum_from_spectra_at_many_concentrations(
+            ref_spectrum=ref_spectrum, reference_interpolator=reference_interpolator, concentrations=concentrations,
+            ref_concentration=ref_concentration, one_calibrant_df=one_calibrant_df, nanodrop_df=nanodrop_df,
+            bkg_spectrum=bkg_spectrum, concentration_column_name=concentration_column_name, cut_from=cut_from,
+            cut_to=cut_to, upper_limit_of_absorbance=upper_limit_of_absorbance,
             artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
-            no_right_edge_subtraction=no_right_edge_subtraction,
-            calibrant_shortname=calibrant_shortname,
-            do_plot=do_plot
-        )
+            no_right_edge_subtraction=no_right_edge_subtraction, calibrant_shortname=calibrant_shortname,
+            do_plot=do_plot)
 
     if do_smoothing_at_low_absorbance is not None:
-        ref_spectrum, reference_interpolator = _apply_reference_smoothing(
-            ref_spectrum=ref_spectrum,
-            do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
-            savgol_window=savgol_window,
-            wavelengths=nanodrop_df['wavelength'].to_numpy(),
-            do_plot=do_plot
-        )
+        ref_spectrum, reference_interpolator = _smooth_the_reference_spectrum(ref_spectrum=ref_spectrum,
+                                                                              do_smoothing_at_low_absorbance=do_smoothing_at_low_absorbance,
+                                                                              savgol_window=savgol_window,
+                                                                              wavelengths=nanodrop_df[
+                                                                                  'wavelength'].to_numpy(),
+                                                                              do_plot=do_plot)
 
-    coeffs = _calculate_concentration_coefficients(
-        concentrations=concentrations,
-        one_calibrant_df=one_calibrant_df,
-        nanodrop_df=nanodrop_df,
-        bkg_spectrum=bkg_spectrum,
-        reference_interpolator=reference_interpolator,
-        concentration_column_name=concentration_column_name,
-        cut_from=cut_from,
-        cut_to=cut_to,
-        upper_limit_of_absorbance=upper_limit_of_absorbance,
-        artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
-        no_right_edge_subtraction=no_right_edge_subtraction,
-        do_record_residuals=do_record_residuals,
-        dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
-        calibrant_shortname=calibrant_shortname,
-        calibration_folder=calibration_folder,
-        do_plot=do_plot
-    )
+    coeffs = _calculate_coefficients_vs_concentration(concentrations=concentrations, one_calibrant_df=one_calibrant_df,
+                                                      nanodrop_df=nanodrop_df, bkg_spectrum=bkg_spectrum,
+                                                      reference_interpolator=reference_interpolator,
+                                                      concentration_column_name=concentration_column_name,
+                                                      cut_from=cut_from, cut_to=cut_to,
+                                                      upper_limit_of_absorbance=upper_limit_of_absorbance,
+                                                      artefactogenic_upper_limit_of_absorbance=artefactogenic_upper_limit_of_absorbance,
+                                                      no_right_edge_subtraction=no_right_edge_subtraction,
+                                                      do_record_residuals=do_record_residuals,
+                                                      dont_save_residuals_below_cut_to=dont_save_residuals_below_cut_to,
+                                                      calibrant_shortname=calibrant_shortname,
+                                                      calibration_folder=calibration_folder, do_plot=do_plot)
 
     _plot_calibration_curve(coeffs, concentrations, do_plot,
                             savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration-vs-coeff.png")
 
     if not do_not_save_data:
-        _save_calibration_data(
-            calibration_folder=calibration_folder,
-            calibrant_shortname=calibrant_shortname,
-            bkg_spectrum=bkg_spectrum,
-            ref_spectrum=ref_spectrum,
-            coeffs=coeffs,
-            concentrations=concentrations
-        )
+        _save_calibration_results(calibration_folder=calibration_folder, calibrant_shortname=calibrant_shortname,
+                                  bkg_spectrum=bkg_spectrum, ref_spectrum=ref_spectrum, coeffs=coeffs,
+                                  concentrations=concentrations)
 
 
 def _load_reference_from_cary_file(
@@ -323,12 +284,12 @@ def _load_reference_from_cary_file(
     reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
 
     if do_plot:
-        _plot_about_resampling(wavelengths, ref_spectrum, ref_spectrum_before_resampling, wavelengths_cary)
+        _plot_about_resampling(wavelengths_cary, ref_spectrum_before_resampling, wavelengths, ref_spectrum)
 
     return ref_spectrum, reference_interpolator
 
 
-def _apply_reference_smoothing(
+def _smooth_the_reference_spectrum(
         ref_spectrum: np.ndarray,
         do_smoothing_at_low_absorbance: float,
         savgol_window: int,
@@ -364,7 +325,7 @@ def _apply_reference_smoothing(
     return ref_spectrum, reference_interpolator
 
 
-def _apply_reference_stitching(
+def _stitch_reference_spectrum_from_spectra_at_many_concentrations(
         ref_spectrum: np.ndarray,
         reference_interpolator: callable,
         concentrations: List[float],
@@ -397,23 +358,23 @@ def _apply_reference_stitching(
             continue
 
         df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
-        target_spectrum = _load_and_process_spectrum_by_metadata_row(
-            df_row_here, nanodrop_df, bkg_spectrum, no_right_edge_subtraction)[:, 1]
+        target_spectrum = _load_and_process_spectrum_by_row_in_metadata_dataframe(df_row_here, nanodrop_df,
+                                                                                  bkg_spectrum,
+                                                                                  no_right_edge_subtraction)[:, 1]
 
         mask = _create_spectrum_mask(
             wavelength_indices, target_spectrum, cut_from, cut_to,
             upper_limit_of_absorbance, artefactogenic_upper_limit_of_absorbance
         )
 
-        popt, pcov = _fit_spectrum_to_reference(
-            wavelength_indices, target_spectrum, reference_interpolator,
-            mask, initial_scale_guess=concentration / ref_concentration  # or appropriate ratio
-        )
+        popt, pcov = _fit_reference_model_to_target_spectrum(wavelength_indices, target_spectrum,
+                                                             reference_interpolator, mask,
+                                                             initial_scale_guess=concentration / ref_concentration)
 
         # Plot the fit
-        _plot_concentration_fit(df_row_here, do_plot, lambda xs, a, b: a * reference_interpolator(xs) + b,
-                                mask, popt, target_spectrum,
-                                wavelength_indices, concentration_column_name)
+        _plot_concentration_fit(wavelength_indices, target_spectrum,
+                                lambda xs, a, b: a * reference_interpolator(xs) + b, popt, mask, df_row_here,
+                                concentration_column_name, do_plot)
 
         # Update reference spectrum with stitched data
         ref_spectrum[mask] = (target_spectrum[mask] - popt[1]) / popt[0]
@@ -433,7 +394,7 @@ def _apply_reference_stitching(
     return ref_spectrum, reference_interpolator
 
 
-def _calculate_concentration_coefficients(
+def _calculate_coefficients_vs_concentration(
         concentrations: List[float],
         one_calibrant_df: pd.DataFrame,
         nanodrop_df: pd.DataFrame,
@@ -466,8 +427,9 @@ def _calculate_concentration_coefficients(
             continue
 
         df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == concentration].iloc[0]
-        target_spectrum = _load_and_process_spectrum_by_metadata_row(df_row_here, nanodrop_df, bkg_spectrum,
-                                                                     no_right_edge_subtraction)[:, 1]
+        target_spectrum = _load_and_process_spectrum_by_row_in_metadata_dataframe(df_row_here, nanodrop_df,
+                                                                                  bkg_spectrum,
+                                                                                  no_right_edge_subtraction)[:, 1]
 
         mask = _create_spectrum_mask(
             wavelength_indices, target_spectrum, cut_from, cut_to,
@@ -479,10 +441,9 @@ def _calculate_concentration_coefficients(
             wavelength_indices, target_spectrum, artefactogenic_upper_limit_of_absorbance
         )
 
-        popt, pcov = _fit_spectrum_to_reference(
-            wavelength_indices, target_spectrum, reference_interpolator,
-            mask, initial_scale_guess=concentration / 0.006
-        )
+        popt, pcov = _fit_reference_model_to_target_spectrum(wavelength_indices, target_spectrum,
+                                                             reference_interpolator, mask,
+                                                             initial_scale_guess=concentration / 0.006)
 
         coeffs.append(popt[0])
 
@@ -500,9 +461,9 @@ def _calculate_concentration_coefficients(
         )
 
         # Plot concentration fit
-        _plot_concentration_fit(df_row_here, do_plot, lambda xs, a, b: a * reference_interpolator(xs) + b,
-                                mask, popt, target_spectrum, wavelength_indices,
-                                concentration_column_name,
+        _plot_concentration_fit(wavelength_indices, target_spectrum,
+                                lambda xs, a, b: a * reference_interpolator(xs) + b, popt, mask, df_row_here,
+                                concentration_column_name, do_plot,
                                 savefigpath=calibration_folder + f"references/{calibrant_shortname}/concentration_fits/{df_row_here[concentration_column_name]}_fit.png")
 
     return coeffs
@@ -530,11 +491,11 @@ def _record_residuals_if_needed(
         return
 
     # Recreate the fitting function
-    def func(xs, a, b):
+    def model_function(xs, a, b):
         return a * reference_interpolator(xs) + b
 
     # Calculate residuals
-    residuals = target_spectrum - func(wavelength_indices, *popt)
+    residuals = target_spectrum - model_function(wavelength_indices, *popt)
 
     # Choose which mask to use for saving
     if dont_save_residuals_below_cut_to:
@@ -556,7 +517,7 @@ def _record_residuals_if_needed(
         residuals_for_saving)
 
 
-def _save_calibration_data(
+def _save_calibration_results(
         calibration_folder: str,
         calibrant_shortname: str,
         bkg_spectrum: np.ndarray,
@@ -624,7 +585,7 @@ def _create_spectrum_mask(
     return mask
 
 
-def _fit_spectrum_to_reference(
+def _fit_reference_model_to_target_spectrum(
         wavelength_indices: np.ndarray,
         target_spectrum: np.ndarray,
         reference_interpolator: callable,
@@ -638,13 +599,13 @@ def _fit_spectrum_to_reference(
         Tuple of (fit_parameters, parameter_covariance)
     """
 
-    def func(xs, a, b):
+    def model_function(xs, a, b):
         return a * reference_interpolator(xs) + b
 
     p0 = (initial_scale_guess, 0)
     bounds = ([-1e-10, -np.inf], [np.inf, np.inf])
-    return curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
-                           p0=p0, bounds=bounds)
+    return curve_fit(model_function, wavelength_indices[mask], target_spectrum[mask],
+                     p0=p0, bounds=bounds)
 
 
 def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum", semilog=False):
@@ -657,26 +618,26 @@ def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum"
     plt.show()
 
 
-def _plot_about_resampling(wavelengths, ref_spectrum, ref_spectrum_before_resampling, wavelengths_cary):
-    plt.semilogy(wavelengths_cary, ref_spectrum_before_resampling, label='forced reference')
-    plt.title(f'Ref spectrum, forced reference')
-    plt.semilogy(wavelengths, ref_spectrum, label='forced reference, resampled')
+def _plot_about_resampling(wavelengths_before_resampling, spectrum_before_resampling, resampled_wavelengths,
+                           resampled_spectrum):
+    plt.semilogy(wavelengths_before_resampling, spectrum_before_resampling, label='Original spectrum from Cary')
+    plt.title(f'Resampling of forced reference spectrum from Agilent Cary spectrophotometer')
+    plt.semilogy(resampled_wavelengths, resampled_spectrum, label='Resampled spectrum')
     plt.show()
 
 
-def _plot_concentration_fit(df_row_here, do_plot, func, mask, popt, target_spectrum, wavelength_indices,
-                            concentration_column_name,
-                            savefigpath=None):
+def _plot_concentration_fit(wavelength_indices, target_spectrum, model_function, popt, mask, df_row_here,
+                            concentration_column_name, do_plot, savefigpath=None):
     fig1 = plt.figure(1)
     plt.plot(target_spectrum, label='data', color='C0', alpha=0.5)
     mask_illustration = np.ones_like(target_spectrum) * np.max(target_spectrum)
     mask_illustration[mask] = 0
     plt.fill_between(x=wavelength_indices, y1=0, y2=mask_illustration, color='yellow', alpha=0.3,
                      label='ignored (masked) data')
-    plt.plot(func(wavelength_indices, *popt), color='r', label='fit', alpha=0.5)
-    plt.plot(func(wavelength_indices, popt[0], 0), color='C1', label='reference', alpha=0.5)
+    plt.plot(model_function(wavelength_indices, *popt), color='r', label='fit', alpha=0.5)
+    plt.plot(model_function(wavelength_indices, popt[0], 0), color='C1', label='reference', alpha=0.5)
     plt.ylim(-0.03,
-             np.max((func(wavelength_indices, *popt)[mask])) * 2)
+             np.max((model_function(wavelength_indices, *popt)[mask])) * 2)
     plt.title(
         f"conc {df_row_here[concentration_column_name]}, well {df_row_here['nanodrop_col_name']}")
     plt.legend()
@@ -723,7 +684,8 @@ def _plot_calibration_curve(coeffs, concentrations, do_plot,
         plt.clf()
 
 
-def _load_and_process_spectrum_by_metadata_row(row, nanodrop_df, bkg_spectrum, no_right_edge_subtraction=False):
+def _load_and_process_spectrum_by_row_in_metadata_dataframe(row, nanodrop_df, bkg_spectrum,
+                                                            no_right_edge_subtraction=False):
     """
     Load and process a spectrum for a specific metadata row.
 
@@ -755,10 +717,10 @@ def _load_and_process_spectrum_by_metadata_row(row, nanodrop_df, bkg_spectrum, n
     return spectrum
 
 
-def _validate_and_filter_calibrant_data(all_calibrants_df, calibrant_shortname,
-                                        concentration_column_name, ref_concentration,
-                                        min_concentration, max_concentration,
-                                        skip_concentrations):
+def _isolate_data_for_a_single_calibrant_from_dataframe(all_calibrants_df, calibrant_shortname,
+                                                        concentration_column_name, ref_concentration,
+                                                        min_concentration, max_concentration,
+                                                        skip_concentrations):
     """
     Validate and filter calibrant data for a specific calibrant.
 
@@ -841,12 +803,15 @@ def take_median_of_nanodrop_spectra(plate_folder, nanodrop_lower_cutoff_of_wavel
         stacked_cols = [nanodrop_df[column].to_numpy() for column in columns_to_average]
         ys = np.median(np.array(stacked_cols), axis=0)
         nanodrop_df_medianned[f'{sample_id}'] = ys
+
+        ######### PLOTTING; UNCOMMENT IF DEBUGGING #########
         # for col in stacked_cols:
         #     plt.plot(nanodrop_df["wavelength"], col, label='original')
         # plt.plot(nanodrop_df["wavelength"], ys, label='medianned')
         # plt.legend()
         # plt.show()
 
+    ######### PLOTTING; UNCOMMENT IF DEBUGGING #########
     # # plot all columns against column 'wavelength' and use labels as columns
     # for column in nanodrop_df.columns[1:]:
     #     plt.plot(nanodrop_df["wavelength"], nanodrop_df[column], label=column)

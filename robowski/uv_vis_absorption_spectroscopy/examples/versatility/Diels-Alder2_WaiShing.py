@@ -1,13 +1,13 @@
 from robowski.settings import *
 from versatility_examples import process_plate
-from robowski.uv_vis_absorption_spectroscopy.calibrator import construct_calibrant
+from robowski.uv_vis_absorption_spectroscopy.calibrator import perform_calibration
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 
 experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Diels-Alder2_WaiShing/'
 
 cut_from = 0
 
-construct_calibrant(
+perform_calibration(
     cut_from=cut_from,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',
@@ -23,7 +23,7 @@ construct_calibrant(
     do_smoothing_at_low_absorbance=None
 )
 
-construct_calibrant(
+perform_calibration(
     cut_from=cut_from,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',
@@ -39,7 +39,7 @@ construct_calibrant(
     do_smoothing_at_low_absorbance=None
 )
 
-construct_calibrant(
+perform_calibration(
     cut_from=cut_from,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',

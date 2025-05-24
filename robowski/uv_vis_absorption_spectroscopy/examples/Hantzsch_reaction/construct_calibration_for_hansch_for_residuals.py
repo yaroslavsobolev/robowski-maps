@@ -8,7 +8,7 @@ experiment_name = f'BPRF/2024-01-17-run01/'
 cut_from = 0
 
 ## Without CARY
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -25,7 +25,7 @@ cut_from = 0
 # )
 
 # # With CARY
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -45,7 +45,7 @@ cut_from = 0
 #     do_record_residuals=True
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -68,7 +68,7 @@ cut_from = 0
 #     do_not_save_data=True
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -89,7 +89,7 @@ cut_from = 0
 #     do_not_save_data=True
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -114,7 +114,7 @@ cut_from = 0
 #     nanodrop_wavelength_shift = -1
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -138,7 +138,7 @@ cut_from = 0
 #     # nanodrop_wavelength_shift = +2
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -158,7 +158,7 @@ cut_from = 0
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -180,7 +180,7 @@ cut_from = 0
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -199,7 +199,7 @@ cut_from = 0
 #     do_not_save_data = True,
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -221,7 +221,7 @@ cut_from = 0
 #     do_not_save_data=True,
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=80,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -245,7 +245,7 @@ cut_from = 0
 # )
 
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -264,7 +264,7 @@ cut_from = 0
 #     do_not_save_data=True
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -287,7 +287,7 @@ cut_from = 0
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -310,7 +310,7 @@ cut_from = 0
 #     # custom_bkg_spectrum_npy_file=data_folder + 'BPRF/2024-01-17-run01/microspectrometer_data/calibration/references/HRP01/bkg_spectrum.npy'
 # )
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -336,7 +336,7 @@ cut_from = 0
 # plate_folder = data_folder + 'BPRF/2024-01-17-run01/calibrations/2024-03-14_20-52-15_UV-Vis_dm088_4.csv'
 # calibrator.take_median_of_nanodrop_spectra(plate_folder)
 
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -362,7 +362,7 @@ cut_from = 0
 
 # ######### DYE
 # experiment_name = f'Yaroslav/'
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=0,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -388,7 +388,7 @@ cut_from = 0
 # )
 
 # experiment_name = f'Yaroslav/'
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=50,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -414,7 +414,7 @@ cut_from = 0
 # )
 
 # experiment_name = f'Yaroslav/'
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=1,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -444,7 +444,7 @@ cut_from = 0
 
 # experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Friedel-Crafts_GM/'
 # cut_from = 150
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -466,7 +466,7 @@ cut_from = 0
 
 # experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Diels-Alder2_WaiShing/'
 # cut_from = 40
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -489,7 +489,7 @@ cut_from = 0
 # experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Diels-Alder2_WaiShing/'
 # Validation tests
 # experiment_name = 'BPRF/benchmarks/'
-# calibrator.construct_calibrant(
+# calibrator.perform_calibration(
 #     cut_from=cut_from,
 #     lower_limit_of_absorbance=0.007,
 #     concentration_column_name='concentration',
@@ -515,7 +515,7 @@ cut_from = 0
 # experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Diels-Alder2_WaiShing/'
 # Validation tests
 experiment_name = 'BPRF/benchmarks/'
-calibrator.construct_calibrant(
+calibrator.perform_calibration(
     cut_from=cut_from,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',

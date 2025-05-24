@@ -13,7 +13,7 @@ experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Cla
 
 f = plt.figure(figsize=(4.9, 4.5 * 2/3 * 1.1), dpi=300)
 
-construct_calibrant(
+perform_calibration(
     cut_from=5,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',
@@ -27,7 +27,7 @@ construct_calibrant(
     experiment_name=experiment_name,
 )
 
-construct_calibrant(
+perform_calibration(
     cut_from=5,
     lower_limit_of_absorbance=0.007,
     concentration_column_name='concentration',

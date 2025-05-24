@@ -46,7 +46,7 @@ def test_unmixing_for_claisen(datadir):
         versatility_examples.data_folder = ''
         experiment_name = f'nanodrop-spectrophotometer-measurements/versatility_test/Claisen_WaiShing/'
 
-        calibrator.construct_calibrant(
+        calibrator.perform_calibration(
             cut_from=5,
             lower_limit_of_absorbance=0.007,
             concentration_column_name='concentration',
@@ -61,7 +61,7 @@ def test_unmixing_for_claisen(datadir):
             do_smoothing_at_low_absorbance=None
         )
 
-        calibrator.construct_calibrant(
+        calibrator.perform_calibration(
             cut_from=5,
             lower_limit_of_absorbance=0.007,
             concentration_column_name='concentration',
@@ -109,7 +109,7 @@ def test_hantzsch_calibration(datadir):
         versatility_examples.data_folder = ''
         experiment_name = f'BPRF/2024-01-17-run01/'
         cut_from = 5
-        calibrator.construct_calibrant(
+        calibrator.perform_calibration(
             cut_from=cut_from,
             lower_limit_of_absorbance=0.007,
             concentration_column_name='concentration',

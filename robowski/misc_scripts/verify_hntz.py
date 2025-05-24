@@ -4,7 +4,7 @@ from assert_identity_of_two_csv_tables import compare_csv_tables
 
 if __name__ == '__main__':
     list_of_runs = tuple(['2024-02-16-run01'])
-    ## Uncomment to recalibrate the analysis
+    # Uncomment to recalibrate the analysis
     for set_index in [0]:
         print(f'Processing calibrant set {set_index}...')
         combined_set = []
@@ -21,6 +21,10 @@ if __name__ == '__main__':
     run_name = 'BPRF/2024-02-16-run01/'
     csv_filepath_1 = datafolder1 + run_name + 'results/historical/calibrantset_0/' + 'product_concentration.csv'
     csv_filepath_2 = datafolder2 + run_name + 'results/' + 'product_concentration.csv'
+
+    df1 = pd.read_csv(csv_filepath_1)
+    df2 = pd.read_csv(csv_filepath_2)
+
     are_identical, result = compare_csv_tables(csv_filepath_1, csv_filepath_2)
 
     if are_identical:

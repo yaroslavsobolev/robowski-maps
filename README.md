@@ -124,7 +124,7 @@ it is not meant to be run as a standalone script.
 For familiarizing oneself the overall workflow, we recommend starting with
 the scripts `uv-vis-absorption-spectroscopy/examples/versatility` folder as easy-to-understand, minimal examples of 
 spectral processing.
-For instance, the `Beckmann_WaiShing.py` is first running the calibration routines `construct_calibrant()` for each of the components
+For instance, the `Beckmann_WaiShing.py` is first running the calibration routines `perform_calibration()` for each of the components
 of the reaction mixture, and then executes the `process_plate()` method that iterates over the spectra from separate
 vials of the vial plate and applies the unmixing algorithm. The results are returned as `pandas` DataFrame object
 containing the concentrations of the components in each vial. Calibration procedures take the spectra of the pure

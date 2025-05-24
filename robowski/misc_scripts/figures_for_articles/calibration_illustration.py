@@ -9,7 +9,7 @@ from scipy.optimize import curve_fit
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
 
-def construct_calibrant(
+def perform_calibration(
                         cut_from,
                         lower_limit_of_absorbance,
                         concentration_column_name,
