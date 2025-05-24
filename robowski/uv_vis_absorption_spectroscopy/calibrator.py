@@ -113,10 +113,10 @@ def perform_calibration(
     saved to disk for later use in spectral unmixing.
 
     The calibration process is based on the assumption that absorption spectra of a pure substance
-    scale linearly with concentration (Beer-Lambert law). The "coefficient" represents the scaling
-    factor by which the reference spectrum must be multiplied to match the spectrum
-    measured at a given concentration (known in the case of calibration samples, unknown in the case of
-    unknown mixtures). This coefficient is a direct reflection of the magnitude of the substance's
+    scale linearly with concentration (Beer-Lambert law). That is, the reference spectrum must be scaled by a certain
+    coefficient to match the spectrum measured at a given concentration -- a concentration, which is known in the case
+    of calibration samples,and unknown in the case of
+    new complex mixtures). This scaling coefficient is a direct reflection of the magnitude of the substance's
     spectrum at that concentration relative to the reference concentration.
     This coefficient-to-concentration relationship is later used in spectral unmixing to determine
     unknown concentrations from mixed spectra.
@@ -131,6 +131,16 @@ def perform_calibration(
         mix, are used to determine the concentration of the substance in the mixture.
     5. Evaluate linear fit of coefficient-to-concentration relationships across all concentrations
     6. Save all calibration data to files for later use, following the specified folder structure
+
+    Robust determination of concentration requires careful exclusion of problematic spectral regions:
+
+    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
+    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes detector artifacts
+    - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
+
+    These masking criteria ensure that coefficients are determined only from high-quality spectral
+    data where the Beer-Lambert relationship holds and instrumental artifacts are minimal.
 
     Structure of input files
     --------------------
@@ -423,6 +433,16 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
     reference spectrum with improved dynamic range, particularly important for multispectrum unmixing
     where the same "parent" sample is diluted by different factors and the spectra of these diluted samples
     are used simultaneously for unmixing and understanding the concentration of the substance in the "parent" mixture.
+
+    Robust concentration determination requires careful exclusion of problematic spectral regions:
+
+    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
+    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes artefacts of the spectrophotometer
+    - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
+
+    These masking criteria ensure that coefficients are determined only from high-quality spectral
+    data where the Beer-Lambert relationship holds and instrumental artifacts are minimal.
 
     Parameters
     ----------
@@ -917,13 +937,180 @@ def _stitch_reference_spectrum_from_spectra_at_many_concentrations(
         do_plot: bool
 ) -> Tuple[np.ndarray, callable]:
     """
-    Apply reference spectrum stitching using higher concentration samples.
+    Enhance reference spectrum quality by incorporating data from higher-concentration samples.
 
-    Stitching improves the reference spectrum by using data from higher
-    concentration samples where the signal is stronger and more reliable.
+    This function iteratively improves the reference spectrum by "stitching" in spectral regions
+    from higher-concentration samples where the signal-to-noise ratio is superior. The process
+    creates a synthetic reference spectrum with extended dynamic range and improved quality,
+    particularly beneficial for multispectrum unmixing (when the parent sample is diluted by several ]
+    different factors and the spectra of these diluted samples are used simultaneously for unmixing)
 
-    Returns:
-        Tuple of (modified_ref_spectrum, updated_reference_interpolator)
+    This stitching method goes through the following steps:
+
+    1. **Iterate through concentrations**: Process spectra of samples with concentrations progressively higher than reference
+    2. **Load target spectrum**: Extract and preprocess the higher-concentration spectrum
+    3. **Create spectral mask**: Identify wavelength regions suitable for stitching it with the current reference spectrum
+    4. **Match target's magnitude to the reference**: Determine optimal scaling of magnitude between the current reference and the target spectrum.
+    5. **Stitch the target with the reference**: Replace reference regions with scaled target spectrum data
+    6. **Update reference**: Create new interpolator using the stitched spectrum
+    7. **Repeat iteratively**: Continue with next higher concentration using updated reference
+
+    Scientific rationale
+    --------------------
+    Reference spectrum quality directly impacts calibration accuracy and subsequent concentration
+    determinations. Increasing the dynamic range (signal to noise ratio) of the reference spectrum
+    allows for resolution of weaker bands and covers absorbance ranges that will be encountered in
+    spectra of mixture of unknown compositions.
+
+    The stitching process is particularly valuable for:
+    - Multispectrum unmixing with wide concentration ranges
+    - Substances with both weak and strong absorption bands in one spectrum
+
+    Mathematical details
+    --------------------
+    Even though the concentrations of the samples are known, the algorithm does not use them directly in the
+    stitching procedure, but rather treats the concentration ratio as a free parameter. Furthermore, the possible
+    vertical offset between the two spectra is also corrected for by treating it as a free parameter. This approach
+    to stitching offers a much more precise matching at the intersectiion of the "usable" wavelength ranges of the
+    reference spectrum and the target spectrum.
+
+    "Usable wavelength range" here means that the algorithm only
+    considers wavelength regions where the signal of the respective spectrum (reference or target) is sufficienly
+    precise (relatively free of noise) and within the linear regime of the Beer-Lambert law. This follows the
+    general method of careful exclusion of problematic spectral regions, used throughout this module:
+
+    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
+    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes artefacts of the spectrophotometer
+    - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
+
+    These masking criteria ensure that coefficients are determined only from high-quality spectral
+    data where the Beer-Lambert relationship holds and instrumental artifacts are minimal.
+
+
+    Specifically, for each higher-concentration sample, the algorithm fits a linear model:
+    target_spectrum = a × reference_interpolator(wavelengths) + b
+
+    Where:
+    - 'a' is the scaling coefficient (expected ≈ concentration_ratio)
+    - 'b' is the baseline offset
+    - Fitting is performed only on wavelength regions passing quality criteria
+
+    The improved reference is then calculated as:
+    improved_reference = (target_spectrum - b) / a
+
+    This process preserves the reference spectrum's magnitude while incorporating
+    higher-quality spectral data from the target spectrum taken at higher concentration than the reference.
+
+    Parameters
+    ----------
+    ref_spectrum : numpy.ndarray
+        Initial reference spectrum at the reference concentration. Shape (n_wavelengths,) with
+        absorbance values. This spectrum will be iteratively improved using higher-concentration data.
+    reference_interpolator : callable
+        Interpolation function for the current reference spectrum. Takes wavelength indices and
+        returns absorbance values. It is updated after each stitching iteration.
+    concentrations : list of float
+        Complete list of available concentrations (mol/L) for this calibrant, sorted in ascending order.
+        Only concentrations higher than ref_concentration will be used for stitching.
+    ref_concentration : float
+        Reference concentration (mol/L) corresponding to the initial reference spectrum. Used as
+        the baseline for concentration comparisons and scaling calculations.
+    one_calibrant_df : pandas.DataFrame
+        Metadata for this specific calibrant. Must contain
+        columns: 'substance', concentration_column_name, `nanodrop_col_name`. See the documentation of
+        `perform_calibration()` for details of the expected structure of the metadata dataframe.
+    nanodrop_df : pandas.DataFrame
+        Complete spectral dataset with wavelengths in first column and sample absorbances in
+        numbered columns. Column numbers correspond to `nanodrop_col_name` values in metadata dataframe `one_calibrant_df`.
+    bkg_spectrum : numpy.ndarray
+        Background spectrum to subtract from all measurements. Shape (n_wavelengths, 2) with
+        columns [wavelengths, absorbances]. Applied before any stitching operations.
+    concentration_column_name : str
+        Name of the concentration column in `one_calibrant_df`, typically 'concentration'.
+    cut_from : int
+        Wavelengths below this index are excluded from stitching calculations to avoid noisy or artifact-prone
+        spectral regions.
+    cut_to : int or None
+        Wavelengths above this index are excluded from stitching calculations. If None, analysis continues to the
+        spectrum end. Used to exclude regions with poor signal quality or instrumental artifacts, as well as for
+        excluding the long sections of almost zero absorbance (i.e. containing nothing but noise) at the red end of
+        the spectrum, which are not contributing anything but noise to the result.
+    upper_limit_of_absorbance : float
+        Maximum absorbance value for inclusion in stitching fits. Prevents fitting in regions
+        where Beer-Lambert law breaks down or instrumental saturation occurs.
+    artefactogenic_upper_limit_of_absorbance : float
+        Absorbance threshold for detecting spectrophotometer artifacts. This is not related
+        to the breakdown of the Beer-Lambert law, but rather to the artefacts generated by the spectrophotometer
+        when almost no light reaches the detector. The algorithm finds the highest
+        wavelength where absorbance exceeds this value and masks all lower (bluer) wavelengths, removing
+        artifact-contaminated regions caused by insufficient light transmission.
+    no_right_edge_subtraction : bool
+        Whether to skip baseline correction on loaded spectra. When False, the mean of the
+        last 100 wavelength points is subtracted from each spectrum before processing.
+    calibrant_shortname : str
+        Identifier for this calibrant, used for diagnostic plot titles and quality control
+        messages during the stitching process.
+    do_plot : bool
+        Whether to display diagnostic plots for each stitching iteration. Shows fit quality
+        and the progressive evolution of updated reference. Useful for method validation and troubleshooting.
+
+    Returns
+    -------
+    ref_spectrum : numpy.ndarray
+        Stitched reference spectrum incorporating data from spectra taken at various higher concentrations
+        than the reference concentration. Has improved signal quality and extended dynamic range.
+        Baseline-corrected to have its minimum absorbance equal to zero.
+        Shape (n_wavelengths,).
+    reference_interpolator : callable
+        Updated interpolation function for the enhanced reference spectrum. Compatible with
+        subsequent calibration workflow functions and coefficient calculation procedures.
+
+    Notes
+    -----
+    **Iteration order and strategy:**
+
+    Concentrations are processed in ascending order (lowest to highest, starting from the reference one). This
+    ensures that each iteration builds upon the best available reference, progressively replacing spectral
+    data at lower-absorbance regions with higher-quality spectral data measured at same regions at increasing
+    concentrations of the substance in question.
+
+    **Matching the two spectra before stitching:**
+
+    The linear fitting uses bounded optimization to ensure physically reasonable results:
+    - Scaling coefficient 'a' bounded to positive values
+    - Initial guess based on expected concentration ratio
+
+    **Integration with calibration workflow:**
+
+    This function is called by `_calibrate_a_single_calibrant()` when `do_reference_stitching=True`.
+    It operates after initial reference creation but before optional smoothing, ensuring that
+    smoothing can further improve the stitched reference if desired.
+
+    Examples
+    --------
+    Enhancing a reference spectrum using higher-concentration data::
+
+        >>> concentrations = [0.001, 0.002, 0.005, 0.010]  # Available concentrations
+        >>> ref_concentration = 0.001  # Initial reference
+        >>> enhanced_ref, new_interpolator = _stitch_reference_spectrum_from_spectra_at_many_concentrations(
+        ...     ref_spectrum=initial_ref_spectrum,
+        ...     reference_interpolator=initial_interpolator,
+        ...     concentrations=concentrations,
+        ...     ref_concentration=ref_concentration,
+        ...     one_calibrant_df=calibrant_metadata,
+        ...     nanodrop_df=spectral_data,
+        ...     bkg_spectrum=background_spectrum,
+        ...     concentration_column_name='concentration',
+        ...     cut_from=50,  # Start from 270 nm if first (bluest) point of spectrum is 220 nm
+        ...     cut_to=None,  # Use full spectrum
+        ...     upper_limit_of_absorbance=0.95,
+        ...     artefactogenic_upper_limit_of_absorbance=1.5,
+        ...     no_right_edge_subtraction=False,
+        ...     calibrant_shortname='methoxybenzaldehyde',
+        ...     do_plot=True
+        ... )
+        # enhanced_ref now incorporates data from 0.002, 0.005, and 0.010 M samples
     """
     wavelength_indices = np.arange(ref_spectrum.shape[0])
 
@@ -987,11 +1174,173 @@ def _calculate_coefficients_vs_concentration(
         do_plot: bool
 ) -> List[float]:
     """
-    Calculate coefficients relating concentration to spectral scaling factors.
+    Establish quantitative relationship between the spectral scaling coefficient and the concentration.
 
-    Returns:
-        Tuple of (coefficients, coefficient_errors, spectra)
+    This function is the core of the calibration process, determining how much the reference spectrum
+    must be scaled to match the measured spectrum at each known concentration. These scaling factors
+    ("coefficients", shortened to "coeffs" in variables) form the basis for converting spectral
+    magnitudes into concentration values during spectral unmixing of unknown mixtures.
+
+    This method follows these steps:
+
+    1. **Iterate through concentrations**: Process each available concentration in ascending order
+    2. **Load target spectrum**: Extract and preprocess the spectrum at current concentration
+    3. **Apply quality masking**: Exclude problematic wavelength regions from fitting
+    4. **Fit scaling model**: Determine optimal coefficient for scaling the reference spectrum to target spectrum
+    5. **Record coefficient**: Store the scaling coefficient for this concentration
+    6. **Optional residuals saving**: Save fitting residuals for instrumental uncertainty analysis
+    7. **Generate diagnostics**: Create fit quality plots for each concentration
+
+    Scientific background
+    --------------------
+    The coefficient represents the factor by which the reference spectrum must be multiplied to
+    best match the target spectrum at a given concentration. Under the Beer-Lambert law, this
+    coefficient should be directly proportional to concentration:
+
+    `coefficient = (target_concentration / reference_concentration)`
+
+    The linear model fitted for each concentration is:
+    `target_spectrum = a × reference_interpolator(wavelengths) + b`
+
+    Where `a` (the scaling coefficient) captures the concentration-dependent absorption magnitude,
+    and `b` corrects for baseline differences between the target and reference measurements.
+
+    The coefficients from all concentrations are later used to create an interpolation function
+    that converts scaling coefficients into concentration values during mixture analysis.
+
+    Quality Control Strategy
+    ------------------------
+    Robust coefficient determination requires careful exclusion of problematic spectral regions:
+
+    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
+    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes artefacts of the spectrophotometer
+    - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
+
+    These masking criteria ensure that coefficients are determined only from high-quality spectral
+    data where the Beer-Lambert relationship holds and instrumental artifacts are minimal.
+
+    Parameters
+    ----------
+    concentrations : list of float
+        Complete list of concentrations (mol/L) for this calibrant, including zero concentration
+        for background. Processed in the order provided, typically ascending.
+    one_calibrant_df : pandas.DataFrame
+        Metadata for this specific calibrant containing the linkage between concentrations and
+        spectral column identifiers. Must include columns: concentration_column_name, 'nanodrop_col_name'.
+    nanodrop_df : pandas.DataFrame
+        Complete spectral dataset with wavelengths in first column and sample absorbances in
+        numbered columns corresponding to 'nanodrop_col_name' values.
+    bkg_spectrum : numpy.ndarray
+        Background spectrum to subtract from all target spectra before coefficient calculation.
+        Shape (n_wavelengths, 2) with columns [wavelengths, absorbances].
+    reference_interpolator : callable
+        Interpolation function for the reference spectrum. Takes wavelength indices (not wavelength
+        values) and returns absorbance values. Created from the final enhanced reference spectrum.
+    concentration_column_name : str
+        Name of the concentration column in one_calibrant_df, typically 'concentration'.
+    cut_from : int
+        Wavelengths below this index are excluded from coefficient fitting to avoid noisy
+        blue-end regions where instrumental artifacts are more pronouced.
+    cut_to : int or None
+        Wavelengths above this index are excluded from fitting. If None, fitting continues to
+        spectrum end. Useful for removing red-end regions with negligible signal.
+    upper_limit_of_absorbance : float
+        Maximum absorbance value for inclusion in stitching fits. Prevents fitting in regions
+        where Beer-Lambert law breaks down or instrumental saturation occurs.
+    artefactogenic_upper_limit_of_absorbance : float
+        Absorbance threshold for detecting spectrophotometer artifacts. This is not related
+        to the breakdown of the Beer-Lambert law, but rather to the artefacts generated by the spectrophotometer
+        when almost no light reaches the detector. The algorithm finds the highest
+        wavelength where absorbance exceeds this value and masks all lower (bluer) wavelengths, removing
+        artifact-contaminated regions caused by insufficient light transmission.
+    no_right_edge_subtraction : bool
+        Whether to skip baseline correction using the red end of target spectra. When False,
+        the mean of the last 100 points is subtracted before coefficient fitting.
+    do_record_residuals : bool, optional
+        Whether to save fitting residuals for uncertainty analysis. Residuals are saved
+        to enable later mapping of spectrophotometer errors as a function of wavelength and absorbance
+        (see `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`
+         and the respective section in the Supplementary Information document of the accompanying research article).
+        Default is False.
+    dont_save_residuals_below_cut_to : bool
+        Whether to exclude residuals from wavelengths below cut_to when saving. Focuses residual
+        analysis on the spectroscopically useful wavelength range.
+    calibrant_shortname : str
+        Identifier for this calibrant, used in residual filenames and diagnostic plot titles.
+    calibration_folder : str
+        Root directory for saving results of the calibration for later use. Plots are saved to
+        references/{calibrant_shortname}/concentration_fits/ subdirectory.
+    do_plot : bool
+        Whether to display diagnostic plots with fit quality for each concentration.
+        Useful for validating calibration quality and identifying problematic measurements.
+
+    Returns
+    -------
+    coeffs : list of float
+        Scaling coefficients for each concentration, in the same order as the input concentrations
+        list. Zero concentration returns coefficient of 0. These coefficients form the basis for
+        the concentration interpolation function used in spectral unmixing.
+
+    Notes
+    -----
+    **Zero Concentration Handling:**
+
+    The background sample (concentration = 0) automatically receives a coefficient of 0 without
+    fitting. This establishes the baseline reference point for the coefficient-concentration
+    relationship and ensures physical consistency.
+
+    **Fitting Bounds and Initialization:**
+
+    - Scaling coefficient 'a' constrained to positive values (prevents unphysical negative scaling)
+    - Initial guess based on expected concentration ratio relative to reference
+    - Baseline offset 'b' unbounded to accommodate instrumental variations
+
+    **Diagnostic plot show:**
+
+    - Target spectrum vs fitted model across full wavelength range
+    - Masked (excluded) regions highlighted for quality control
+    - Fit parameters and concentration information in plot titles
+    - Reference spectrum scaled by fitted coefficient for comparison
+
+    **Integration with Calibration Workflow:**
+
+    This function is called by `_calibrate_a_single_calibrant()` after reference spectrum
+    finalization (including optional stitching and smoothing). The returned scaling coefficients are
+    saved as interpolator_coeffs.npy for use in spectral unmixing workflows.
+
+    **Relationship to Spectral Unmixing:**
+
+    During analysis of unknown mixtures, the saved coefficient-to-concentration relationship is
+    inverted: unmixing algorithm returns spectral scaling coefficient for each substance, and these coefficients are then
+    converted to concentrations using the interpolation function created from these calibration data.
+
+    Examples
+    --------
+    Calculating coefficients for a methoxybenzaldehyde calibration series::
+
+        >>> concentrations = [0, 0.0001, 0.0005, 0.001, 0.005, 0.01]  # mol/L
+        >>> coeffs = _calculate_coefficients_vs_concentration(
+        ...     concentrations=concentrations,
+        ...     one_calibrant_df=methoxy_metadata,
+        ...     nanodrop_df=spectral_data,
+        ...     bkg_spectrum=background_spectrum,
+        ...     reference_interpolator=reference_interp_func,
+        ...     concentration_column_name='concentration',
+        ...     cut_from=50,  # Start from ~270 nm
+        ...     cut_to=None,  # Use full red range
+        ...     upper_limit_of_absorbance=0.95,
+        ...     artefactogenic_upper_limit_of_absorbance=1.5,
+        ...     no_right_edge_subtraction=False,
+        ...     do_record_residuals=True,
+        ...     dont_save_residuals_below_cut_to=False,
+        ...     calibrant_shortname='methoxybenzaldehyde',
+        ...     calibration_folder='/path/to/calibration/',
+        ...     do_plot=True
+        ... )
+        # coeffs = [0, 0.12, 0.58, 1.15, 5.8, 11.5]  # Example output
     """
+
     coeffs = []
     wavelength_indices = np.arange(bkg_spectrum.shape[0])
 
