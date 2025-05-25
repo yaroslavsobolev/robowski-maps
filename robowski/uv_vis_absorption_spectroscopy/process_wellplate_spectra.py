@@ -1721,7 +1721,6 @@ class SpectraProcessor:
                                                maxfev=100, ftol=1e-6, xtol=1e-6, gtol=1e-6, verbose=1,
                                                x_scale=x_scale)
 
-        # print(f'infodict nfev: {infodict["nfev"]}')
         perr = np.sqrt(np.diag(pcov))  # errors of the fitted coefficients
 
         concentrations_here = popt[0:number_of_calibrants]
@@ -1854,6 +1853,7 @@ class SpectraProcessor:
         bounds = (lower_bounds, upper_bounds)
         return bounds, p0, x_scale
 
+
     def plot_result_of_multispectrum_unmixing(self, background_interpolators, calibrant_shortnames, comboX, do_plot,
                                               fig_filename, indices_for_splitting,
                                               model_with_stoichiometric_inequalities, number_of_calibrants,
@@ -1896,26 +1896,12 @@ class SpectraProcessor:
                                          target_spectra_wavelength_indices_masked[spectrum_index]) *
                                      weights_of_background_components[spectrum_index],
                                      label='Bkg. PC1', linestyle=':')
-        # for spectrum_index in range(number_of_spectra):
-        #     axs[spectrum_index].legend()
+
         axs[0].legend()
         plt.xlabel('Wavelength, nm')
         plt.ylabel('Absorbance')
         axs[0].set_title(os_string)
-        # plot covariance matrix
-        # # plt.legend()
-        # plt.show()
-        #
-        # plt.figure(figsize=(5, 10))
-        # pcov_to_plot = pcov[:len(calibrant_shortnames), :len(calibrant_shortnames)]
-        # plt.imshow(pcov_to_plot, vmin=-1*max(np.abs(pcov_to_plot).flatten()), vmax=max(np.abs(pcov_to_plot).flatten()),
-        #            cmap='RdBu_r')
-        # # make tick labels from calibrant_shortnames
-        # plt.yticks(range(len(calibrant_shortnames)), calibrant_shortnames)
-        # plt.xticks(range(len(calibrant_shortnames)), calibrant_shortnames, rotation=90)
-        # plt.colorbar(orientation='vertical', fraction=0.046)
-        # plt.tight_layout()
-        # plt.show()
+
         fig1.savefig(f"{fig_filename}.png")
         if do_plot:
             plt.show()
