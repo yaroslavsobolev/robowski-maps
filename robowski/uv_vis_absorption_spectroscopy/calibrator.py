@@ -1298,7 +1298,7 @@ def _calculate_coefficients_vs_concentration(
     - Initial guess based on expected concentration ratio relative to reference
     - Baseline offset 'b' unbounded to accommodate instrumental variations
 
-    **Diagnostic plot show:**
+    **Diagnostic plots show:**
 
     - Target spectrum vs fitted model across full wavelength range
     - Masked (excluded) regions highlighted for quality control
@@ -1315,7 +1315,8 @@ def _calculate_coefficients_vs_concentration(
 
     During analysis of unknown mixtures, the saved coefficient-to-concentration relationship is
     inverted: unmixing algorithm returns spectral scaling coefficient for each substance, and these coefficients are then
-    converted to concentrations using the interpolation function created from these calibration data.
+    converted to concentrations using the interpolation function recreated created from saved calibration results
+    by the
 
     Examples
     --------

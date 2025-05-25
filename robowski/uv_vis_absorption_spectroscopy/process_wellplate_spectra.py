@@ -880,8 +880,9 @@ class SpectraProcessor:
 
         return coeff_to_concentration_interpolator, reference_interpolator, bkg_spectrum
 
+
     def load_calibration_for_one_calibrant(self, calibrant_shortname, calibration_folder, use_line_fit=False,
-                                           do_savgol_filtering=False):
+                                           do_savgol_filtering=False, returned_interpolator_direction='coeff_to_concentration'):
         """
         Load calibration data for a calibrant from saved files.
 
@@ -902,23 +903,37 @@ class SpectraProcessor:
             (coeff_to_concentration_interpolator, reference_interpolator, bkg_spectrum)
         """
         bkg_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/bkg_spectrum.npy')
-        # assert len(bkg_spectrum) == 381
 
         coeffs = np.load(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy')
         concentrations = np.load(
             calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy')
+
         if not use_line_fit:
-            coeff_to_concentration_interpolator = interpolate.interp1d(coeffs, concentrations,
-                                                                       fill_value='extrapolate')
+            if returned_interpolator_direction == 'coeff_to_concentration':
+                coeff_to_concentration_interpolator = interpolate.interp1d(coeffs, concentrations,
+                                                                           fill_value='extrapolate')
+            elif returned_interpolator_direction == 'concentration_to_coeff':
+                coeff_to_concentration_interpolator = interpolate.interp1d(concentrations, coeffs,
+                                                                           fill_value='extrapolate')
+            else:
+                raise ValueError(f"Unknown interpolator direction: {returned_interpolator_direction}. "
+                                 f"Use 'coeff_to_concentration' or 'concentration_to_coeff'.")
         else:
-            # make a line fit with zero intercept
             xs = coeffs
             ys = concentrations
             popt, pcov = curve_fit(lambda x, a: a * x, xs, ys, p0=(1))
-            new_xs = np.array([0, 1])
+            new_xs = np.array([0, 1.0])
             new_ys = np.array([0, popt[0]])
-            coeff_to_concentration_interpolator = interpolate.interp1d(new_xs, new_ys,
-                                                                          fill_value='extrapolate')
+
+            if returned_interpolator_direction == 'coeff_to_concentration':
+                coeff_to_concentration_interpolator = interpolate.interp1d(new_xs, new_ys,
+                                                                           fill_value='extrapolate')
+            elif returned_interpolator_direction == 'concentration_to_coeff':
+                coeff_to_concentration_interpolator = interpolate.interp1d(new_ys, new_xs,
+                                                                           fill_value='extrapolate')
+            else:
+                raise ValueError(f"Unknown interpolator direction: {returned_interpolator_direction}. "
+                                 f"Use 'coeff_to_concentration' or 'concentration_to_coeff'.")
 
         ref_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy')
         # assert len(ref_spectrum) == 381
@@ -927,53 +942,6 @@ class SpectraProcessor:
             ref_spectrum = savgol_filter(ref_spectrum, 7, 3)
         reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
         return coeff_to_concentration_interpolator, reference_interpolator, bkg_spectrum
-
-    def load_concentration_to_coeff_for_one_calibrant(self, calibrant_shortname, calibration_folder, use_line_fit=False):
-        """
-        Load calibration data and create a concentration-to-coefficient interpolator.
-
-        This is the inverse of the coefficient-to-concentration interpolator.
-
-        Parameters
-        ----------
-        calibrant_shortname : str
-            Short name of the calibrant
-        calibration_folder : str
-            Path to the folder containing calibration data
-        use_line_fit : bool, optional
-            Whether to use a linear fit for the calibration curve, defaults to False
-
-        Returns
-        -------
-        tuple
-            (concentration_to_coeff_interpolator, reference_interpolator, bkg_spectrum)
-        """
-        bkg_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/bkg_spectrum.npy')
-
-        coeffs = np.load(calibration_folder + f'references/{calibrant_shortname}/interpolator_coeffs.npy')
-        concentrations = np.load(
-            calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy')
-        # assert that there is zero concentration
-        assert 0 in concentrations, f"Zero concentration is not in the list of concentrations for {calibrant_shortname}"
-        assert 0 in coeffs # assert that there is zero coefficient
-
-        if not use_line_fit:
-            concentration_to_coeff_interpolator = interpolate.interp1d(concentrations, coeffs,
-                                                                       fill_value='extrapolate')
-        else:
-            # make a line fit with zero intercept
-            xs = coeffs
-            ys = concentrations
-            popt, pcov = curve_fit(lambda x, a: a * x, xs, ys, p0=(1))
-            new_xs = np.array([0, 1])
-            new_ys = np.array([0, popt[0]])
-            concentration_to_coeff_interpolator = interpolate.interp1d(new_ys, new_xs,
-                                                                          fill_value='extrapolate')
-
-        ref_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy')
-        wavelength_indices = np.arange(ref_spectrum.shape[0])
-        reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
-        return concentration_to_coeff_interpolator, reference_interpolator, bkg_spectrum
 
 
     def spectrum_to_concentration(self, target_spectrum_input, calibration_folder, calibrant_shortnames,
@@ -2003,10 +1971,13 @@ class SpectraProcessor:
                 'bkg_spectrum'] = \
                 self.load_calibration_for_one_calibrant(calibrant_shortname, calibration_folder,
                                                         use_line_fit=use_linear_calibration,
-                                                        do_savgol_filtering=False)
+                                                        do_savgol_filtering=False,
+                                                        returned_interpolator_direction='coeff_to_concentration')
             dict_here['concentration_to_coeff_interpolator'], _, _ = \
-                self.load_concentration_to_coeff_for_one_calibrant(calibrant_shortname, calibration_folder,
-                                                                   use_line_fit=use_linear_calibration)
+                self.load_calibration_for_one_calibrant(
+                    calibrant_shortname, calibration_folder, use_line_fit=use_linear_calibration,
+                    do_savgol_filtering=False,
+                    returned_interpolator_direction='concentration_to_coeff')
             calibrants.append(dict_here.copy())
         return calibrants
 
