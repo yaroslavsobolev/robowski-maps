@@ -14,6 +14,7 @@ Key Functions:
     _apply_reference_smoothing: Applies noise reduction to reference spectra
 
 The workflow of this module consists of several steps:
+
 1. Loading spectral data from NanoDrop spectrophotometer measurements.
 2. Background subtraction and spectral preprocessing.
 3. Creating reference spectra from spectra of known standard concentrations, or loading it from an external NumPy file.
@@ -44,7 +45,8 @@ Note:
     structure defined in the robowski package documentation.
 
     This module is intentionally written in functional style, instead of Object-Oriented style.
-    **Reasons:**
+    Even though this causes the code to be a bit longer, and the functions to have many parameters,
+    it has several advantages:
 
     1. **Clear dependencies**: Each function signature explicitly shows what data it needs
     2. **No hidden coupling**: Easy to see exactly what each function depends on
@@ -121,15 +123,16 @@ def perform_calibration(
     unknown concentrations from mixed spectra.
 
     The workflow for each calibrant:
-    1. Load data for the calibrant from the input files
-    2. Creating reference spectra from spectra of known standard concentrations, or loading it from an external NumPy file.
-    3. Optionally enhance the reference using stitching or smoothing
-    4. For each concentration, finding the coefficients by which the reference spectrum must be multiplied in order
-        to match the absorbance spectrum of the sample at that concentration. These "coefficients"/"coeffs" as they
-        are called throughout the code, are reflecting the magnitude of the spectrum of a specific substance in the
-        mix, are used to determine the concentration of the substance in the mixture.
-    5. Evaluate linear fit of coefficient-to-concentration relationships across all concentrations
-    6. Save all calibration data to files for later use, following the specified folder structure
+
+    - Load data for the calibrant from the input files
+    - Creating reference spectra from spectra of known standard concentrations, or loading it from an external NumPy file.
+    - Optionally enhance the reference using stitching or smoothing
+    - For each concentration, finding the coefficients by which the reference spectrum must be multiplied in order to
+    match the absorbance spectrum of the sample at that concentration. These "coefficients"/"coeffs" as they are called
+    throughout the code, are reflecting the magnitude of the spectrum of a specific substance in the mix, are used to
+    determine the concentration of the substance in the mixture.
+    - Evaluate linear fit of coefficient-to-concentration relationships across all concentrations
+    - Save all calibration data to files for later use, following the specified folder structure
 
     Robust determination of concentration requires careful exclusion of problematic spectral regions:
 
@@ -184,10 +187,32 @@ def perform_calibration(
     The linkage is: CSV column "1" contains the spectrum for the sample described in TXT row 2
     (methoxybenzaldehyde at 0.0000025 M concentration).
 
+    Structure of output files
+    -------------------------
+    The function creates a standardized directory structure that is later accessed by
+    `process_wellplate_spectra.py` functions during spectral unmixing:
+
+    >>> calibration_folder/
+    >>> ├── background/
+    >>> │   └── bkg_spectrum.npy          # Shared background for all calibrants
+    >>> └── references/
+    >>>     └── {calibrant_shortname}/
+    >>>         ├── bkg_spectrum.npy      # Calibrant-specific background copy
+    >>>         ├── ref_spectrum.npy      # Reference spectrum
+    >>>         ├── interpolator_coeffs.npy     # Scaling coefficients array
+    >>>         └── interpolator_concentrations.npy  # Corresponding concentrations
+
+
+    This structure enables the unmixing functions to:
+    - Load calibrant-specific reference spectra and coefficient relationships
+    - Apply consistent background correction across all measurements
+    - Convert fitted spectral scaling coefficients into molar concentrations of the respective substances
+
+
     **Integration with Spectral Unmixing:**
 
     The saved calibration data is later loaded by functions in `process_wellplate_spectra.py`,
-    specifically `load_calibration_for_one_calibrant()` and `load_concentration_to_coeff_for_one_calibrant()`,
+    specifically `load_calibration_for_one_calibrant()`,
     to enable determination of component concentrations in unknown mixture spectra.
 
     Parameters
@@ -268,7 +293,7 @@ def perform_calibration(
         Whether to save fitting residuals for uncertainty analysis. Residuals are saved
         to enable later mapping of spectrophotometer errors as a function of wavelength and absorbance
         (see `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`
-         and the respective section in the Supplementary Information document of the accompanying research article).
+        and the respective section in the Supplementary Information document of the accompanying research article).
         Default is False.
     do_not_save_data : bool, optional
         Whether to skip saving calibration results to files. Useful for testing. Default is False.
@@ -286,8 +311,7 @@ def perform_calibration(
         Negative of the bumber of points from the red end of the spectrum to be used if the 'no_right-edge-subtraction' option is set to
         False. This is the number of points to be used for calculating the mean value of the spectrum at the right edge
         of the spectrum. The mean value is then subtracted from the whole spectrum. This is useful for removing the
-        vertical offset of the spectrum.
-        Default is (-100), which means "last 100 points".
+        vertical offset of the spectrum. Default is (-100), which means "last 100 points".
 
     Notes
     -----
@@ -569,7 +593,7 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
     **Integration with Spectral Unmixing:**
 
     The saved calibration data is later loaded by functions in `process_wellplate_spectra.py`,
-    specifically `load_calibration_for_one_calibrant()` and `load_concentration_to_coeff_for_one_calibrant()`,
+    specifically `load_calibration_for_one_calibrant()`,
     to enable determination of component concentrations in unknown mixture spectra.
     """
     create_folder_unless_it_exists(calibration_folder + f'references/{calibrant_shortname}')
@@ -666,7 +690,7 @@ def _load_reference_from_cary_file(
     3. **Interpolator creation**: Generate a new reference interpolator function for the resampled spectrum
     4. **Optional visualization**: Display comparison plots if requested
 
-    Scientific Rationale
+    Experimental rationale
     --------------------
     The Agilent Cary 5000 is a research-grade double-beam UV-Vis spectrophotometer with significantly
     better performance characteristics than the NanoDrop 2000c:
@@ -677,6 +701,7 @@ def _load_reference_from_cary_file(
     - **Stray light**: <0.00003% (Cary) vs <0.02% (NanoDrop)
 
     Using Cary-derived reference spectra improves calibration accuracy, especially for:
+
     - Substances with narrow spectral features that may be broadened by NanoDrop
     - Low-concentration calibrations where noise reduction is critical
     - Multispectrum unmixing requiring high-precision reference spectra
@@ -964,6 +989,7 @@ def _stitch_reference_spectrum_from_spectra_at_many_concentrations(
     spectra of mixture of unknown compositions.
 
     The stitching process is particularly valuable for:
+
     - Multispectrum unmixing with wide concentration ranges
     - Substances with both weak and strong absorption bands in one spectrum
 
@@ -993,12 +1019,12 @@ def _stitch_reference_spectrum_from_spectra_at_many_concentrations(
     target_spectrum = a × reference_interpolator(wavelengths) + b
 
     Where:
-    - 'a' is the scaling coefficient (expected ≈ concentration_ratio)
-    - 'b' is the baseline offset
+
+    - `a` is the scaling coefficient
+    - `b` is the baseline offset
     - Fitting is performed only on wavelength regions passing quality criteria
 
-    The improved reference is then calculated as:
-    improved_reference = (target_spectrum - b) / a
+    The improved reference is then calculated as: `improved_reference = (target_spectrum - b) / a`
 
     This process preserves the reference spectrum's magnitude while incorporating
     higher-quality spectral data from the target spectrum taken at higher concentration than the reference.
@@ -1262,7 +1288,7 @@ def _calculate_coefficients_vs_concentration(
         Whether to save fitting residuals for uncertainty analysis. Residuals are saved
         to enable later mapping of spectrophotometer errors as a function of wavelength and absorbance
         (see `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`
-         and the respective section in the Supplementary Information document of the accompanying research article).
+        and the respective section in the Supplementary Information document of the accompanying research article).
         Default is False.
     dont_save_residuals_outside_the_mask : bool
         If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
@@ -1281,8 +1307,8 @@ def _calculate_coefficients_vs_concentration(
     -------
     coeffs : list of float
         Scaling coefficients for each concentration, in the same order as the input concentrations
-        list. Zero concentration returns coefficient of 0. These coefficients form the basis for
-        the concentration interpolation function used in spectral unmixing.
+        list. For zero concentration, the coefficient is 0. These scaling coefficients form the basis for
+        converting the spectral magnitudes into concentrations in the spectral unmixing.
 
     Notes
     -----
@@ -1392,12 +1418,99 @@ def _record_residuals(wavelengths: np.ndarray, wavelength_indices: np.ndarray, t
                       reference_interpolator: callable, popt: np.ndarray, save_mask: np.ndarray,
                       df_row: pd.Series, filename_from_calibration_source='dummy_filename') -> None:
     """
-    Record residuals from spectrum fitting if requested.
+    Record fitting residuals for instrumental error mapping.
 
-    Saves residuals data for uncertainty analysis, using either the full mask
-    or just the artifact mask depending on configuration.
+    This function calculates and saves the differences between measured target spectra and
+    fitted model predictions. The residuals data enables mapping of spectrophotometer
+    measurement uncertainties as a function of wavelength and absorbance, which is used
+    for proper error propagation in spectral unmixing of unknown mixtures.
+
+    The main steps in this code:
+    1. **Recreate fitting function**: Rebuild the linear model used in coefficient fitting
+    2. **Calculate residuals**: Compute target_spectrum - model_prediction for all wavelengths
+    3. **Apply mask selection**: Extract residuals only for wavelengths specified by save_mask
+    4. **Package data**: Combine wavelengths, target values, and residuals into structured array
+    5. **Save to disk**: Store data with standardized filename linking to source measurements
+
+    Scientific Rationale
+    --------------------
+    Accurate concentration determination from spectral unmixing requires understanding the
+    measurement uncertainties inherent in the spectrophotometer. These uncertainties are not
+    constant but depend on both wavelength (due to detector characteristics, light source
+    intensity, and optical components) and absorbance level (due to shot noise, detector
+    linearity, and Beer-Lambert deviations).
+
+    The residuals from calibration measurements provide empirical data for mapping these
+    instrumental uncertainties. This uncertainty map is later used in:
+    - Weighted least-squares fitting during spectral unmixing
+    - Confidence interval calculation for concentration determinations
+
+    The approach is implemented in `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`
+    which uses the saved residuals to create bivariate interpolation functions σ(λ, A) representing
+    measurement uncertainty as a function of wavelength λ and absorbance A.
+
+    Parameters
+    ----------
+    wavelengths : numpy.ndarray
+        Wavelength array in nm corresponding to the spectral data. Shape (n_wavelengths,)
+        typically spanning 220-600 nm for NanoDrop measurements with 1 nm spacing.
+    wavelength_indices : numpy.ndarray
+        Array of wavelength indices (0-based integers) corresponding to the wavelengths.
+        Used for calling the reference_interpolator function which expects indices not wavelengths.
+    target_spectrum : numpy.ndarray
+        Measured absorbance spectrum at this concentration after background subtraction.
+        Shape (n_wavelengths,) with absorbance values at each wavelength point.
+    reference_interpolator : callable
+        Interpolation function for the reference spectrum. Takes wavelength indices and
+        returns absorbance values. This is the same interpolator used in the fitting process.
+    popt : numpy.ndarray
+        Optimized fitting parameters from scipy.optimize.curve_fit. Contains [a, b] where:
+        - a: scaling coefficient relating target to reference spectrum
+        - b: baseline offset correction between measurements
+    save_mask : numpy.ndarray
+        Boolean array indicating which wavelengths to include in saved residuals. Shape (n_wavelengths,)
+        Can be either the full fitting mask (excluding both the instrumental artifacts and the tails of spectral range) or
+        the artifact mask (excluding only instrumental artifacts). Choice depends on susceptibility of the
+        particular spectrum of the substance to the instrumental artifacts.
+    df_row : pandas.Series
+        Metadata row for this measurement containing 'nanodrop_col_name' and other sample information.
+        Used to create unique filenames linking residuals back to source data.
+    filename_from_calibration_source : str, optional
+        Base filename identifier, typically the calibrant_shortname. Used to organize residuals
+        by substance and facilitate later analysis. Default 'dummy_filename' for testing.
+
+    Notes
+    -----
+
+    **Output File Format:**
+
+    Saved data is a 3-column array with shape (n_saved_points, 3):
+    - Column 0: Wavelengths (nm) for saved points
+    - Column 1: Target spectrum absorbances for saved points
+    - Column 2: Fitting residuals (target - model) for saved points
+
+    **Filename Convention:**
+
+    Files are saved as: `residuals_{calibrant}__colname{column_number}.npy`
+    This naming links each residual file to:
+    - The chemical substance (calibrant name)
+    - The original CSV column containing the raw spectrum data
+    - The concentration and experimental conditions via the metadata
+
+    **Integration with Uncertainty Analysis:**
+
+    The saved residuals are processed by `absorbance_errorbar_model.py` to:
+    1. Aggregate residuals across all calibrants and concentrations
+    2. Fit bivariate spline functions σ(wavelength, absorbance)
+    3. Create uncertainty interpolators for use in spectral unmixing
+    4. Generate diagnostic plots of 2D uncertainty surface
+
+    **Storage Location:**
+
+    Residuals are saved to the `nanodrop_errorbar_folder` directory (global variable of this module),
+    separate from calibration data, to facilitate cross-experiment uncertainty analysis and model development.
+
     """
-
     # Recreate the fitting function
     def model_function(xs, a, b):
         return a * reference_interpolator(xs) + b
@@ -1427,10 +1540,98 @@ def _save_calibration_results(
         concentrations: List[float]
 ) -> None:
     """
-    Save all calibration data files to disk for later use in spectral unmixing.
+    Save all calibration data files to disk for later use in spectral unmixing workflows.
 
-    Saves background spectrum, reference spectrum, coefficients, and concentrations
-    as numpy arrays in the calibration folder structure.
+    This function persists the complete calibration results for a single calibrant, creating
+    the standardized file structure required by spectral unmixing functions. The saved data
+    enables conversion between measured spectral magnitudes and chemical concentrations in
+    unknown mixture analysis.
+
+    The saved calibration data includes:
+
+    1. **Background spectrum**: Solvent-only reference for baseline correction
+    2. **Reference spectrum**: Pure-component spectrum at known concentration
+    3. **Scaling coefficient array**: Scaling factors relating spectral magnitudes to the reference spectrum
+    4. **Concentration array**: Known concentration values corresponding to each coefficient
+
+    Structure of output files
+    ------------------------------
+    The function creates a standardized directory structure that is later accessed by
+    `process_wellplate_spectra.py` functions during spectral unmixing:
+
+    >>> calibration_folder/
+    >>> ├── background/
+    >>> │   └── bkg_spectrum.npy          # Shared background for all calibrants
+    >>> └── references/
+    >>>     └── {calibrant_shortname}/
+    >>>         ├── bkg_spectrum.npy      # Calibrant-specific background copy
+    >>>         ├── ref_spectrum.npy      # Reference spectrum
+    >>>         ├── interpolator_coeffs.npy     # Scaling coefficients array
+    >>>         └── interpolator_concentrations.npy  # Corresponding concentrations
+
+    This structure enables the unmixing functions to:
+
+    - Load calibrant-specific reference spectra and coefficient relationships
+    - Apply consistent background correction across all measurements
+    - Convert fitted spectral scaling coefficients into molar concentrations of the respective substances
+
+    Parameters
+    ----------
+    calibration_folder : str
+        Root directory path where all calibration files will be saved. Must be writable
+        and should follow the experiment naming conventions.
+    calibrant_shortname : str
+        Unique identifier for this chemical component. Used to create the calibrant-specific
+        subdirectory and must match the substance names used in spectral unmixing workflows.
+    bkg_spectrum : numpy.ndarray
+        Background spectrum array with shape (n_wavelengths, 2) containing columns
+        [wavelengths, absorbances]. Represents solvent-only measurements for baseline correction.
+    ref_spectrum : numpy.ndarray
+        Final reference spectrum with shape (n_wavelengths,) containing absorbance
+        values at each wavelength. Incorporates all enhancements from stitching and smoothing,
+        if those options were used.
+    coeffs : list of float
+        Scaling coefficients for each calibration concentration. These values represent
+        the factors by which the reference spectrum must be multiplied to match measured
+        spectra at known concentrations.
+    concentrations : list of float
+        Concentration values (mol/L) corresponding to each coefficient in the coeffs array.
+        Must be in the same order as coeffs to maintain the coefficient-concentration mapping.
+
+    Notes
+    -----
+    **File Formats:**
+
+    All data is saved in NumPy binary format (.npy). This format is chosen for:
+
+    - Precision preservation of floating-point calibration data
+    - Fast loading during spectral unmixing operations
+    - Cross-platform compatibility
+
+    **Redundant Background Storage:**
+
+    The background spectrum is saved in two locations:
+
+    - `background/bkg_spectrum.npy`: Shared across all calibrants for this experiment
+    - `references/{calibrant}/bkg_spectrum.npy`: Calibrant-specific copy for standalone use
+
+    This redundancy ensures that calibration data remains self-contained and portable.
+
+    **Data Integrity Requirements:**
+
+    The function assumes that input arrays are properly aligned:
+
+    - `coeffs` and `concentrations` must have the same length and corresponding order
+    - `ref_spectrum` and `bkg_spectrum` must have compatible wavelength grids
+    - All spectra should span the same wavelength range used in later measurements
+
+    **Integration with Unmixing Workflow:**
+
+    The saved files are loaded by functions in `process_wellplate_spectra.py`:
+
+    - `load_calibration_for_one_calibrant()`: Loads coefficient-to-concentration interpolator
+    - Background spectra are used for baseline correction in unknown sample processing
+
     """
     np.save(calibration_folder + f'references/{calibrant_shortname}/bkg_spectrum.npy', bkg_spectrum)
     np.save(calibration_folder + f'background//bkg_spectrum.npy', bkg_spectrum)
@@ -1445,10 +1646,41 @@ def _create_artifact_mask(
         artefactogenic_upper_limit_of_absorbance: float
 ) -> np.ndarray:
     """
-    Create a mask that excludes wavelength regions contaminated by measurement artifacts.
+    Create a mask that excludes wavelength regions contaminated by spectrophotometer artifacts.
 
-    Finds the highest wavelength index where absorbance exceeds the artifact threshold
-    and excludes all wavelengths up to that point.
+    This function identifies and masks wavelength regions where instrumental artifacts
+    occur due to insufficient light transmission reaching the detector. When absorbance
+    values become very high, the spectrophotometer generates random but string spectral features that
+    contaminate the measurement rather than reflecting genuine sample absorption.
+    The artifacts typically begin at shorter (bluer) wavelengths where sample absorption
+    is strongest, then extend toward longer wavelengths as overall absorbance increases.
+
+    The masking strategy:
+
+    1. **Find artifact boundary**: Locate the highest wavelength where absorbance exceeds the threshold
+    2. **Mask contaminated region**: Exclude all wavelengths at and below this boundary
+    3. **Preserve clean data**: Keep only wavelengths above the artifact boundary
+
+
+    Parameters
+    ----------
+    wavelength_indices : numpy.ndarray
+        Array of wavelength indices (0-based integers) corresponding to the spectrum.
+        Shape (n_wavelengths,) typically spanning the full NanoDrop measurement range.
+    target_spectrum : numpy.ndarray
+        Measured absorbance spectrum to analyze for artifacts. Shape (n_wavelengths,)
+        with absorbance values at each wavelength point.
+    artefactogenic_upper_limit_of_absorbance : float
+        Absorbance threshold above which instrumental artifacts are generated.
+        Typical value is 1.5 for NanoDrop measurements.
+
+    Returns
+    -------
+    artifact_mask : numpy.ndarray
+        Boolean array indicating which wavelengths are free from artifacts.
+        Shape (n_wavelengths,) where True indicates usable wavelengths and
+        False indicates artifact-contaminated regions to be excluded.
+
     """
     artifact_indices = np.where(target_spectrum > artefactogenic_upper_limit_of_absorbance)[0]
     if len(artifact_indices) == 0:
@@ -1469,9 +1701,57 @@ def _create_spectrum_mask(
         artefactogenic_upper_limit_of_absorbance: float
 ) -> np.ndarray:
     """
-    Create a boolean mask for spectrum fitting, excluding problematic regions.
+    Create a comprehensive boolean mask for spectrum fitting by combining multiple quality criteria.
+
+    This function generates a mask that excludes problematic spectral regions from calibration
+    fitting, ensuring robust coefficient determination by including only high-quality data where
+    the Beer-Lambert relationship holds and instrumental artifacts are minimal.
+
+    Each masking criterion addresses specific instrumental limitations:
+
+    - **cut_from**: Removes noisy short-wavelength regions where lamp intensity is low and detector sensitivity varies
+    - **cut_to**: Removes long-wavelength regions with negligible absorption signal, which does not contribute to the calibration anything but noise
+    - **upper_limit_of_absorbance**: Prevents fitting in non-linear regime where Beer-Lambert law breaks down
+    - **artefactogenic_upper_limit_of_absorbance**: Excludes detector artifacts caused by insufficient photon flux reaching the detector of the spectrophotometer
+
+    Specifically, the function applies criteria sequentially using logical AND operations:
+
+    1. wavelength_indices > cut_from
+    2. wavelength_indices < cut_to (if specified)
+    3. target_spectrum < upper_limit_of_absorbance
+    4. Artifact-free regions from `_create_artifact_mask()`
+
+    Parameters
+    ----------
+    wavelength_indices : numpy.ndarray
+        Array of wavelength indices (0-based integers) corresponding to the spectrum.
+        Shape (n_wavelengths,) typically spanning 0 to 380 for NanoDrop measurements.
+    target_spectrum : numpy.ndarray
+        Measured absorbance spectrum to be masked. Shape (n_wavelengths,) with
+        absorbance values at each wavelength point.
+    cut_from : int
+        Minimum wavelength index for analysis. Wavelengths below this index are excluded
+        to avoid noisy blue-end regions where instrumental artifacts dominate.
+    cut_to : int or None
+        Maximum wavelength index for analysis. If None, no upper wavelength limit is applied.
+        Used to exclude red-end regions with minimal signal contribution.
+    upper_limit_of_absorbance : float
+        Maximum absorbance value for inclusion in fitting. Points above this threshold
+        are masked to avoid non-linear Beer-Lambert behavior and concentration-dependent
+        matrix effects.
+    artefactogenic_upper_limit_of_absorbance : float
+        Absorbance threshold for detecting instrumental artifacts. Regions where absorbance
+        exceeds this value indicate insufficient light transmission and unreliable measurements.
+
+    Returns
+    -------
+    mask : numpy.ndarray
+        Boolean array indicating which wavelengths pass all quality criteria.
+        Shape (n_wavelengths,) where True indicates wavelengths suitable for fitting
+        and False indicates problematic regions to be excluded.
+
     """
-    # Basic wavelength and absorbance filtering
+
     mask = wavelength_indices > cut_from
     if cut_to is not None:
         mask = np.logical_and(mask, wavelength_indices < cut_to)
@@ -1494,10 +1774,58 @@ def _fit_reference_model_to_target_spectrum(
         initial_scale_guess: float
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Fit target spectrum to reference spectrum using linear scaling.
+    Fit target spectrum to reference spectrum using constrained linear scaling model.
 
-    Returns:
-        Tuple of (fit_parameters, parameter_covariance)
+    This function performs line fitting to determine the optimal
+    scaling coefficient and baseline offset that best match the target spectrum to
+    the reference spectrum. The fitting uses only wavelengths specified by the mask
+    to exclude problematic spectral regions.
+
+    The fitted linear model:
+    target_spectrum = a × reference_interpolator(wavelengths) + b
+
+    Where:
+
+    - 'a' is the scaling coefficient (proportional to concentration ratio)
+    - 'b' is the baseline offset (corrects possible instrumental drift)
+
+    Parameters
+    ----------
+    wavelength_indices : numpy.ndarray
+        Array of wavelength indices corresponding to the spectral data.
+        Shape (n_wavelengths,) with integer values typically ranging 0-380.
+    target_spectrum : numpy.ndarray
+        Measured absorbance spectrum to be fitted. Shape (n_wavelengths,)
+        containing absorbance values at each wavelength point.
+    reference_interpolator : callable
+        Interpolation function for the reference spectrum. Takes wavelength
+        indices and returns corresponding absorbance values for the reference.
+    mask : numpy.ndarray
+        Boolean array indicating which wavelengths to include in fitting.
+        Shape (n_wavelengths,) where True indicates usable data points.
+    initial_scale_guess : float
+        Starting estimate for the scaling coefficient 'a'. Typically based
+        on the ratio of target concentration to reference concentration.
+
+    Returns
+    -------
+    Tuple[np.ndarray, np.ndarray]
+        Tuple (popt, pcov), where `popt` is an array of ptimized parameters from the fit, containing [scaling_coefficient, baseline_offset];
+        `pcov` is the covariance matrix of the fitted parameters, providing uncertainty estimates.
+
+    Examples
+    --------
+    Fitting a 0.005 mol/L target spectrum to a 0.001 mol/L reference::
+
+        >>> popt, pcov = _fit_reference_model_to_target_spectrum(
+        ...     wavelength_indices=np.arange(381),
+        ...     target_spectrum=measured_absorbances,
+        ...     reference_interpolator=ref_interp_function,
+        ...     mask=quality_mask,  # From _create_spectrum_mask()
+        ...     initial_scale_guess=5.0  # Expected 5x scaling
+        ... )
+        >>> scaling_coeff, baseline_offset = popt
+        >>> # scaling_coeff ≈ 5.0, baseline_offset ≈ 0.0 for ideal case
     """
 
     def model_function(xs, a, b):
@@ -1510,7 +1838,30 @@ def _fit_reference_model_to_target_spectrum(
 
 
 def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum", semilog=False):
-    """Plot background spectrum."""
+    """
+    Display a spectrum plot for diagnostic purposes during calibration.
+
+    This utility function creates a matplotlib plot of spectral data with configurable
+    scale and title. Used throughout the calibration workflow to visualize background
+    spectra, reference spectra, and processing results for quality control.
+
+    The function displays the plot immediately using plt.show(), making it suitable
+    for interactive analysis and quality control during calibration development.
+
+    Parameters
+    ----------
+    wavelengths : array-like
+        Wavelength values in nm for the x-axis. Typically spans 220-600 nm
+        for NanoDrop measurements.
+    spectrum : array-like
+        Absorbance values for the y-axis. Should have the same length as wavelengths.
+    title : str, optional
+        Plot title text. Default "Background spectrum".
+    semilog : bool, optional
+        Whether to use logarithmic y-axis scaling. Default False uses linear scaling.
+        Useful for visualizing low-absorbance spectral features.
+
+    """
     if semilog:
         plt.semilogy(wavelengths, spectrum)
     else:
@@ -1521,6 +1872,9 @@ def _plot_diagnostic_spectrum(wavelengths, spectrum, title="Background spectrum"
 
 def _plot_about_resampling(wavelengths_before_resampling, spectrum_before_resampling, resampled_wavelengths,
                            resampled_spectrum):
+    """
+    For description of the parameters, see the method `_load_reference_from_cary_file()` that calls this function.
+    """
     plt.semilogy(wavelengths_before_resampling, spectrum_before_resampling, label='Original spectrum from Cary')
     plt.title(f'Resampling of forced reference spectrum from Agilent Cary spectrophotometer')
     plt.semilogy(resampled_wavelengths, resampled_spectrum, label='Resampled spectrum')
@@ -1529,6 +1883,43 @@ def _plot_about_resampling(wavelengths_before_resampling, spectrum_before_resamp
 
 def _plot_concentration_fit(wavelength_indices, target_spectrum, model_function, popt, mask, df_row_here,
                             concentration_column_name, do_plot, savefigpath=None):
+    """
+    Create diagnostic plot showing fit quality for a single concentration measurement.
+
+    This function generates a plot comparing the measured target spectrum against
+    the fitted linear model, highlighting masked regions and showing individual
+    components (fitted model and scaled reference spectrum).
+
+    **Plot Elements:**
+
+    - Target spectrum data (blue line)
+    - Fitted model prediction (red line)
+    - Reference spectrum scaled by fitted coefficient (green line)
+    - Masked regions highlighted in yellow
+    - Title shows concentration and well identification
+
+    Parameters
+    ----------
+    wavelength_indices : numpy.ndarray
+        Array of wavelength indices for the x-axis.
+    target_spectrum : numpy.ndarray
+        Measured absorbance spectrum (target data).
+    model_function : callable
+        Fitted model function that takes (wavelength_indices, a, b) and returns predicted spectrum.
+    popt : numpy.ndarray
+        Optimized fitting parameters [scaling_coefficient, baseline_offset].
+    mask : numpy.ndarray
+        Boolean array indicating wavelengths used in fitting (True) vs masked (False).
+    df_row_here : pandas.Series
+        Metadata row containing concentration and well information for plot title.
+    concentration_column_name : str
+        Name of concentration column in metadata for plot title.
+    do_plot : bool
+        Whether to display the plot interactively.
+    savefigpath : str, optional
+        File path for saving the plot. If None, plot is not saved.
+
+    """
     fig1 = plt.figure(1)
     plt.plot(target_spectrum, label='data', color='C0', alpha=0.5)
     mask_illustration = np.ones_like(target_spectrum) * np.max(target_spectrum)

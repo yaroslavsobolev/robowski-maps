@@ -445,7 +445,8 @@ class SpectraProcessor:
         nanodrop_df["wavelength"] = nanodrop_df["wavelength"].astype(float)
 
         # Remove underscore from the column names and everything after it.
-        # This is because Yankai has added the UUID of each comdition into the column names -- a good idea, because
+        # This is because Yankai Jia has, at some point in time,
+        # added the UUID of each comdition into the column names -- a good idea, because
         # it allows to cross-validate the relation between spectra and the list of conditions.
         nanodrop_df.columns = nanodrop_df.columns.str.split('_').str[0]
 
