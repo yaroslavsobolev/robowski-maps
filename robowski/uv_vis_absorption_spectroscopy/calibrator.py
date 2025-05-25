@@ -70,6 +70,9 @@ import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as proc
 import robowski.uv_vis_absorption_spectroscopy.spectraltools as st
 from robowski.settings import *
 from robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra import create_folder_unless_it_exists
+from robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra import (
+    create_spectrum_mask, create_artifact_mask
+)
 
 nanodrop_errorbar_folder = (data_folder + 'nanodrop-spectrophotometer-measurements/' +
                             'nanodrop_errorbar_folder_2024-03-16/raw_residuals/')
@@ -136,9 +139,9 @@ def perform_calibration(
 
     Robust determination of concentration requires careful exclusion of problematic spectral regions:
 
-    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Wavelength range limiting**: `cut_from` and `cut_to` crop the wavelength range to exclude noisy or uninformative regions
     - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
-    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes detector artifacts
+    - **Spectrometer artifacts**: `artefactogenic_upper_limit_of_absorbance` threshold is used to remove artefacts of the spectrophotometer
     - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
 
     These masking criteria ensure that coefficients are determined only from high-quality spectral
@@ -301,7 +304,7 @@ def perform_calibration(
         Concentrations to exclude from processing. Default is an empty tuple.
     dont_save_residuals_outside_the_mask : bool, optional
         If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
-        If False, saves only the residuals defined by `artifact_mask`. See _create_artifact_mask() for details.
+        If False, saves only the residuals defined by `artifact_mask`. See create_artifact_mask() for details.
         Defauld is False.
     lower_limit_of_absorbance : float, optional
         Deprecated parameter retained for backward compatibility. Previously used to exclude
@@ -460,9 +463,9 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
 
     Robust concentration determination requires careful exclusion of problematic spectral regions:
 
-    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Wavelength range limiting**: `cut_from` and `cut_to` crop the wavelength range to exclude noisy or uninformative regions
     - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
-    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes artefacts of the spectrophotometer
+    - **Spectrometer artifacts**: `artefactogenic_upper_limit_of_absorbance` threshold is used to remove artefacts of the spectrophotometer
     - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
 
     These masking criteria ensure that coefficients are determined only from high-quality spectral
@@ -557,7 +560,7 @@ def _calibrate_a_single_calibrant(calibrant_shortname, ref_concentration, min_co
         (see `robowski/uv_vis_absorption_spectroscopy/absorbance_errorbar_model.py`).
     dont_save_residuals_outside_the_mask : bool
         If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
-        If False, saves only the residuals defined by `artifact_mask`. See _create_artifact_mask() for details.
+        If False, saves only the residuals defined by `artifact_mask`. See create_artifact_mask() for details.
         Defauld is False.
     lower_limit_of_absorbance : float
         Deprecated parameter retained for backward compatibility. Previously used to exclude
@@ -1006,9 +1009,9 @@ def _stitch_reference_spectrum_from_spectra_at_many_concentrations(
     precise (relatively free of noise) and within the linear regime of the Beer-Lambert law. This follows the
     general method of careful exclusion of problematic spectral regions, used throughout this module:
 
-    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Wavelength range limiting**: `cut_from` and `cut_to` crop the wavelength range to exclude noisy or uninformative regions
     - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
-    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes artefacts of the spectrophotometer
+    - **Spectrometer artifacts**: `artefactogenic_upper_limit_of_absorbance` threshold is used to remove artefacts of the spectrophotometer
     - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
 
     These masking criteria ensure that coefficients are determined only from high-quality spectral
@@ -1150,7 +1153,7 @@ def _stitch_reference_spectrum_from_spectra_at_many_concentrations(
                                                                                   bkg_spectrum,
                                                                                   no_right_edge_subtraction)[:, 1]
 
-        mask = _create_spectrum_mask(
+        mask = create_spectrum_mask(
             wavelength_indices, target_spectrum, cut_from, cut_to,
             upper_limit_of_absorbance, artefactogenic_upper_limit_of_absorbance
         )
@@ -1239,9 +1242,9 @@ def _calculate_coefficients_vs_concentration(
     ------------------------
     Robust coefficient determination requires careful exclusion of problematic spectral regions:
 
-    - **Wavelength range limiting**: `cut_from` and `cut_to` exclude noisy or uninformative regions
+    - **Wavelength range limiting**: `cut_from` and `cut_to` crop the wavelength range to exclude noisy or uninformative regions
     - **Absorbance ceiling**: `upper_limit_of_absorbance` prevents fitting in regions deviating from the Beer-Lambert law
-    - **Artifact detection**: `artefactogenic_upper_limit_of_absorbance` removes artefacts of the spectrophotometer
+    - **Spectrometer artifacts**: `artefactogenic_upper_limit_of_absorbance` threshold is used to remove artefacts of the spectrophotometer
     - **Baseline correction**: Optional right-edge subtraction removes instrumental drift
 
     These masking criteria ensure that coefficients are determined only from high-quality spectral
@@ -1292,7 +1295,7 @@ def _calculate_coefficients_vs_concentration(
         Default is False.
     dont_save_residuals_outside_the_mask : bool
         If True, saves only the residuals defined by `mask`: the good wavelength regions where the fit was performed.
-        If False, saves only the residuals defined by `artifact_mask`. See _create_artifact_mask() for details.
+        If False, saves only the residuals defined by `artifact_mask`. See create_artifact_mask() for details.
         Defauld is False.
     calibrant_shortname : str
         Identifier for this calibrant, used in residual filenames and diagnostic plot titles.
@@ -1383,13 +1386,13 @@ def _calculate_coefficients_vs_concentration(
                                                                                   bkg_spectrum,
                                                                                   no_right_edge_subtraction)[:, 1]
 
-        mask = _create_spectrum_mask(
+        mask = create_spectrum_mask(
             wavelength_indices, target_spectrum, cut_from, cut_to,
             upper_limit_of_absorbance, artefactogenic_upper_limit_of_absorbance
         )
 
         # Get artifact mask separately for residuals recording
-        artifact_mask = _create_artifact_mask(
+        artifact_mask = create_artifact_mask(
             wavelength_indices, target_spectrum, artefactogenic_upper_limit_of_absorbance
         )
 
@@ -1640,132 +1643,6 @@ def _save_calibration_results(
     np.save(calibration_folder + f'references/{calibrant_shortname}/interpolator_concentrations.npy', concentrations)
 
 
-def _create_artifact_mask(
-        wavelength_indices: np.ndarray,
-        target_spectrum: np.ndarray,
-        artefactogenic_upper_limit_of_absorbance: float
-) -> np.ndarray:
-    """
-    Create a mask that excludes wavelength regions contaminated by spectrophotometer artifacts.
-
-    This function identifies and masks wavelength regions where instrumental artifacts
-    occur due to insufficient light transmission reaching the detector. When absorbance
-    values become very high, the spectrophotometer generates random but string spectral features that
-    contaminate the measurement rather than reflecting genuine sample absorption.
-    The artifacts typically begin at shorter (bluer) wavelengths where sample absorption
-    is strongest, then extend toward longer wavelengths as overall absorbance increases.
-
-    The masking strategy:
-
-    1. **Find artifact boundary**: Locate the highest wavelength where absorbance exceeds the threshold
-    2. **Mask contaminated region**: Exclude all wavelengths at and below this boundary
-    3. **Preserve clean data**: Keep only wavelengths above the artifact boundary
-
-
-    Parameters
-    ----------
-    wavelength_indices : numpy.ndarray
-        Array of wavelength indices (0-based integers) corresponding to the spectrum.
-        Shape (n_wavelengths,) typically spanning the full NanoDrop measurement range.
-    target_spectrum : numpy.ndarray
-        Measured absorbance spectrum to analyze for artifacts. Shape (n_wavelengths,)
-        with absorbance values at each wavelength point.
-    artefactogenic_upper_limit_of_absorbance : float
-        Absorbance threshold above which instrumental artifacts are generated.
-        Typical value is 1.5 for NanoDrop measurements.
-
-    Returns
-    -------
-    artifact_mask : numpy.ndarray
-        Boolean array indicating which wavelengths are free from artifacts.
-        Shape (n_wavelengths,) where True indicates usable wavelengths and
-        False indicates artifact-contaminated regions to be excluded.
-
-    """
-    artifact_indices = np.where(target_spectrum > artefactogenic_upper_limit_of_absorbance)[0]
-    if len(artifact_indices) == 0:
-        largest_artifact_index = -1
-    else:
-        largest_artifact_index = np.max(artifact_indices)
-
-    artifact_mask = wavelength_indices > largest_artifact_index
-    return artifact_mask
-
-
-def _create_spectrum_mask(
-        wavelength_indices: np.ndarray,
-        target_spectrum: np.ndarray,
-        cut_from: int,
-        cut_to: Optional[int],
-        upper_limit_of_absorbance: float,
-        artefactogenic_upper_limit_of_absorbance: float
-) -> np.ndarray:
-    """
-    Create a comprehensive boolean mask for spectrum fitting by combining multiple quality criteria.
-
-    This function generates a mask that excludes problematic spectral regions from calibration
-    fitting, ensuring robust coefficient determination by including only high-quality data where
-    the Beer-Lambert relationship holds and instrumental artifacts are minimal.
-
-    Each masking criterion addresses specific instrumental limitations:
-
-    - **cut_from**: Removes noisy short-wavelength regions where lamp intensity is low and detector sensitivity varies
-    - **cut_to**: Removes long-wavelength regions with negligible absorption signal, which does not contribute to the calibration anything but noise
-    - **upper_limit_of_absorbance**: Prevents fitting in non-linear regime where Beer-Lambert law breaks down
-    - **artefactogenic_upper_limit_of_absorbance**: Excludes detector artifacts caused by insufficient photon flux reaching the detector of the spectrophotometer
-
-    Specifically, the function applies criteria sequentially using logical AND operations:
-
-    1. wavelength_indices > cut_from
-    2. wavelength_indices < cut_to (if specified)
-    3. target_spectrum < upper_limit_of_absorbance
-    4. Artifact-free regions from `_create_artifact_mask()`
-
-    Parameters
-    ----------
-    wavelength_indices : numpy.ndarray
-        Array of wavelength indices (0-based integers) corresponding to the spectrum.
-        Shape (n_wavelengths,) typically spanning 0 to 380 for NanoDrop measurements.
-    target_spectrum : numpy.ndarray
-        Measured absorbance spectrum to be masked. Shape (n_wavelengths,) with
-        absorbance values at each wavelength point.
-    cut_from : int
-        Minimum wavelength index for analysis. Wavelengths below this index are excluded
-        to avoid noisy blue-end regions where instrumental artifacts dominate.
-    cut_to : int or None
-        Maximum wavelength index for analysis. If None, no upper wavelength limit is applied.
-        Used to exclude red-end regions with minimal signal contribution.
-    upper_limit_of_absorbance : float
-        Maximum absorbance value for inclusion in fitting. Points above this threshold
-        are masked to avoid non-linear Beer-Lambert behavior and concentration-dependent
-        matrix effects.
-    artefactogenic_upper_limit_of_absorbance : float
-        Absorbance threshold for detecting instrumental artifacts. Regions where absorbance
-        exceeds this value indicate insufficient light transmission and unreliable measurements.
-
-    Returns
-    -------
-    mask : numpy.ndarray
-        Boolean array indicating which wavelengths pass all quality criteria.
-        Shape (n_wavelengths,) where True indicates wavelengths suitable for fitting
-        and False indicates problematic regions to be excluded.
-
-    """
-
-    mask = wavelength_indices > cut_from
-    if cut_to is not None:
-        mask = np.logical_and(mask, wavelength_indices < cut_to)
-    mask = np.logical_and(mask, target_spectrum < upper_limit_of_absorbance)
-
-    # Exclude artifact-contaminated regions
-    artifact_mask = _create_artifact_mask(
-        wavelength_indices, target_spectrum, artefactogenic_upper_limit_of_absorbance
-    )
-    mask = np.logical_and(mask, artifact_mask)
-
-    return mask
-
-
 def _fit_reference_model_to_target_spectrum(
         wavelength_indices: np.ndarray,
         target_spectrum: np.ndarray,
@@ -1821,7 +1698,7 @@ def _fit_reference_model_to_target_spectrum(
         ...     wavelength_indices=np.arange(381),
         ...     target_spectrum=measured_absorbances,
         ...     reference_interpolator=ref_interp_function,
-        ...     mask=quality_mask,  # From _create_spectrum_mask()
+        ...     mask=quality_mask,  # From create_spectrum_mask()
         ...     initial_scale_guess=5.0  # Expected 5x scaling
         ... )
         >>> scaling_coeff, baseline_offset = popt
