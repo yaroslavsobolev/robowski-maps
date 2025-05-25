@@ -598,9 +598,6 @@ class SpectraProcessor:
         # rename first column to "wavelength" and make it float type
         nanodrop_df = nanodrop_df.rename(columns={nanodrop_df.columns[0]: "wavelength"})
 
-        # print the lowest value of 'wavelength' column
-        # print(f"Lowest wavelength in nanodrop file: {nanodrop_df['wavelength'].min()}")
-
         # remove rows where wavelength is lower than nanodrop_lower_cutoff_of_wavelengths
         nanodrop_df = nanodrop_df[nanodrop_df["wavelength"] >= self.nanodrop_lower_cutoff_of_wavelengths]
 
@@ -895,7 +892,6 @@ class SpectraProcessor:
                                  f"Use 'coeff_to_concentration' or 'concentration_to_coeff'.")
 
         ref_spectrum = np.load(calibration_folder + f'references/{calibrant_shortname}/ref_spectrum.npy')
-        # assert len(ref_spectrum) == 381
         wavelength_indices = np.arange(ref_spectrum.shape[0])
         if do_savgol_filtering:
             ref_spectrum = savgol_filter(ref_spectrum, 7, 3)
@@ -982,10 +978,10 @@ class SpectraProcessor:
                                                                       wavelength_indices, number_of_pca_components=2)
 
         if len(wavelength_indices[mask]) == 0:
-            print('There is no data that is within mask. Returning zeros.')
+            print('There is no data that is usable. Returning zeros.')
             return [0 for i in range(4)]
 
-        def func(*args):
+        def model_function(*args):
             xs = args[0]
             c,d,e,f = args[-4:]
             calibrant_coefficients = args[1:-4]
@@ -1004,7 +1000,7 @@ class SpectraProcessor:
             bkg_comp_limit = np.inf
         bounds = ([-1e-20] * len(calibrant_shortnames) + [-np.inf, linebounds[0], -1*bkg_comp_limit, -1*bkg_comp_limit],
                   upper_bounds + [np.inf, linebounds[1], bkg_comp_limit, bkg_comp_limit])
-        popt, pcov = curve_fit(func, wavelength_indices[mask], target_spectrum[mask],
+        popt, pcov = curve_fit(model_function, wavelength_indices[mask], target_spectrum[mask],
                                p0=p0, bounds=bounds)
         perr = np.sqrt(np.diag(pcov))  # errors of the fitted coefficients
 
@@ -1016,7 +1012,7 @@ class SpectraProcessor:
 
         self._diagnostic_plot_of_spectrum_to_concentration_unmixing(wavelengths, wavelength_indices, target_spectrum,
                                                                     target_spectrum_input, mask, calibrant_shortnames,
-                                                                    concentrations_here, func, popt, ignore_pca_bkg,
+                                                                    concentrations_here, model_function, popt, ignore_pca_bkg,
                                                                     fig_filename, use_line, do_plot)
 
         if return_errors:
@@ -1991,8 +1987,6 @@ class SpectraProcessor:
         variance = self.sigma_interpolator(wavelength, absorbance)[0][0]
         if variance < lower_threshold_of_sigma**2:
             variance = lower_threshold_of_sigma**2
-        # if wavelength <= 270:
-        #     variance = variance * (1 + 200*np.exp(-1*(wavelength - 220)/20))
         return np.sqrt(variance)
 
     def product_concentrations_to_required_substrates(self, concentrations, calibrant_shortnames):
@@ -2040,24 +2034,12 @@ class SpectraProcessor:
         float
             Stoichiometric cost (penalization value)
         """
-        def smooth_step(x):
-            if x <= 0:
-                return 0
-            else:
-                return x
-            # return np.exp(x)
-
         required_subs = self.product_concentrations_to_required_substrates(concentrations, calibrant_shortnames)
         final_penalization = 0
         for s in self.substrates:
             if starting_concentrations_dict[s] > 0:
                 overspending_ratio = required_subs[s] / starting_concentrations_dict[s]
-                final_penalization += smooth_step((overspending_ratio - 1))
-            # final_penalization += smooth_step((required_subs[s] - starting_concentrations_dict[s])/0.001)
-
-        # find concentration of acetic acid
-        # acetic_mixmatch = np.abs(required_subs['ammonium_acetate'] - concentrations[calibrant_shortnames.index('acetic_acid')])
-        # final_penalization += acetic_mixmatch/0.001
+                final_penalization += relu_step((overspending_ratio - 1))
 
         return final_penalization
 
@@ -2290,6 +2272,13 @@ class SpectraProcessor:
                 concentrations)
 
         return coeff_to_concentration_interpolator, reference_interpolator, bkg_spectrum
+
+
+def relu_step(x):
+    if x <= 0:
+        return 0
+    else:
+        return x
 
 
 def plot_differential_absorbances_for_plate(craic_exp_name,
