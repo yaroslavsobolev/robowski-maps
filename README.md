@@ -37,8 +37,8 @@ For the rest of the repository, the installation procedure is as follows:
 
 ### Installing Microsoft Visual C++ 14.0 or greater (required only for [Mayavi](https://docs.enthought.com/mayavi/mayavi/))
 After downloading `vs_buildtools.exe` from [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/): 
-When installing, click "Modify" near the "Visual Studio Build Tools" and check the "Desktop development with C++" option
-in the opened window, then click "Modify" button in the lower right corner. 
+When installing, in the section "Desctop & Mobile" click the "Desktop development with C++" option
+in the opened window, then click "Install" button in the lower right corner. 
 
 If you get the following error, click "Start", type "Developer" and launch the "Developer Command Prompt for VS 2022". Then navigate to 
 
@@ -67,6 +67,10 @@ repository and create a new `conda` environment named `robowski` by running this
 ```bash
 conda env create -f environment.yml
 ```
+
+If during running the above command you get the error message `Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.dll`,
+use the [guide about this error on the Anaconda website](https://docs.conda.io/projects/conda/en/stable/user-guide/troubleshooting.html#numpy-mkl-library-load-failed) for troubleshooting,
+then retry the `conda env create -f environment.yml` commmand again.
 
 After installation, activate the new environment by the following command:
 ```bash
