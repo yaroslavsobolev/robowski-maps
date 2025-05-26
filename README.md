@@ -35,14 +35,19 @@ see the `requirements.txt` file in the `zeus-pipetter` folder and the `README.md
 
 For the rest of the repository, the installation procedure is as follows:
 
+### install Microsoft Visual C++ 14.0 or greater (required only for [Mayavi](https://docs.enthought.com/mayavi/mayavi/)).
+After downloading `vs_buildtools.exe` from [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/): 
+When installing, in the section "Desktop & Mobile" click the "Desktop development with C++" option
+in the opened window, then click "Install" button in the lower right corner. 
+
 ### Creating Anaconda environment with all the required dependencies
 
 The recommended way to install the dependencies is to 
-use [Anaconda package manager](https://www.anaconda.com/docs/getting-started/anaconda/install).
+use [Anaconda package manager](https://www.anaconda.com/docs/getting-started/anaconda/install) (version 23.10.0 or greater is recommended).
 Launch the terminal with Anaconda activated. The easiest way to do it is by clicking "Start" menu,
 finding (e.g. by typing in search) "Anaconda Command Prompt" and running it. It is recommended
 that you run it with administrator privileges, so right-click on the "Anaconda Command Prompt" and select "Run as administrator".
-In the launched commant prompt, navigate to your local folder containing this 
+In the launched command prompt, navigate to your local folder containing this 
 repository and create a new `conda` environment named `robowski` by running this command:
 ```bash
 conda env create -f environment.yml
@@ -55,7 +60,8 @@ conda env create -f environment_without_mayavi.yml
 ```
 The only consequence of not installing Mayavi is that you will not be able to visualize the 3D yield maps of the reactions
 using Python scripts. This is not a big issue, because you can instead use the Hyperspace Viewer
-distributed with the article's Zenodo repository, which is a standalone application that does not even require Python.
+distributed with the article (in [Zenodo repository](https://zenodo.org/uploads/14880579) and article's Supplementary 
+Files). Hyperspace Viewer is a standalone application that does not even require Python. 
 The rest of the code will run normally without Mayavi.
 
 After installation, activate the new environment by the following command:
@@ -64,15 +70,19 @@ conda activate robowski
 ```
 and proceed to the section "Installing this package with `pip`" below.
 
-### Troubleshooting if Mayavi failed to install by the `conda env create` command above
+### Troubleshooting the install
 
-##### Possible issue 1. Microsoft Visual C++ 14.0 (or greater) needs to be installed separately
-Depending on your OS configuration, you may beed to install Microsoft Visual C++ 14.0 or greater (required only for [Mayavi](https://docs.enthought.com/mayavi/mayavi/)).
-After downloading `vs_buildtools.exe` from [Microsoft website](https://visualstudio.microsoft.com/visual-cpp-build-tools/): 
-When installing, in the section "Desctop & Mobile" click the "Desktop development with C++" option
-in the opened window, then click "Install" button in the lower right corner. 
+Possible error: during running the above command you get the error message `Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.dll`,
+the [official discussion](https://docs.conda.io/projects/conda/en/stable/user-guide/troubleshooting.html#numpy-mkl-library-load-failed) 
+(by Anaconda developers) of the causes of this error reads:
+> Another software vendor has installed MKL or Intel OpenMP (libiomp5md.dll) files into the C:\Windows\System32 folder. 
+> These files are being loaded before Anaconda's and they're not compatible.
 
-If you get the following error, click "Start", type "Developer" and launch the "Developer Command Prompt for VS 2022". Then navigate to 
+Use the [guide about this error on the Anaconda website](https://docs.conda.io/projects/conda/en/stable/user-guide/troubleshooting.html#numpy-mkl-library-load-failed) for troubleshooting,
+then retry the `conda env create -f environment.yml` commmand again.
+
+If you get errors saying that the Visual Studio C++ files (e.g. compiler) are not found,
+click "Start", type "Developer" and launch the "Developer Command Prompt for VS 2022". Then navigate to 
 
 ```
 cd C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build
@@ -83,23 +93,6 @@ or the respective directory of your Visual Studio installation. Run the command
 ```
 vcvarsall.bat amd64_arm
 ```
-
-to set the environment variables.
-
-```
-vs_buildtools.exe --norestart --passive --downloadThenInstall --includeRecommended --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Workload.MSBuildTools
-```
-
-Once you have installed the Visual C++ build tools, you can retry the `conda env create -f environment.yml` command again.
-
-##### Possible issue 2. During running the above command you get the error message `Intel MKL FATAL ERROR: Cannot load mkl_intel_thread.dll`,
-the [official discussion](https://docs.conda.io/projects/conda/en/stable/user-guide/troubleshooting.html#numpy-mkl-library-load-failed) 
-(by Anaconda developers) of the causes of this error reads:
-> Another software vendor has installed MKL or Intel OpenMP (libiomp5md.dll) files into the C:\Windows\System32 folder. 
-> These files are being loaded before Anaconda's and they're not compatible.
-
-Use the [guide about this error on the Anaconda website](https://docs.conda.io/projects/conda/en/stable/user-guide/troubleshooting.html#numpy-mkl-library-load-failed) for troubleshooting,
-then retry the `conda env create -f environment.yml` commmand again.
 
 
 ### Alternative installation with `pip` instead of Anaconda (not recommended; not tested)
