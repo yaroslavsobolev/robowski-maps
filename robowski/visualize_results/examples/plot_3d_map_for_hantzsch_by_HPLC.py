@@ -1,22 +1,14 @@
-import importlib
+from robowski.settings import *
+import pandas as pd
 import os
 import numpy as np
-import pandas as pd
-from matplotlib import pyplot as plt
-from scipy.integrate import odeint
-import itertools
-from scipy.optimize import curve_fit
-
-organize_run_results = importlib.import_module("misc-scripts.organize_run_results")
-avs = importlib.import_module("visualize-results.animated_viewer_static")
-
-
-data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
+import robowski.misc_scripts.organize_run_results as organize_run_results
+import robowski.visualize_results.animated_viewer_static as avs
 
 # HPLC_80 deg
-file_path = r'D:\Dropbox\robochem\data\BPRF\HPLC_results\Hantzsch_80\average_results_HPLCb.csv'
+file_path = data_folder + r'BPRF\HPLC_results\Hantzsch_80\average_results_HPLCb.csv'
 # # HPLC_26 deg
-# file_path = r'C:\Users\UNIST\Dropbox\robochem\data\BPRF\HPLC_results\Hantzsch_26\average_results_HPLC_26.csv'
+# file_path = data_folder + r'BPRF\HPLC_results\Hantzsch_26\average_results_HPLC_26.csv'
 # Load the CSV file into a DataFrame
 resultst_df = pd.read_csv(file_path)
 # column_to_plot = 'yield'
