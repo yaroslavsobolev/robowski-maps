@@ -1,0 +1,34 @@
+name: robowski
+channels:
+  - viscid-hub
+  - conda-forge
+  - https://conda.anaconda.org/openeye
+  - defaults
+dependencies:
+  - ipython
+  - joblib
+  - jupyter_client
+  - matplotlib
+  - pandas
+  - pip
+  - python=3.10
+  - scikit-learn
+  - scipy
+  - seaborn
+  - setuptools
+  - shortuuid
+  - statsmodels
+  - uncertainties
+  - wheel
+  - xlrd
+  - pip:
+    - corner
+    - emcee
+    - importlib-resources
+    - jupyterlab
+    - networkx
+    - notebook
+    - numpy
+    - packaging
+    - pyautogui
+    - tqdm
