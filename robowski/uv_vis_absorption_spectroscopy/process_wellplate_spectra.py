@@ -1770,6 +1770,14 @@ class SpectraProcessor:
 
         # === PERFORM FITTING ===
 
+        # = THE REASONS BEHIND THE FOLLOWING LOGIC =
+        # if stoichiometric inequalities must be obeyed, try to fit the model with them, using the previous fit as a
+        # starting point.
+        # Because the scipy.optimize.curve_fit is implemented in a way that exceeding the maximum number of function
+        # evaluations throws an error, we try to fit the model with relaxed tolerances and smaller number of function
+        # evaluations first. And only go to larger number of function evaluations if it fails. On average, this saves
+        # computational resources,and increases precision.
+
         # First fit: preliminary fitting without stoichiometric constraints
         popt, pcov = curve_fit(preliminary_model_without_stoichiometric_inequalities, combined_X, combined_Y, method='trf',
                                p0=p0, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
