@@ -1539,12 +1539,12 @@ class SpectraProcessor:
         ignore_pca_bkg : bool, optional
             Whether to disable PCA background component fitting. Default False.
         return_errors : bool, optional
-            Whether to return uncertainty estimates. Default False.
+            Whether to return uncertainty estimates. Default False. Must not be True if return_report is True.
         use_linear_calibration : bool, optional
             Whether to use linear calibration curves. Default True. If False, uses piecewise linear interpolation
             of the calibration data points.
         return_report : bool, optional
-            Whether to return detailed fitting report. Default False.
+            Whether to return detailed fitting report. Default False. Must not be True if return_errors is True.
         sigma_of_absorbance : float, optional
             Standard deviation of absorbance measurements. Default 0.01.
         starting_concentration_dict : dict or None, optional
@@ -1561,8 +1561,9 @@ class SpectraProcessor:
         Returns
         -------
         numpy.ndarray or tuple
-            Array of fitted concentrations, or tuple with additional information
-            if return_errors or return_report is True.
+            Array of fitted concentrations if return_report and return_errors are False.
+            Tuple if return_errors or return_report is True: first element is concentrations,
+            second element is either concentration errors or fitting report.
 
         Examples
         --------
@@ -1631,6 +1632,8 @@ class SpectraProcessor:
                                                                       wavelength_indices, number_of_pca_components=1)
 
         def preliminary_model_without_stoichiometric_inequalities(*args):
+            # Number of arguments depends on the settigs, but the sequence of arguments follows a certain pattern
+            # As follows:
             xs = args[0]
             separate_spectra = np.split(xs, indices_for_splitting)
             calibrants_concentrations = args[1:number_of_calibrants + 1]
@@ -1721,10 +1724,10 @@ class SpectraProcessor:
                                                maxfev=100, ftol=1e-6, xtol=1e-6, gtol=1e-6, verbose=1,
                                                x_scale=x_scale)
 
-        perr = np.sqrt(np.diag(pcov))  # errors of the fitted coefficients
+        perr = np.sqrt(np.diag(pcov))  # errors of the fitted coefficients and other parameters
 
+        # Display overspending ratios
         concentrations_here = popt[0:number_of_calibrants]
-
         if obey_stoichiometric_inequalities:
             required_subs = self.product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
             os_string = ''
@@ -1737,6 +1740,7 @@ class SpectraProcessor:
         else:
             os_string = ''
 
+        # Extract the dilution factors, offsets, and wavelength offsets from the fitted parameters
         fitted_dilution_factors = popt[number_of_calibrants: number_of_calibrants + number_of_spectra - 1]
         fitted_offsets = popt[number_of_calibrants + number_of_spectra - 1: number_of_calibrants + number_of_spectra - 1 + number_of_spectra]
         fitted_wavelength_offsets = popt[number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra:
@@ -1748,19 +1752,14 @@ class SpectraProcessor:
         logging.debug('Popt: ', popt)
         logging.debug('p0: ', p0)
 
-        if return_errors:
-            # convert coefficient errors into concentration errors
-            upper_confidence_limit = [calibrants[calibrant_index]['coeff_to_concentration_interpolator'](fitted_coeff + perr[calibrant_index])
-                               for calibrant_index, fitted_coeff in enumerate(popt[:-4])]
-            concentration_errors = [upper_confidence_limit[i] - concentrations_here[i] for i in range(len(concentrations_here))]
-            return concentrations_here, concentration_errors
-
         # make number of subplots equal to number of spectra
         predicted_comboY = preliminary_model_without_stoichiometric_inequalities(comboX, *popt)
 
         fit_report = dict()
+        concentration_errors = []
         for calibrant_id, calibrant_shortname in enumerate(calibrant_shortnames):
             fit_report[f'pcerr#{calibrant_shortname}'] = perr[calibrant_id]
+            concentration_errors.append(perr[calibrant_id])
 
         fit_report['rmse'] = np.sqrt(np.mean((predicted_comboY - comboY) ** 2))
         fit_report['maxresidual'] = np.max(np.abs(predicted_comboY - comboY))
@@ -1793,6 +1792,8 @@ class SpectraProcessor:
 
         if return_report:
             return concentrations_here, fit_report
+        elif return_errors:
+            return concentrations_here, concentration_errors
         else:
             return concentrations_here
 
