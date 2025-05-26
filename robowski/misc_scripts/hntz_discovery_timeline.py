@@ -194,6 +194,8 @@ def plot_timeline(list_of_runs, list_of_calibrant_set_ids, param_to_plot='rmse',
 
     fig, ax = plt.subplots(figsize=(5, 4))
     sns.set_style('whitegrid')
+   # set the param column to float
+    overall_df['param'] = overall_df['param'].astype(float)
     ax = sns.boxplot(ax=ax, x='set_index', y='param', data=overall_df, color='grey', notch=True, whis=[5, 95])
     ax = sns.stripplot(ax=ax, x="set_index", y="param", data=overall_df, alpha=0.35, color='C0', jitter=0.2, size=3)
     # set y axis to log scale

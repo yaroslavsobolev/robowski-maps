@@ -212,6 +212,10 @@ The Markov Chain Monte Carlo (MCMC) sampling is performed by routines in the `_e
 Covariance matrices are plotted by the `ugi_kinetics_v3_covplot.py` script based on the precalculated output
 of the scripts whose names contain `_perr_`, meaning "parameter errors analysis".
 
+#### Hantzsch reaction
+1. To reproduce the Figure 5a and Figure S99, run the `robowski/misc_scripts/hntz_discovery_timeline.py` script.
+2. To reproduce the main-text figure 5b, run the `robowski/misc_scripts/figures_for_articles/all_hantzsch_spectra_figure5b.py` script.
+3. To reproduce the Figure 5d, 5e and 5f, run the `TO BE ADDED`
 
 #### Reactions with prussian blue analogs
 
@@ -257,9 +261,6 @@ folder.
 ### Reproducing other figures from the accompanying research article
 
 To reproduce the main-text Figure 4j, run the `robowski/visualize_results/visualize_results.py` script.
-
-To reproduce the main-text figure 5b, run the `robowski/misc_scripts/figures_for_articles/all_hantzsch_spectra_figure5b.py` script.
-
 To reproduce the Figure S17 and recalculating the uncertainty map of the NanoDrop spectrophotometer,
 run the `robowski/uv-vis-absorption-spectroscopy/absorbance_errorbar_model.py` script.
 
