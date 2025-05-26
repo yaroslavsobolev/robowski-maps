@@ -62,7 +62,7 @@ plt.show()
 cut_from = 0
 
 # Principal component analysis of the background spectra
-nc = 1
+nc = 2
 pca1 = pca(n_components=nc)
 nfeat1 = spectra
 nfeat1 = [x - np.mean(x) for x in nfeat1]
