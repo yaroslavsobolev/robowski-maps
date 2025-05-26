@@ -1578,133 +1578,219 @@ class SpectraProcessor:
             ... )
         """
 
+        # === INITIALIZATION AND DATA LOADING ===
         t0 = time.time()
+
+        # Load calibration data for all calibrants (reference spectra and concentration-coefficient relationships)
         calibrants = self.load_dictionary_of_calibrants_from_files(calibrant_shortnames, calibration_folder,
                                                                    use_linear_calibration)
-
         print(f'N calibrants: {len(calibrants)}')
 
+        # Load background spectrum - either shared background or average of calibrant backgrounds
         if ignore_pca_bkg:
             bkg_spectrum = np.mean(np.array([calibrant['bkg_spectrum'] for calibrant in calibrants]), axis=0)
         else:
             bkg_spectrum = np.load(background_model_folder + 'bkg_spectrum.npy')
+
+        # Validate that all spectra have same wavelength grid as background
         for target_spectrum_input in target_spectrum_inputs:
             assert len(bkg_spectrum) == len(target_spectrum_input), \
                 'Length of background spectrum is not the same as the length of the target spectrum.' \
                 'This may be because the wavelengths are not aligned.'
 
+        # === SPECTRAL PREPROCESSING ===
+        # Subtract background from all target spectra
         wavelengths = bkg_spectrum[:, 0]
-        target_spectra = [target_spectrum_input - bkg_spectrum[:, 1] for target_spectrum_input in target_spectrum_inputs]
+        target_spectra = [target_spectrum_input - bkg_spectrum[:, 1] for target_spectrum_input in
+                          target_spectrum_inputs]
         wavelength_indices = np.arange(calibrants[0]['bkg_spectrum'].shape[0])
 
+        # Apply quality masks to each spectrum - exclude problematic wavelength regions
         target_spectra_wavelength_indices_masked = []
         target_spectra_amplitudes_masked = []
         for i, target_spectrum in enumerate(target_spectra):
             target_spectrum_wavelengths_masked, target_spectrum_amplitudes_masked = self.mask_multispectrum(
-                wavelength_indices, target_spectrum, cut_from, upper_limit_of_absorbance=upper_limit_of_absorbance, cut_to=cut_to)
+                wavelength_indices, target_spectrum, cut_from, upper_limit_of_absorbance=upper_limit_of_absorbance,
+                cut_to=cut_to)
             target_spectra_wavelength_indices_masked.append(target_spectrum_wavelengths_masked)
             target_spectra_amplitudes_masked.append(target_spectrum_amplitudes_masked)
 
+            # Check if any usable data remains after masking
             if len(target_spectrum_wavelengths_masked) == 0:
                 print(f'There is no data that is within mask for spectrum #{i}. Returning zeros.')
                 return [0 for i in range(len(calibrant_shortnames))]
 
-        comboX = np.concatenate(target_spectra_wavelength_indices_masked)
-        comboY = np.concatenate(target_spectra_amplitudes_masked)
+        # === DATA STRUCTURE PREPARATION FOR FITTING ===
+        # Concatenate all masked spectra into single arrays for simultaneous fitting of both spectra
+        combined_X = np.concatenate(target_spectra_wavelength_indices_masked)  # All wavelength indices
+        combined_Y = np.concatenate(target_spectra_amplitudes_masked)  # All absorbance values
 
-        # uncertainties
+        # Setup measurement uncertainties for weighted fitting
         if not self.use_instrumental_sigmas:
-            combo_sigmas = np.ones_like(comboY) * sigma_of_absorbance
+            # Use constant uncertainty
+            combo_sigmas = np.ones_like(combined_Y) * sigma_of_absorbance
         else:
+            # Use wavelength and absorbance-dependent uncertainty model
             combo_sigmas = []
-            for i, wavelength_index in enumerate(comboX):
+            for i, wavelength_index in enumerate(combined_X):
                 wavelength_here = wavelengths[wavelength_index]
-                absorbance_here = comboY[i]
+                absorbance_here = combined_Y[i]
                 sigma_here_here = self.uncertainty_of_measured_absorbance(wavelength_here, absorbance_here)
                 combo_sigmas.append(sigma_here_here)
             combo_sigmas = np.array(combo_sigmas)
 
-        indices_for_splitting = np.cumsum([len(target_spectrum_wavelengths_masked) for target_spectrum_wavelengths_masked in target_spectra_wavelength_indices_masked])[:-1]
+        # Calculate indices for splitting combined arrays back into individual spectra
+        indices_for_splitting = np.cumsum([len(target_spectrum_wavelengths_masked)
+                                           for target_spectrum_wavelengths_masked in
+                                           target_spectra_wavelength_indices_masked])[:-1]
+
         number_of_calibrants = len(calibrant_shortnames)
         number_of_spectra = len(target_spectrum_inputs)
 
+        # Load PCA background components for modeling systematic background variations
         background_interpolators = self.load_background_interpolators(background_model_folder, ignore_pca_bkg,
                                                                       wavelength_indices, number_of_pca_components=1)
 
+        # === DEFINE FITTING MODEL FUNCTIONS ===
+
         def preliminary_model_without_stoichiometric_inequalities(*args):
-            # Number of arguments depends on the settigs, but the sequence of arguments follows a certain pattern
-            # As follows:
-            xs = args[0]
-            separate_spectra = np.split(xs, indices_for_splitting)
+            """
+            Core spectral model that predicts combined spectra from fitted parameters.
+
+            This function implements the mathematical model that relates the measured spectra
+            to the underlying chemical concentrations and instrumental parameters.
+
+            Parameter structure in args:
+            - args[0]: wavelength indices (combined_X)
+            - args[1:number_of_calibrants+1]: concentrations of each calibrant in undiluted sample
+            - args[number_of_calibrants+1:...]: dilution factors for spectra 2, 3, etc. (spectrum 1 factor is fixed)
+            - next block: baseline offsets for each spectrum. Number of offsets = number_of_spectra
+            - next block: PCA background weights for each spectrum.
+            - final block: wavelength shift corrections for each spectrum. Number of shifts = number_of_spectra
+            """
+
+            # === PARSE FITTED PARAMETERS FROM ARGS ===
+            xs = args[0]  # Combined wavelength indices for all spectra
+            separate_spectra = np.split(xs, indices_for_splitting)  # Split back into individual spectrum indices
+
+            # Extract calibrant concentrations in the undiluted parent sample
             calibrants_concentrations = args[1:number_of_calibrants + 1]
-            dilutions_factors_here = [dilution_factors[0]] + list(args[number_of_calibrants + 1: number_of_calibrants + 1 + number_of_spectra - 1])
+
+            # Extract dilution factors: first is fixed, others are fitted parameters
+            dilutions_factors_here = [dilution_factors[0]] + list(
+                args[number_of_calibrants + 1: number_of_calibrants + 1 + number_of_spectra - 1])
             assert len(dilutions_factors_here) == number_of_spectra
+
+            # Extract baseline offsets for each spectrum (accounts for instrumental drift)
             offsets = args[number_of_calibrants + 1 + number_of_spectra - 1:
                            number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra]
+
+            # Extract PCA background component weights for each spectrum
             bkg_pca_weights = args[number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra:
                                    number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra + number_of_spectra]
-            wavelength_offsets = args[number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra + number_of_spectra:
-                                      number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra + number_of_spectra + number_of_spectra]
+
+            # Extract wavelength calibration offsets for each spectrum (accounts for instrumental wavelength shifts)
+            wavelength_offsets = args[
+                                 number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra + number_of_spectra:
+                                 number_of_calibrants + 1 + number_of_spectra - 1 + number_of_spectra + number_of_spectra + number_of_spectra]
+
+            # === PREDICT EACH SPECTRUM SEPARATELY ===
             separate_predicted_spectra = []
-            for spectrum_index, wavelengths in enumerate(separate_spectra):
-                wavelengths = wavelengths + wavelength_offsets[spectrum_index]
+            for spectrum_index, wavelength_indices_for_this_spectrum in enumerate(separate_spectra):
+
+                # Apply wavelength calibration offset to correct for instrumental wavelength shifts between spectra
+                wavelengths_corrected = wavelength_indices_for_this_spectrum + wavelength_offsets[spectrum_index]
+
+                # Calculate diluted concentrations for this specific spectrum
                 dilution_factor_for_this_spectrum = dilutions_factors_here[spectrum_index]
-                calibrants_concentrations_for_this_spectrum = [x / dilution_factor_for_this_spectrum for x in calibrants_concentrations]
+                calibrants_concentrations_for_this_spectrum = [conc / dilution_factor_for_this_spectrum
+                                                               for conc in calibrants_concentrations]
 
-                calibrants_coeffs_for_this_spectrum = [np.asscalar(calibrants[i]['concentration_to_coeff_interpolator'](calibrants_concentrations_for_this_spectrum[i]))
-                                                       for i in range(number_of_calibrants)]
+                # Convert concentrations to spectral scaling coefficients using calibration curves
+                calibrants_coeffs_for_this_spectrum = [
+                    np.asscalar(calibrants[i]['concentration_to_coeff_interpolator'](
+                        calibrants_concentrations_for_this_spectrum[i]))
+                    for i in range(number_of_calibrants)
+                ]
 
-                predicted_spectrum = np.zeros_like(wavelengths)
+                # Initialize predicted spectrum
+                predicted_spectrum = np.zeros_like(wavelengths_corrected)
 
+                # Sum contributions from all calibrants (core Beer-Lambert law implementation)
                 for i in range(number_of_calibrants):
-                    predicted_spectrum += calibrants_coeffs_for_this_spectrum[i] * calibrants[i]['reference_interpolator'](wavelengths)
+                    predicted_spectrum += (calibrants_coeffs_for_this_spectrum[i] *
+                                           calibrants[i]['reference_interpolator'](wavelengths_corrected))
 
-                predicted_spectrum += offsets[spectrum_index] + background_interpolators[0](wavelengths) * bkg_pca_weights[spectrum_index]
+                # Add systematic contributions: baseline offset + PCA background component
+                predicted_spectrum += (offsets[spectrum_index] +
+                                       background_interpolators[0](wavelengths_corrected) * bkg_pca_weights[
+                                           spectrum_index])
+
                 separate_predicted_spectra.append(predicted_spectrum)
-            comboY = np.concatenate(separate_predicted_spectra)
 
-            return comboY
+            # Concatenate all predicted spectra to match the structure of measured data
+            combined_Y = np.concatenate(separate_predicted_spectra)
+            return combined_Y
 
         def model_with_stoichiometric_inequalities(*args):
+            """
+            Enhanced model that adds stoichiometric constraints via penalty method.
+
+            This function wraps the core spectral model and adds soft constraints to prevent
+            solutions that violate chemical stoichiometry (e.g., more product than possible
+            given starting material amounts).
+            """
+
+            # Extract calibrant concentrations from fitted parameters
             calibrants_concentrations = args[1:number_of_calibrants + 1]
-            comboY = preliminary_model_without_stoichiometric_inequalities(*args)
+
+            # Get base model prediction
+            combined_Y = preliminary_model_without_stoichiometric_inequalities(*args)
+
+            # Add stoichiometric penalty if starting concentrations are provided
             if starting_concentration_dict is not None:
-                stoich_penalization_of_cost = self.stoich_cost(calibrants_concentrations, calibrant_shortnames, starting_concentration_dict)
-                comboY[-2] += stoich_penalization_of_cost * combo_sigmas[-2] / self.uncertainty_of_stoichiometric_overspending_ratio
-                comboY[-1] -= stoich_penalization_of_cost * combo_sigmas[-1] / self.uncertainty_of_stoichiometric_overspending_ratio
-            return comboY
+                # Calculate penalty for violating stoichiometric constraints
+                stoich_penalization_of_cost = self.stoich_cost(calibrants_concentrations, calibrant_shortnames,
+                                                               starting_concentration_dict)
 
-        bounds, p0, x_scale = self.prepare_initial_guess_and_bounds_and_xscale(calibrant_shortnames, dilution_factors,
-                                                                               ignore_pca_bkg,
-                                                                               maximum_wavelength_offset,
-                                                                               number_of_calibrants, number_of_spectra,
-                                                                               obey_stoichiometric_inequalities,
-                                                                               second_dilution_factor_bound_range,
-                                                                               starting_concentration_dict)
+                # Apply penalty by modifying the last two data points (this creates artificial data points that
+                # are driven away from zero when stoichiometry is violated, increasing the fitting residuals)
+                combined_Y[-2] += stoich_penalization_of_cost * combo_sigmas[
+                    -2] / self.uncertainty_of_stoichiometric_overspending_ratio
+                combined_Y[-1] -= stoich_penalization_of_cost * combo_sigmas[
+                    -1] / self.uncertainty_of_stoichiometric_overspending_ratio
 
-        popt, pcov = curve_fit(preliminary_model_without_stoichiometric_inequalities, comboX, comboY, method='trf',
+            return combined_Y
+
+        # === SETUP FITTING PARAMETERS AND BOUNDS ===
+        bounds, p0, x_scale = self.prepare_initial_guess_and_bounds_and_xscale(
+            calibrant_shortnames, dilution_factors, ignore_pca_bkg, maximum_wavelength_offset,
+            number_of_calibrants, number_of_spectra, obey_stoichiometric_inequalities,
+            second_dilution_factor_bound_range, starting_concentration_dict)
+
+        # === PERFORM FITTING ===
+
+        # First fit: preliminary fitting without stoichiometric constraints
+        popt, pcov = curve_fit(preliminary_model_without_stoichiometric_inequalities, combined_X, combined_Y, method='trf',
                                p0=p0, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                maxfev=100000, ftol=1e-15, xtol=1e-15, gtol=1e-15, verbose=1, x_scale=x_scale)
 
-        # if stoichiometric inequalities must be obeyed, try to fit the model with them,
-        # using the previous fit as a starting point.
-        # Because the scipy.curve_fit is implemented in a way that exceeding the maximum number of function evaluations
-        # throws an error, we try to fit the model with relaxed tolerances and smaller number of function evaluations
-        # first. And only go to larger number of function evaluations if it fails. On average, this saves computational
-        # resources,and increases precision.
+        # Second fit: add stoichiometric constraints if requested
+        # Uses hierarchical fitting strategy with progressively relaxed tolerances if needed
         if obey_stoichiometric_inequalities:
             print('prelim done')
             try:
-                popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY,
+                # Try strict tolerances first
+                popt, pcov = curve_fit(model_with_stoichiometric_inequalities, combined_X, combined_Y,
                                        p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                        maxfev=100, ftol=1e-15, xtol=1e-15, gtol=1e-15, verbose=1,
                                        x_scale=x_scale)
-            # if max_nfev is reached
             except RuntimeError:
+                # Fall back to progressively relaxed tolerances if fitting fails
                 print(f'RuntimeError, hopefully max_nfev')
                 print('Trying again with 1e-12 tolerances')
                 try:
-                    popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY, method='trf',
+                    popt, pcov = curve_fit(model_with_stoichiometric_inequalities, combined_X, combined_Y, method='trf',
                                            p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                            maxfev=100, ftol=1e-12, xtol=1e-12, gtol=1e-12, verbose=1,
                                            x_scale=x_scale)
@@ -1712,39 +1798,46 @@ class SpectraProcessor:
                     print(f'RuntimeError, hopefully max_nfev')
                     print('Trying again with 1e-10 tolerances')
                     try:
-                        popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY, method='trf',
+                        popt, pcov = curve_fit(model_with_stoichiometric_inequalities, combined_X, combined_Y, method='trf',
                                                p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                                maxfev=100, ftol=1e-10, xtol=1e-10, gtol=1e-10, verbose=1,
                                                x_scale=x_scale)
                     except RuntimeError:
                         print(f'RuntimeError, hopefully max_nfev')
                         print('Trying again with 1e-6 tolerances')
-                        popt, pcov = curve_fit(model_with_stoichiometric_inequalities, comboX, comboY, method='trf',
+                        popt, pcov = curve_fit(model_with_stoichiometric_inequalities, combined_X, combined_Y, method='trf',
                                                p0=popt, bounds=bounds, sigma=combo_sigmas, absolute_sigma=True,
                                                maxfev=100, ftol=1e-6, xtol=1e-6, gtol=1e-6, verbose=1,
                                                x_scale=x_scale)
 
-        perr = np.sqrt(np.diag(pcov))  # errors of the fitted coefficients and other parameters
+        # === EXTRACT AND REPORT RESULTS ===
 
-        # Display overspending ratios
-        concentrations_here = popt[0:number_of_calibrants]
+        perr = np.sqrt(np.diag(pcov))  # Parameter uncertainties from covariance matrix
+        concentrations_here = popt[0:number_of_calibrants]  # Final fitted concentrations
+
+        # Display stoichiometric analysis if constraints were applied
         if obey_stoichiometric_inequalities:
-            required_subs = self.product_concentrations_to_required_substrates(concentrations_here, calibrant_shortnames)
+            required_subs = self.product_concentrations_to_required_substrates(concentrations_here,
+                                                                               calibrant_shortnames)
             os_string = ''
             for s in self.substrates:
                 overspending_ratio = required_subs[s] / starting_concentration_dict[s]
-                string_here = f'{s} osr: {overspending_ratio-1:.1%}\n'
+                string_here = f'{s} osr: {overspending_ratio - 1:.1%}\n'
                 os_string += string_here
             os_string = os_string[:-1]
             print(os_string)
         else:
             os_string = ''
 
-        # Extract the dilution factors, offsets, and wavelength offsets from the fitted parameters
+        # Extract fitted instrumental parameters for diagnostics
         fitted_dilution_factors = popt[number_of_calibrants: number_of_calibrants + number_of_spectra - 1]
-        fitted_offsets = popt[number_of_calibrants + number_of_spectra - 1: number_of_calibrants + number_of_spectra - 1 + number_of_spectra]
-        fitted_wavelength_offsets = popt[number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra:
-                                      number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra + number_of_spectra]
+        fitted_offsets = popt[
+                         number_of_calibrants + number_of_spectra - 1: number_of_calibrants + number_of_spectra - 1 + number_of_spectra]
+        fitted_wavelength_offsets = popt[
+                                    number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra:
+                                    number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra + number_of_spectra]
+
+        # Log fitting results for diagnostics
         logging.debug(f'Fitted wavelength offsets: {fitted_wavelength_offsets}')
         logging.debug('Fitted concentrations:', concentrations_here)
         logging.debug('Fitted dilution factors:', fitted_dilution_factors)
@@ -1752,8 +1845,10 @@ class SpectraProcessor:
         logging.debug('Popt: ', popt)
         logging.debug('p0: ', p0)
 
-        # make number of subplots equal to number of spectra
-        predicted_comboY = preliminary_model_without_stoichiometric_inequalities(comboX, *popt)
+        # === GENERATE FITTING DIAGNOSTICS ===
+
+        # Calculate final model prediction and fitting statistics
+        predicted_combined_Y = preliminary_model_without_stoichiometric_inequalities(combined_X, *popt)
 
         fit_report = dict()
         concentration_errors = []
@@ -1761,26 +1856,32 @@ class SpectraProcessor:
             fit_report[f'pcerr#{calibrant_shortname}'] = perr[calibrant_id]
             concentration_errors.append(perr[calibrant_id])
 
-        fit_report['rmse'] = np.sqrt(np.mean((predicted_comboY - comboY) ** 2))
-        fit_report['maxresidual'] = np.max(np.abs(predicted_comboY - comboY))
+        fit_report['rmse'] = np.sqrt(np.mean((predicted_combined_Y - combined_Y) ** 2))
+        fit_report['maxresidual'] = np.max(np.abs(predicted_combined_Y - combined_Y))
         fit_report['fitted_dilution_factor_2'] = fitted_dilution_factors[0]
 
+        # Extract background component weights for reporting
         weights_of_background_components = popt[number_of_calibrants + number_of_spectra - 1 + number_of_spectra:
                                                 number_of_calibrants + number_of_spectra - 1 + number_of_spectra + number_of_spectra]
         print(f'weights_of_background_components: {weights_of_background_components}')
 
-        separate_predicted_spectra = np.split(predicted_comboY, indices_for_splitting)
+        # Statistical analysis of fitting residuals
+        separate_predicted_spectra = np.split(predicted_combined_Y, indices_for_splitting)
         separate_sigmas = np.split(combo_sigmas, indices_for_splitting)
         for spectrum_index in range(number_of_spectra):
-            residuals_here = separate_predicted_spectra[spectrum_index] - target_spectra_amplitudes_masked[spectrum_index]
+            residuals_here = separate_predicted_spectra[spectrum_index] - target_spectra_amplitudes_masked[
+                spectrum_index]
             lag = len(residuals_here) // 5
             lb_df = sm.stats.acorr_ljungbox(residuals_here, lags=[lag])
             if len(lb_df) == 1:
-                # take values from first row of dataframe lb_pvalue
+                # Record Ljung-Box test statistics for residual autocorrelation
                 fit_report[f'LB_pvalue_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_pvalue']
                 fit_report[f'LB_stat_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_stat']
 
-        self.plot_result_of_multispectrum_unmixing(background_interpolators, calibrant_shortnames, comboX, do_plot,
+        # === VISUALIZATION ===
+
+        # Generate diagnostic plots showing fit quality and component contributions
+        self.plot_result_of_multispectrum_unmixing(background_interpolators, calibrant_shortnames, combined_X, do_plot,
                                                    fig_filename, indices_for_splitting,
                                                    model_with_stoichiometric_inequalities, number_of_calibrants,
                                                    number_of_spectra, os_string, popt, separate_predicted_spectra,
@@ -1789,6 +1890,8 @@ class SpectraProcessor:
                                                    weights_of_background_components)
 
         print(f'Time spent for this unmixing: {time.time() - t0} seconds.')
+
+        # === RETURN RESULTS ===
 
         if return_report:
             return concentrations_here, fit_report
@@ -1801,61 +1904,158 @@ class SpectraProcessor:
                                                     maximum_wavelength_offset, number_of_calibrants, number_of_spectra,
                                                     obey_stoichiometric_inequalities,
                                                     second_dilution_factor_bound_range, starting_concentration_dict):
-        p0 = []
-        lower_bounds = []
-        upper_bounds = []
-        x_scale = []
-        # it stoichiometry is obeyed, limit the upper bound of calibrant concentration to two times the possible
-        # concentration if all the starting material is used to make this calibrant only
+        """
+        Prepare optimization parameters for multi-spectrum fitting with scipy.optimize.curve_fit.
+
+        This function constructs the initial parameter guess (p0), parameter bounds, and characteristic
+        scales (x_scale) for the nonlinear least-squares optimization. The parameters are organized
+        in a specific order that matches how the model functions parse their arguments.
+
+        The parameter vector structure is:
+        1. Calibrant concentrations (number_of_calibrants parameters)
+        2. Dilution factors for spectra 2, 3, etc. (number_of_spectra - 1 parameters, spectrum 1 is reference)
+        3. Baseline offsets for each spectrum (number_of_spectra parameters)
+        4. PCA background component weights for each spectrum (number_of_spectra parameters)
+        5. Wavelength calibration offsets for each spectrum (number_of_spectra parameters)
+
+        When stoichiometric constraints are enabled, concentration upper bounds are calculated based
+        on starting material availability and reaction stoichiometry to prevent unphysical solutions.
+
+        Parameters
+        ----------
+        calibrant_shortnames : list of str
+            Names of chemical components being fitted.
+        dilution_factors : list of float
+            Dilution factors for each spectrum. First factor is fixed as reference.
+        ignore_pca_bkg : bool
+            If True, constrains PCA background weights to near-zero values.
+        maximum_wavelength_offset : float
+            Maximum allowed wavelength shift between spectra (nm).
+        number_of_calibrants : int
+            Number of chemical components being fitted.
+        number_of_spectra : int
+            Number of spectra being fitted simultaneously.
+        obey_stoichiometric_inequalities : bool
+            If True, enforces stoichiometric constraints on concentrations.
+        second_dilution_factor_bound_range : float
+            Relative tolerance for dilution factor fitting (e.g., 0.1 = ±10%).
+        starting_concentration_dict : dict or None
+            Starting substrate concentrations for stoichiometric calculations.
+
+        Returns
+        -------
+        bounds : tuple
+            (lower_bounds, upper_bounds) for scipy.optimize.curve_fit bounds parameter.
+        p0 : list
+            Initial parameter guesses for scipy.optimize.curve_fit p0 parameter.
+        x_scale : list
+            Characteristic parameter scales for scipy.optimize.curve_fit x_scale parameter.
+
+        Notes
+        -----
+        The x_scale parameter helps the optimizer by providing characteristic scales for each
+        parameter type (concentrations ~mM, dilution factors ~10-1000, offsets ~0.01, etc.).
+        This normalization improves convergence for parameters with very different magnitudes.
+        For details, see
+        https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit
+        for documentation of `scipy.optimize.curve_fit` and its parameters.
+
+        """
+
+        # Initialize parameter arrays
+        p0 = []  # Initial parameter guesses
+        lower_bounds = []  # Lower bounds for each parameter
+        upper_bounds = []  # Upper bounds for each parameter
+        x_scale = []  # Characteristic scales for parameter normalization
+
+        # === CALCULATE STOICHIOMETRIC CONCENTRATION LIMITS ===
+        # If stoichiometry is enforced, calculate maximum possible concentration for each calibrant
+        # based on available starting materials and reaction stoichiometry
         if obey_stoichiometric_inequalities:
             calibrant_concentration_upper_bounds = []
             for i, substance_for_fitting in enumerate(calibrant_shortnames):
                 limits_here = []
+
+                # Check each substrate to find the limiting reagent for this product
                 for s in self.substrates:
-                    if self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0] == 0:
-                        continue
-                    limit_by_this_substrate = starting_concentration_dict[s] / self.df_stoich.loc[
-                        self.df_stoich['Names'] == substance_for_fitting, s].values[0]
+                    # Get stoichiometric coefficient for this substrate in this product's formation
+                    stoich_coeff = self.df_stoich.loc[self.df_stoich['Names'] == substance_for_fitting, s].values[0]
+                    if stoich_coeff == 0:
+                        continue  # This substrate is not used for this product
+
+                    # Calculate maximum product concentration limited by this substrate
+                    limit_by_this_substrate = starting_concentration_dict[s] / stoich_coeff
                     limits_here.append(limit_by_this_substrate)
+
+                # Use the most restrictive (minimum) limit across all substrates
                 calibrant_concentration_upper_bounds.append(min(limits_here))
-            print(f'Limits: {calibrant_concentration_upper_bounds}')
+            print(f'Stoichiometric concentration limits: {calibrant_concentration_upper_bounds}')
+
+        # === PARAMETER BLOCK 1: CALIBRANT CONCENTRATIONS ===
+        # Add one concentration parameter per calibrant
         for i in range(number_of_calibrants):
-            p0.append(1e-7)
-            x_scale.append(1e-3)
-            lower_bounds.append(0)
+            p0.append(1e-7)  # Initial guess: 0.1 μM (typical starting point)
+            x_scale.append(1e-3)  # Characteristic scale: 1 mM (typical concentration range)
+            lower_bounds.append(0)  # Concentrations cannot be negative
+
             if obey_stoichiometric_inequalities:
+                # Set upper bound based on stoichiometric limits, with 2x safety factor
                 upper_bounds.append(max([2e-7, 2 * calibrant_concentration_upper_bounds[i]]))
             else:
+                # No stoichiometric constraints - allow unlimited concentrations
                 upper_bounds.append(np.inf)
+
+        # === PARAMETER BLOCK 2: DILUTION FACTORS ===
+        # Add dilution factors for spectra 2, 3, etc. (spectrum 1 is fixed reference)
         for i in range(number_of_spectra - 1):
-            p0.append(dilution_factors[i + 1])
-            x_scale.append(dilution_factors[i + 1])
-            lower_bounds.append(dilution_factors[i + 1] * (1 - second_dilution_factor_bound_range))
-            upper_bounds.append(dilution_factors[i + 1] * (1 + second_dilution_factor_bound_range))
-        for i in range(number_of_spectra):  # these are offsets
-            p0.append(0)
-            x_scale.append(0.01)
-            lower_bounds.append(-np.inf)
+            nominal_dilution = dilution_factors[i + 1]  # Target dilution factor
+
+            p0.append(nominal_dilution)  # Initial guess: nominal value
+            x_scale.append(nominal_dilution)  # Scale: same order of magnitude as value
+
+            # Allow small deviations around nominal dilution factor to account for pipetting errors
+            tolerance = second_dilution_factor_bound_range  # e.g., 0.1 = ±10%
+            lower_bounds.append(nominal_dilution * (1 - tolerance))
+            upper_bounds.append(nominal_dilution * (1 + tolerance))
+
+        # === PARAMETER BLOCK 3: BASELINE OFFSETS ===
+        # Add baseline offset correction for each spectrum (accounts for instrumental drift)
+        for i in range(number_of_spectra):
+            p0.append(0)  # Initial guess: no offset
+            x_scale.append(0.01)  # Scale: typical absorbance offset magnitude
+            lower_bounds.append(-np.inf)  # Offsets can be positive or negative
             upper_bounds.append(np.inf)
+
+        # === PARAMETER BLOCK 4: PCA BACKGROUND WEIGHTS ===
+        # Add PCA background component weights for modeling systematic background variations
         if ignore_pca_bkg:
+            # Effectively disable PCA background by constraining weights to near-zero
             max_bkg_pca_weight = 1e-12
         else:
+            # Allow significant PCA background contributions
             max_bkg_pca_weight = 0.5
-        for i in range(number_of_spectra):  # these are weights for PCA componetns of the background
-            p0.append(0)
-            x_scale.append(max_bkg_pca_weight)
-            lower_bounds.append(-1 * max_bkg_pca_weight)
+
+        for i in range(number_of_spectra):
+            p0.append(0)  # Initial guess: no background contribution
+            x_scale.append(max_bkg_pca_weight)  # Scale: maximum allowed weight
+            lower_bounds.append(-1 * max_bkg_pca_weight)  # Weights can be positive or negative
             upper_bounds.append(max_bkg_pca_weight)
-        for i in range(number_of_spectra):  # these are wavelength offsets (shifts) of individual spectra
-            p0.append(0)
-            x_scale.append(1)
-            lower_bounds.append(-1 * maximum_wavelength_offset)
+
+        # === PARAMETER BLOCK 5: WAVELENGTH OFFSETS ===
+        # Add wavelength calibration offsets to correct for small instrumental wavelength shifts
+        for i in range(number_of_spectra):
+            p0.append(0)  # Initial guess: no wavelength shift
+            x_scale.append(1)  # Scale: 1 nm (typical shift magnitude)
+            lower_bounds.append(-1 * maximum_wavelength_offset)  # e.g., ±1.5 nm for NanoDrop
             upper_bounds.append(maximum_wavelength_offset)
+
+        # Package bounds in format expected by scipy.optimize.curve_fit
         bounds = (lower_bounds, upper_bounds)
+
         return bounds, p0, x_scale
 
 
-    def plot_result_of_multispectrum_unmixing(self, background_interpolators, calibrant_shortnames, comboX, do_plot,
+    def plot_result_of_multispectrum_unmixing(self, background_interpolators, calibrant_shortnames, combined_X, do_plot,
                                               fig_filename, indices_for_splitting,
                                               model_with_stoichiometric_inequalities, number_of_calibrants,
                                               number_of_spectra, os_string, popt, separate_predicted_spectra,
@@ -1884,8 +2084,8 @@ class SpectraProcessor:
             for i in range(number_of_calibrants):
                 if i != calibrant_index:
                     cpopt[i] = 0
-            predicted_comboY = model_with_stoichiometric_inequalities(comboX, *cpopt)
-            separate_predicted_spectra = np.split(predicted_comboY, indices_for_splitting)
+            predicted_combined_Y = model_with_stoichiometric_inequalities(combined_X, *cpopt)
+            separate_predicted_spectra = np.split(predicted_combined_Y, indices_for_splitting)
             for spectrum_index in range(number_of_spectra):
                 axs[spectrum_index].plot(220 + target_spectra_wavelength_indices_masked[spectrum_index],
                                          separate_predicted_spectra[spectrum_index],
