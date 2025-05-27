@@ -915,12 +915,23 @@ class SpectraProcessor:
 
         .. math::
 
-            A(\lambda) = \sum_i a_i R_i(\lambda) + c + d\lambda + \sum_j e_j B_j(\lambda)
+            A(\lambda) = \sum_j a_j R_j(\lambda) + b_0 + b_1 \cdot \lambda + \sum_k w_k B_k(\lambda)
 
-        where :math:`a_i` are scaling coefficients, and :math:`R_i(\lambda)` are reference spectra for each calibrant.
-        The model includes a linear baseline term (:math:`c + d\lambda`) and optionally PCA background components
-        :math:`e_j B_j(\lambda)`. The :math:`a_i` coefficients are subsequently converted to concentrations using
+        where:
+
+        - :math:`A(\lambda)` is predicted absorbance at wavelength :math:`\lambda`
+        - :math:`a_j` is scaling coefficient for calibrant j (proportional to concentration)
+        - :math:`R_j(\lambda)` is reference spectrum of calibrant j at wavelength :math:`\lambda`
+        - :math:`b_0` is constant baseline offset (instrumental drift)
+        - :math:`b_1` is linear baseline slope (wavelength-dependent drift)
+        - :math:`w_k` is weight for PCA background component k
+        - :math:`B_k(\lambda)` is PCA background component k at wavelength :math:`\lambda`
+
+        The :math:`a_i` coefficients are subsequently converted to concentrations using
         the `coeff_to_concentration_interpolator` for each calibrant.
+        The model includes an optional linear baseline term (:math:`b_1 \cdot \lambda`) and optionally PCA background components
+        :math:`w_k B_k(\lambda)`.
+
 
         Parameters
         ----------
@@ -981,12 +992,76 @@ class SpectraProcessor:
             print('There is no data that is usable. Returning zeros.')
             return [0 for i in range(4)]
 
+        # MODEL
         def model_function(*args):
-            xs = args[0]
-            c,d,e,f = args[-4:]
+            """
+            Spectral model function to be used by scipy.optimize.curve_fit in single-spectrum unmixing.
+
+            Models the measured absorption spectrum as a linear combination of calibrant reference
+            spectra plus instrumental baseline and weighted PCA components of background. Since it takes
+            wavelength indices as the first argument, the mathematical formulation of this implementation is
+
+            .. math::
+
+                A(i) = \sum_j a_j R_j(i) + b_0 + b_1 \cdot i + \sum_k w_k B_k(i)
+
+            where:
+
+            - :math:`A(i)` is predicted absorbance at wavelength index i
+            - :math:`a_j` is scaling coefficient for calibrant j. This coefficient is proportional to concentration.
+            - :math:`R_j(i)` is reference spectrum of calibrant j at wavelength index i
+            - :math:`b_0` is constant baseline offset (instrumental drift)
+            - :math:`b_1` is linear baseline slope (wavelength-dependent drift)
+            - :math:`w_k` is weight for PCA background component k
+            - :math:`B_k(i)` is PCA background component k at wavelength index i
+
+            The fitted scaling coefficients :math:`a_j` are later converted to concentrations using calibration curves.
+            Parameters follow the requirements of scipy.optimize.curve_fit.
+
+
+            Parameters
+            ----------
+            args[0] : numpy.ndarray
+                Wavelength indices where spectrum should be evaluated
+            args[1:-4] : float
+                As many scaling coefficients as needed - one for each calibrant's reference spectrum. These will be fitted.
+            args[-4:] : float
+                [baseline_offset, linear_slope, pca1_weight, pca2_weight]. These will be fitted.
+
+            Returns
+            -------
+            numpy.ndarray
+                Predicted absorption spectrum at the input wavelength indices
+
+            Notes
+            -----
+            This function accesses calibrants and background_interpolators from the enclosing scope.
+            It is designed specifically as the model function to be used by curve_fit for optimization.
+            """
+            # Extract wavelength indices, at which the model spectrum should be evaluated
+            wavelength_indices = args[0]
+
+            # Extract fitted baseline and background parameters (last 4 fitted parameters)
+            baseline_offset, linear_slope, pca1_weight, pca2_weight = args[-4:]
+
+            # Extract fitted scaling coefficients for each calibrant (middle fitted parameters)
             calibrant_coefficients = args[1:-4]
-            return sum([calibrant_coefficients[i] * calibrants[i]['reference_interpolator'](xs) for i in range(len(calibrant_coefficients))]) \
-                      + c + d * xs + e * background_interpolators[0](xs) + f * background_interpolators[1](xs)
+
+            # Build predicted spectrum as linear combination of components
+            predicted_spectrum = (
+                # Core Beer-Lambert law: sum of scaled reference spectra
+                    sum([calibrant_coefficients[i] * calibrants[i]['reference_interpolator'](wavelength_indices)
+                         for i in range(len(calibrant_coefficients))]) +
+
+                    # Instrumental baseline correction: constant offset + linear drift
+                    baseline_offset + linear_slope * wavelength_indices +
+
+                    # Systematic background variations captured by PCA components
+                    pca1_weight * background_interpolators[0](wavelength_indices) +
+                    pca2_weight * background_interpolators[1](wavelength_indices)
+            )
+
+            return predicted_spectrum
 
         p0 = tuple([0.5 if upper_bound is np.inf else upper_bound for upper_bound in upper_bounds] + [0] * 4)
         if use_line:
@@ -1000,6 +1075,8 @@ class SpectraProcessor:
             bkg_comp_limit = np.inf
         bounds = ([-1e-20] * len(calibrant_shortnames) + [-np.inf, linebounds[0], -1*bkg_comp_limit, -1*bkg_comp_limit],
                   upper_bounds + [np.inf, linebounds[1], bkg_comp_limit, bkg_comp_limit])
+
+        # FITTING OF THE MODEL
         popt, pcov = curve_fit(model_function, wavelength_indices[mask], target_spectrum[mask],
                                p0=p0, bounds=bounds)
         perr = np.sqrt(np.diag(pcov))  # errors of the fitted coefficients
