@@ -202,9 +202,8 @@ def perform_calibration(
     >>>     └── {calibrant_shortname}/
     >>>         ├── bkg_spectrum.npy      # Calibrant-specific background copy
     >>>         ├── ref_spectrum.npy      # Reference spectrum
-    >>>         ├── interpolator_coeffs.npy     # Scaling coefficients array
-    >>>         └── interpolator_concentrations.npy  # Corresponding concentrations
-
+    >>>         ├── interpolator_coeffs.npy     # Numpy array of scaling coefficients
+    >>>         └── interpolator_concentrations.npy  # Numpy array of corresponding concentrations
 
     This structure enables the unmixing functions to:
     - Load calibrant-specific reference spectra and coefficient relationships
@@ -357,7 +356,8 @@ def perform_calibration(
 
     sp = process_wellplate_spectra.SpectraProcessor(
         folder_with_correction_dataset=repo_data_path + 'uv_vis_absorption_spectroscopy/microspectrometer-calibration/'
-                                                        '2022-12-01/interpolator-dataset/')
+                                                        '2022-12-01/interpolator-dataset/',
+        filepath_of_csv_stoichiometry_table=None)
     sp.nanodrop_lower_cutoff_of_wavelengths = 220 - nanodrop_wavelength_shift
     sp.nanodrop_upper_cutoff_of_wavelengths = 600 - nanodrop_wavelength_shift
 
