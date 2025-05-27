@@ -1,0 +1,16 @@
+nanodrop_col_name,substance,dilution_factor,solvent,concentration
+0,methoxychalcone,1,ethanol,0.00005
+1,methoxychalcone,1,ethanol,0.0001
+2,methoxychalcone,1,ethanol,0.0002
+3,methoxychalcone,1,ethanol,0.0003
+5,anisaldehyde,1,ethanol,0.00005
+6,anisaldehyde,1,ethanol,0.0001
+7,anisaldehyde,1,ethanol,0.0002
+8,anisaldehyde,1,ethanol,0.0003
+9,anisaldehyde,1,ethanol,0.0004
+10,acetophenone,1,ethanol,0.00005
+11,acetophenone,1,ethanol,0.0001
+12,acetophenone,1,ethanol,0.0002
+13,acetophenone,1,ethanol,0.0003
+14,acetophenone,1,ethanol,0.0004
+15,solvent_ethanol,1,ethanol,0
