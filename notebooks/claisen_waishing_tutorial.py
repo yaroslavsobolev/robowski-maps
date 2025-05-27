@@ -52,7 +52,7 @@ all_calibrants_df = pd.read_csv(calibration_source_filename + '.txt')
 all_calibrants_df['nanodrop_col_name'] = all_calibrants_df['nanodrop_col_name'].astype(str)
 concentration_column_name = 'concentration'
 
-# identifu the background spectrum -- it is one with zero concentration
+# identify the background spectrum -- it is one with zero concentration
 col_name_with_background = all_calibrants_df.loc[all_calibrants_df[concentration_column_name] == 0].iloc[0][
     'nanodrop_col_name']
 absorbances = nanodrop_df[col_name_with_background].to_numpy()
@@ -79,6 +79,53 @@ ref_spectrum -= np.mean(ref_spectrum[-100:])
 # make a linear interpolator for the reference spectrum
 # this is a function that can be evaluated at any wavelength index
 reference_interpolator = interpolate.interp1d(wavelength_indices, ref_spectrum, fill_value='extrapolate')
+
+
+# First, for illustration, let's try to scale the reference spectrum to match the spectrum some other concentration,
+target_concentration = 0.00005
+
+df_row_here = one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == target_concentration].iloc[0]
+
+
+df_row_with_target_concentration = \
+    one_calibrant_df.loc[one_calibrant_df[concentration_column_name] == target_concentration].iloc[0]
+target_spectrum = nanodrop_df[df_row_with_target_concentration['nanodrop_col_name']].to_numpy()
+target_spectrum -= np.mean(target_spectrum[-100:])
+
+def model_function(xs, a, b):
+    return a * reference_interpolator(xs) + b
+
+
+initial_guess_of_scaling_coefficient = target_concentration / ref_concentration
+initial_guess_of_offset = 0
+# the scaling coefficient is bound by zero from below; other bounds are not set
+popt, pcov = curve_fit(model_function, wavelength_indices, target_spectrum,
+                       p0=(initial_guess_of_scaling_coefficient, initial_guess_of_offset),
+                       bounds=([-1e-10, -np.inf], [np.inf, np.inf]))
+
+# errors of the fitted parameters
+perr = np.sqrt(np.diag(pcov))
+
+# scaling coefficient (slope) is the first parameter of the fitted function
+slope = popt[0]
+
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.plot(wavelengths, target_spectrum, label=f'Spectrum at\nconcentration {target_concentration}', color='C0', alpha=0.5)
+ax.plot(wavelengths, model_function(wavelength_indices, *popt), color='r',
+        label='Scaled reference\nspectrum,\noffset-corrected', alpha=0.5)
+ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.8)
+# ax.set_title(
+#     f"Scaling the reference spectrum to match the spectrum at concentration {concentration}")
+ax.legend()
+ax.set_title(f'Calibration\nfor {calibrant_shortname}')
+ax.set_xlabel('Wavelength, nm')
+ax.set_ylabel('Absorbance')
+
+plt.show()
+
+
+# Now let's do this for all the concentrations of methoxychalcone, which are listed in the `all_calibrants_df` dataframe.
+
 
 # sort the concentrations in ascending order
 concentrations = sorted([0] + one_calibrant_df[concentration_column_name].to_list())
@@ -120,7 +167,7 @@ for concentration in concentrations:
     ax.plot(wavelengths, target_spectrum, label=f'Spectrum at\nconcentration {concentration}', color='C0', alpha=0.5)
     ax.plot(wavelengths, model_function(wavelength_indices, *popt), color='r',
             label='Scaled reference\nspectrum,\noffset-corrected', alpha=0.5)
-    ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.4)
+    ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.8)
     # ax.set_title(
     #     f"Scaling the reference spectrum to match the spectrum at concentration {concentration}")
     ax.legend()
@@ -208,7 +255,7 @@ for concentration in concentrations:
     ax.plot(wavelengths, target_spectrum, label=f'Spectrum at\nconcentration {concentration}', color='C0', alpha=0.5)
     ax.plot(wavelengths, model_function(wavelength_indices, *popt), color='r',
             label='Scaled reference\nspectrum,\noffset-corrected', alpha=0.5)
-    ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.4)
+    ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.8)
     # ax.set_title(
     #     f"Scaling the reference spectrum to match the spectrum at concentration {concentration}")
     ax.legend()
@@ -290,7 +337,7 @@ for concentration in concentrations:
     ax.plot(wavelengths, target_spectrum, label=f'Spectrum at\nconcentration {concentration}', color='C0', alpha=0.5)
     ax.plot(wavelengths, model_function(wavelength_indices, *popt), color='r',
             label='Scaled reference\nspectrum,\noffset-corrected', alpha=0.5)
-    ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.4)
+    ax.set_ylim(-0.03, np.max((model_function(wavelength_indices, *popt))) * 1.8)
     # ax.set_title(
     #     f"Scaling the reference spectrum to match the spectrum at concentration {concentration}")
     ax.legend()
