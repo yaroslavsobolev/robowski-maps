@@ -544,7 +544,8 @@ class SpectraProcessor:
 
         self.filepath_of_csv_stoichiometry_table = filepath_of_csv_stoichiometry_table
         self.substrates = substrates
-        self.load_df_stoich()
+        if self.filepath_of_csv_stoichiometry_table is not None:
+            self.load_df_stoich()
 
     def load_df_stoich(self):
         """
