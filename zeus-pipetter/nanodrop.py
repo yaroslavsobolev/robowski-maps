@@ -1,4 +1,21 @@
-##  connect to arduino and send commands "1" and "0"
+"""
+Nanodrop Pedestal Controller
+
+This module defines a `Nanodrop` class to interface with Nanodrop spectrophotometers (e.g., ND-2000, ND-2000c)
+via serial communication. It provides control over the lid, vacuum, air, and liquid channels of the pedestal.
+
+Core Features:
+--------------
+- Open/close lid control
+- Open/close air, liquid, and vacuum channels
+- Flush and dry pedestal (async and sync methods)
+- Combined cleaning sequences (flush-then-dry)
+- Safe shutdown with `close_all()`
+- Serial port initialization and closure
+
+"""
+
+
 import serial, time
 import asyncio
 

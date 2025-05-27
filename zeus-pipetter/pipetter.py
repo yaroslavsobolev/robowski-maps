@@ -1,7 +1,34 @@
 """
-The pipetter module combines gantry and zeus, and deals with actions including pick_tip, discard_tip, draw_liquid,
-dispense_liquid, transfer_liquid and so on.
+Pipetter Control System
+
+This module defines the control logic for automated liquid handling operations using a pipetting robot
+composed of a Zeus vertical axis and a 2D XY gantry system. It provides full functionality for pipetting,
+tip handling, liquid level detection, and integration with an analytical balance.
+
+Core Components:
+----------------
+- **Gantry**: Controls XY-stage motion for accurate positioning under the robot head (Zeus).
+- **Pipetter**: Orchestrates actions such as pick_tip, discard_tip, transfer_liquid, and interactions with a balance.
+
+Key Features:
+-------------
+- Move to coordinates with collision-aware logic (e.g., transitions between balance and nanodrop zones)
+- Tip handling with JSON-based state persistence (`tip_rack.json`)
+- Multi-step pipetting for volumes exceeding tip capacity, with optional calibration
+- Automatic volume detection using Zeus sensors
+- Integration with serial-connected balance (tare, read value, internal adjustment)
+- Transfer tracking and error logging
+- Optional prewetting for improved accuracy
+
+Typical Workflow:
+-----------------
+1. Initialize hardware (Zeus + Gantry + Pipetter)
+2. Pick or change tips
+3. Detect or input liquid levels
+4. Transfer or aspirate/dispense liquids
+5. Measure and record volumes using the balance for pipetting calibration
 """
+
 import logging
 
 pipetter_logger = logging.getLogger('main.pipetter')

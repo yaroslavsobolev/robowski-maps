@@ -1,3 +1,44 @@
+/**
+ * Arduino Servo & Digital IO Controller
+ * -------------------------------------
+ * This sketch interfaces with a computer over a serial connection (9600 baud)
+ * and listens for string-based commands to control:
+ *  - A servo motor (attached to pin 9) mounted on the lid of a Nanodrop spectrophotometer
+ *  - Three digital output pins (2, 3, 4)
+ *
+ * Functionality:
+ * --------------
+ * - "1"  → Opens the servo (sweeps from 30° to 140°)
+ * - "0"  → Closes the servo (sweeps from 140° to 30°)
+ *
+ * - "21" → Sets digital pin 2 HIGH
+ * - "20" → Sets digital pin 2 LOW
+ * - "31" → Sets digital pin 3 HIGH
+ * - "30" → Sets digital pin 3 LOW
+ * - "41" → Sets digital pin 4 HIGH
+ * - "40" → Sets digital pin 4 LOW
+ *
+ * Servo Behavior:
+ * ---------------
+ * - Servo is initialized to 30° on setup.
+ * - Servo movement uses linear sweep with delays:
+ *    - Opening: fast sweep (10ms step delay)
+ *    - Closing: slower sweep (25ms step delay), for avoiding smashing the lid
+ *
+ * Setup:
+ * ------
+ * - Initializes Serial at 9600 baud
+ * - Configures pins 2, 3, 4 as OUTPUT and sets them HIGH by default
+ * - Attaches the servo to pin 9
+ *
+ * Notes:
+ * ------
+ * - Works well with Python scripts sending string commands
+ * - Useful for controlling mechanical setups (valves, lights, etc.)
+ *   where servo and digital output are triggered via software commands.
+ */
+
+
 #include <Servo.h>
 Servo servo;
 int angle = 0;

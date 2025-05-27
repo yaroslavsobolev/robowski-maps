@@ -1,3 +1,23 @@
+"""
+Automated UV-Vis Spectrum Measurement with Nanodrop
+====================================================
+
+This module controls the process of measuring spectra using a Nanodrop spectrophotometer.
+It coordinates hardware (Zeus, gantry, pipetter) and software (Nanodrop GUI via pyautogui)
+to transfer samples and capture absorbance spectra with optional UUID tagging.
+
+Main Features:
+--------------
+- Initializes Zeus hardware, pipetting system, and Nanodrop interface
+- Loads experimental metadata from Excel (optionally mapped to UUIDs)
+- Constructs and executes sample transfer events to the Nanodrop pedestal
+- Automates Nanodrop GUI actions (sample naming, measurement trigger)
+- Automates measurements by pyautogui
+- Washes and dries the Nanodrop pedestal between measurements
+- Supports partial event execution via GUI-specified index ranges
+"""
+
+
 import csv
 import logging, copy, asyncio, PySimpleGUI as sg
 import sys

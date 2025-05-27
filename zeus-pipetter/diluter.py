@@ -1,3 +1,25 @@
+"""
+Serial Dilution Controller
+
+This module automates serial dilution workflows using the liquid handling system.
+It reads dilution parameters from an Excel file and executes pipetting steps via robotic hardware.
+
+Main Features:
+--------------
+- Initializes hardware: Zeus module, gantry, and pipetter
+- GUI-driven input for selecting Excel files, dilution parameters, and containers
+- Supports one- and two-step dilutions (A→B, A→C, B→C)
+- Dynamically generates pipetting events from Excel input
+- Logs all actions to console and file (`main_roboski2.log`)
+- Allows manual volume override and event re-execution
+
+Usage:
+------
+Run as a script to interactively plan and execute dilutions
+
+Author: Yankai Jia
+"""
+
 import logging, winsound, os
 import copy
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
@@ -199,7 +221,7 @@ def generate_events_for_one_container(excel_path: str,
     assert dilution_factor > 1, f'dilution_factor is {dilution_factor}, which is not valid.'
 
     if dilution_factor <= 100:  # A-> B
-        transfer_volume_step0 = 100  #摆烂版本，这个数值需要后续手动修改
+        transfer_volume_step0 = 100
         transfer_volume_step1 = final_volume / dilution_factor
         transfer_volume_step2 = final_volume - transfer_volume_step1
 
@@ -853,7 +875,7 @@ if __name__ == '__main__':
     # # make events_A_to_C empty
     events_A_to_C = {0: [], 1: [], 2: []} # when diluting from B to C for the second dilution, ensure that events_A_to_C is empty by running this line.
 
-    ##############if stop in the middel, copy paste and run the following##################################
+    ##############if stop in the middle, copy paste and run the following##################################
     ids = load_start_end_event_id_by_pysimplegui()
     A_to_B_ids = {0:[ids[0],ids[1]],1:[ids[2],ids[3]],2:[ids[4],ids[5]]}
     A_to_C_ids = {0:[ids[6],ids[7]],1:[ids[8],ids[9]],2:[ids[10],ids[11]]}

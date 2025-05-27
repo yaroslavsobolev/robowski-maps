@@ -1,3 +1,48 @@
+"""
+Zeus Pipetting Module Interface
+
+This module provides a complete software interface to control a ZEUS pipetting unit over CAN bus, based 
+on the GitHub repository: https://github.com/nicholasmorrow/zeus.
+It is used to perform liquid handling tasks including aspiration, dispensing, volume verification, and system diagnostics.
+
+Key Components
+- **ZeusModule**: Core controller class that wraps the full communication protocol with the ZEUS module.
+- **remoteFrameListener**: Asynchronous listener for CAN messages, parses inbound data and triggers action flags.
+- **DeckGeometry, LiquidClass**: Data classes used to configure geometry and liquid handling profiles.
+- **ZeusError**: Custom exception for signaling critical runtime issues.
+
+Core Functionalities
+
+- CAN Bus Communication:
+    - Initialize CAN bus interface via Kvaser.
+    - Send command/data frames, handle retries, remote/kick frames.
+
+- Liquid Handling Operations:
+    - Pipetting operations (aspiration, dispensing, volume check).
+    - Tip handling (pickup, discard).
+    - Z-axis drive control.
+
+- Parameter Configuration:
+    - Define and upload deck geometry, container shapes, and liquid class properties.
+    - Import/export full parameter sets to JSON.
+    - Copy and modify built-in liquid classes.
+
+- System Diagnostics:
+    - Query firmware version, error status, Z-position.
+    - Pressure sensor data acquisition and plotting.
+    - Emergency stop and hardware test modes.
+
+- Automation Utilities:
+    - Response tracking with retry logic and timeouts.
+    - Synchronization checks for motion completion and liquid detection.
+    - Visual feedback via LEDs.
+
+Notes
+- The `ZeusModule` handles most commands through `sendCommand()` and custom command headers.
+- A modular approach is followed to separate hardware protocols (CAN), pipetting logic, and parameter handling.
+- Logging is used to track internal states and debug messages.
+"""
+
 import logging
 import breadboard as brb
 module_logger = logging.getLogger('main.zeus')

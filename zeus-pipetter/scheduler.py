@@ -1,4 +1,9 @@
-## this module analyzes an Excel file and tells the schedule of actions needs to be done.
+"""
+This module analyzes an Excel file and tells the schedule
+of actions needs to be done.
+
+"""
+
 import PySimpleGUI as sg, pandas as pd, os, numpy as np
 from datetime import datetime
 # from pandasgui import show
