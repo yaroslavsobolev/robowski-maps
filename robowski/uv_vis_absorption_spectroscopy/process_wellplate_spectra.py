@@ -2610,6 +2610,18 @@ class SpectraProcessor:
 
 
 def relu_step(x):
+    """
+    The Rectified Linear Unit (ReLU) function, which returns 0 for negative inputs and the input value for positive inputs.
+
+    Parameters
+    ----------
+    x : float
+
+    Returns
+    -------
+    float
+        The input value if it is positive, otherwise 0.
+    """
     if x <= 0:
         return 0
     else:
