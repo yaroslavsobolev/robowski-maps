@@ -904,7 +904,8 @@ class SpectraProcessor:
                                   background_model_folder,
                                   lower_limit_of_absorbance=-0.2, fig_filename='temp', do_plot=False, #lower_limit_of_absorbance=0.02
                                   upper_bounds=[np.inf, np.inf], use_line=False, cut_from=200, ignore_abs_threshold=False,
-                                  cut_to = False, ignore_pca_bkg=False, return_errors=False): #upper_bounds=[np.inf, np.inf]
+                                  cut_to = False, ignore_pca_bkg=False, return_errors=False,
+                                  return_report=False): #upper_bounds=[np.inf, np.inf]
         """
         Determine component concentrations from a single absorption spectrum.
 
@@ -968,12 +969,18 @@ class SpectraProcessor:
         ignore_pca_bkg : bool, optional
             Whether to disable PCA background fitting. Default False.
         return_errors : bool, optional
-            Whether to return uncertainty estimates. Default False.
+            Whether to return uncertainty estimates. Default False. Muse not be True if return_report is True.
+        return_report : bool, optional
+            Whether to return detailed fitting report. Default False. Must not be True if return_errors is True.
 
         Returns
         -------
         list or tuple
-            List of fitted concentrations, or tuple (concentrations, errors) if return_errors=True.
+            List of fitted concentrations, or tuple (concentrations, errors) if return_errors=True,
+            of tuple(concentrations, report) if return_report=True. `report` is a dictionary with detailed fitting information:
+            it contains the following keys: 'concentration_errors', 'rmse', 'LB_pvalue', 'LB_stat' for
+            the errors of concentration (in same units as concentration), root-mean squared error of the fit,
+            Ljung-Box p-value and statistic, respectively.
         """
         self.lower_limit_of_absorbance = lower_limit_of_absorbance
 
@@ -1093,12 +1100,26 @@ class SpectraProcessor:
                                                                     concentrations_here, model_function, popt, ignore_pca_bkg,
                                                                     fig_filename, use_line, do_plot)
 
+        upper_confidence_limit = [
+            calibrants[calibrant_index]['coeff_to_concentration_interpolator'](fitted_coeff + perr[calibrant_index])
+            for calibrant_index, fitted_coeff in enumerate(popt[:-4])]
+        concentration_errors = [upper_confidence_limit[i] - concentrations_here[i] for i in
+                                range(len(concentrations_here))]
         if return_errors:
             # convert coefficient errors into concentration errors
-            upper_confidence_limit = [calibrants[calibrant_index]['coeff_to_concentration_interpolator'](fitted_coeff + perr[calibrant_index])
-                               for calibrant_index, fitted_coeff in enumerate(popt[:-4])]
-            concentration_errors = [upper_confidence_limit[i] - concentrations_here[i] for i in range(len(concentrations_here))]
             return concentrations_here, concentration_errors
+        elif return_report:
+            fit_report = dict()
+            fit_report['concentration_errors'] = concentration_errors
+            residuals_here = target_spectrum[mask] - model_function(wavelength_indices[mask], *popt)
+            fit_report['rmse'] = np.sqrt(np.mean(residuals_here ** 2))
+            lag = len(residuals_here) // 5
+            lb_df = sm.stats.acorr_ljungbox(residuals_here, lags=[lag])
+            if len(lb_df) == 1:
+                # Record Ljung-Box test statistics for residual autocorrelation
+                fit_report['LB_pvalue'] = lb_df.loc[lag, 'lb_pvalue']
+                fit_report['LB_stat'] = lb_df.loc[lag, 'lb_stat']
+            return concentrations_here, fit_report
 
         return concentrations_here
 
@@ -1642,6 +1663,12 @@ class SpectraProcessor:
             Array of fitted concentrations if return_report and return_errors are False.
             Tuple if return_errors or return_report is True: first element is concentrations,
             second element is either concentration errors or fitting report.
+            Fitting report is a dictionary with detailed fitting information:
+            it contains the following keys: 'concentration_errors', 'rmse', 'LB_pvalue', 'LB_stat', 'maxresidual',
+            'fitted_dilution_factor_2', for
+            the errors of concentration (in same units as concentration), root-mean squared error of the fit,
+            Ljung-Box p-value and statistic, highest residual value, and the best-fit value of the second dilution
+            factor (factor for the second spectrum)
 
         Examples
         --------
