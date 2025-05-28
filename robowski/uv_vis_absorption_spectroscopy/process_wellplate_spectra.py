@@ -978,9 +978,12 @@ class SpectraProcessor:
         list or tuple
             List of fitted concentrations, or tuple (concentrations, errors) if return_errors=True,
             of tuple(concentrations, report) if return_report=True. `report` is a dictionary with detailed fitting information:
-            it contains the following keys: 'concentration_errors', 'rmse', 'LB_pvalue', 'LB_stat' for
+            it contains the following keys: 'concentration_errors', 'rmse', 'LB_pvalue', 'LB_stat', `dw_statistic` for
             the errors of concentration (in same units as concentration), root-mean squared error of the fit,
-            Ljung-Box p-value and statistic, respectively.
+            Ljung-Box p-value and statistic, and Durbon-Watson statistic, respectively. Ljung-Box statistic
+            is computed at lag equal to the length of residuals divided by 5, which is largest value
+            recommended by statsmodels package for Ljung-Box test. Durbin-Watson statistic is computed at lag 30 points,
+            which means 30 nm in our case.
         """
         self.lower_limit_of_absorbance = lower_limit_of_absorbance
 
@@ -1127,6 +1130,10 @@ class SpectraProcessor:
                 fit_report['LB_stat'] = lb_df[0][0]
             else:
                 raise ValueError(f"Unexpected type of lb_df: {type(lb_df)}. Expected DataFrame or tuple. Maybe something wrong with the statsmodels version?")
+
+            lag = 30 # points, which in our case means 30 nm
+            fit_report['dw_statistic'] = sm.stats.stattools.durbin_watson(residuals_here[::lag])
+
             return concentrations_here, fit_report
 
         return concentrations_here
@@ -1671,12 +1678,16 @@ class SpectraProcessor:
             Array of fitted concentrations if return_report and return_errors are False.
             Tuple if return_errors or return_report is True: first element is concentrations,
             second element is either concentration errors or fitting report.
-            Fitting report is a dictionary with detailed fitting information:
-            it contains the following keys: 'concentration_errors', 'rmse', 'LB_pvalue', 'LB_stat', 'maxresidual',
-            'fitted_dilution_factor_2', for
-            the errors of concentration (in same units as concentration), root-mean squared error of the fit,
-            Ljung-Box p-value and statistic, highest residual value, and the best-fit value of the second dilution
-            factor (factor for the second spectrum)
+            Fitting report is a dictionary with detailed fitting information.
+            It contains the keys starting with 'pcerr#' for the concentration errors of each calibrant,
+            e.g. 'pcerr#dm35_9' for calibrant named 'dm35_9 .
+            It further contains key 'rmse' for root-mean squared error of the fit.
+            For each dilution number N, it has keys 'LB_pvalue_dil_N', 'LB_stat_dil_N',`dw_statistic_dil_N` for
+            Ljung-Box p-value and statistic, and Durbon-Watson statistic, for the spectrum at that dilution,respectively.
+            Ljung-Box statistic
+            is computed at lag equal to the length of residuals divided by 5, which is largest value
+            recommended by statsmodels package for Ljung-Box test. Durbin-Watson statistic is computed at lag 30 points,
+            which means 30 nm in our case.
 
         Examples
         --------
@@ -1997,15 +2008,23 @@ class SpectraProcessor:
             lb_df = sm.stats.acorr_ljungbox(residuals_here, lags=[lag])
             if isinstance(lb_df, pd.DataFrame):
                 if len(lb_df) == 1:
-                    fit_report['LB_pvalue'] = lb_df.loc[lag, 'lb_pvalue']
-                    fit_report['LB_stat'] = lb_df.loc[lag, 'lb_stat']
+                    fit_report[f'LB_pvalue_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_pvalue']
+                    fit_report[f'LB_stat_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_stat']
             # if lb_df is a tuple
             elif isinstance(lb_df, tuple):
-                fit_report['LB_pvalue'] = lb_df[1][0]
-                fit_report['LB_stat'] = lb_df[0][0]
+                fit_report[f'LB_pvalue_dil_{spectrum_index}'] = lb_df[1][0]
+                fit_report[f'LB_stat_dil_{spectrum_index}'] = lb_df[0][0]
             else:
                 raise ValueError(f"Unexpected type of lb_df: {type(lb_df)}. Expected DataFrame or tuple. "
                                  f"Maybe something wrong with the statsmodels version?")
+            if len(residuals_here) > 60:
+                lag = 30 # points, which in our case means 30 nm
+                fit_report[f'dw_statistic_dil_{spectrum_index}'] = sm.stats.stattools.durbin_watson(residuals_here[::lag])
+            else:
+                fit_report[f'dw_statistic_dil_{spectrum_index}'] = 2
+
+        print(fit_report)
+
 
         # === VISUALIZATION ===
 

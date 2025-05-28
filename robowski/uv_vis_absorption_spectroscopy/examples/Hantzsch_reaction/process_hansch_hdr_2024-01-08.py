@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-
-
 import robowski.uv_vis_absorption_spectroscopy.process_wellplate_spectra as process_wellplate_spectra
 import robowski.misc_scripts.organize_run_results as organize_run_results
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'
@@ -113,7 +111,7 @@ def process_run_by_shortname(run_shortname, cut_from=1, dilution_factor=200):
             for key in reports[vial_id]:
                 df_structure.loc[index_of_this_vial, key] = reports[vial_id][key]
 
-            required_subs = process_wellplate_spectra.product_concentrations_to_required_substrates(product_concentrations, substances_for_fitting)
+            required_subs = sp.product_concentrations_to_required_substrates(product_concentrations, substances_for_fitting)
             for substrate in substrates:
                 df_structure.loc[index_of_this_vial, f'req#{substrate}'] = required_subs[substrate]
                 df_structure.loc[index_of_this_vial, f'os#{substrate}'] = (required_subs[substrate] - float(df_structure.loc[index_of_this_vial, f'c#{substrate}'])) / float(df_structure.loc[index_of_this_vial, f'c#{substrate}']) * 100
@@ -260,9 +258,9 @@ if __name__ == '__main__':
 
     # list_of_runs = tuple(['2024-04-17-run01',
     #                       '2024-04-17-run02'])
-    # list_of_runs = tuple(['2024-04-17-run01'])
+    list_of_runs = tuple(['2024-04-17-run01'])
     # list_of_runs = tuple(['2024-04-17-run02'])
-    list_of_runs = tuple(['2024-09-30-run02'])
+    # list_of_runs = tuple(['2024-09-30-run02'])
     for i, run_shortname in enumerate(list_of_runs):
         process_run_by_shortname(run_shortname)
         # plot_all_spectra_by_shortname(run_shortname)

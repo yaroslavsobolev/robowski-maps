@@ -42,6 +42,7 @@ def process_plate(sp, dilution_factor,
                                                              ignore_pca_bkg=ignore_bkg_pca,
                                                              use_line=use_line,
                                                              return_errors=get_errors_from_fit)
+
         if get_errors_from_fit:
             concentrations_here, concentration_errors = concentrations_here
             concentrations_here = np.array(concentrations_here) * dilution_factor
