@@ -1,3 +1,27 @@
+"""
+Pipetting Event Planner
+
+This module provides classes and functions for parsing reaction plans from Excel files
+and generating structured pipetting events for automated liquid handling. It supports
+pipetting planning for chemical workflows, including integration with
+reaction tracking, calibration routines, and execution logging.
+
+Key Features:
+-------------
+- Volume-based plate layout management (96-well or 54-vial formats)
+- Automated tip type assignment based on volume thresholds
+- Solvent-aware liquid class index resolution for pipetting optimization
+- Liquid surface height estimation using geometry-specific logic
+- Calibration routines and pipetting execution logging
+- Integration with `pipetter`, `zeus`, and `breadboard` modules
+
+Typical Workflow:
+-----------------
+1. Parse Excel data with `EventInterpreter`
+2. Create pipetting events with `generate_event_list_new()`
+3. The pipetting events are executed in the main.py script
+"""
+
 
 import logging, os, pickle, json, numpy as np, winsound, copy, math, re, pandas as pd, time, csv
 from math import ceil

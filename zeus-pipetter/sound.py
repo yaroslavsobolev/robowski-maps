@@ -1,3 +1,7 @@
+"""
+Sounds used during pipetting operations.
+"""
+
 import winsound
 
 def beep_for_measurement():

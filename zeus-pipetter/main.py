@@ -1,10 +1,32 @@
 """
-workflow:
-1. initiate hardware
-2. generate event list for detecting surface height of stock solutions
-3. run events for surface detection, get liquid surface heights and write to excel
-4. generate event list for pipetting
+Automated Reaction Setup Workflow Controller
+
+This script orchestrates an automated pipetting workflow for preparing chemical reactions.
+It initializes hardware, detects liquid surface heights, generates pipetting events based
+on Excel-defined protocols, and executes transfers with real-time logging.
+
+Workflow Overview:
+------------------
+1. Initialize hardware (Zeus, gantry, pipetter)
+2. Assign stock solutions to containers and detect surface heights
+3. Generate pipetting event list from Excel input
+4. Sort and run events based on transfer volume and reagent sequence
+
+Key Components:
+---------------
+- GUI-driven Excel and metadata input (PySimpleGUI)
+- Surface height detection and volume estimation (optional)
+- Event generation via `planner.generate_event_list_new`
+- Execution via `planner.run_events_chem`
+- Logging to console and log file
+
+Environment Requirements:
+-------------------------
+- `ROBOCHEM_DATA_PATH` must be set as an environment variable
+- Excel file must follow defined schema (stock solutions, reaction plans)
+
 """
+
 import logging, copy, time, pickle, re, importlib, json, os, PySimpleGUI as sg, pandas as pd, numpy as np
 
 data_folder = os.environ['ROBOCHEM_DATA_PATH'].replace('\\', '/') + '/'

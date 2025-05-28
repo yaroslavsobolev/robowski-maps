@@ -1,16 +1,87 @@
 """
-container: vial_2ml, well_bio, bottle_20ml, jar_100ml, tube_1.5ml
+breadboard.py
 
-plates plate0: vial_2ml, 54 vials
-       plate1: vial_2ml, 54 vials
-       plate2: vial_2ml, 54 vials
-       plate3: well_bio, 96 wells
-       plate4: bottle_20ml, 8 bottles
-       palte5, bottle_20ml, 8 bottles
-       plate6, jar_100ml, 2 jars
-       plate7, tube_1500ul, 20 tubes
+This module defines the physical and logical structure of the breadboard used in
+the automated liquid handling platform. It provides classes and utilities to configure
+and manage lab containers, plates, decks, and pipette tips for robotic liquid transfers.
 
+Core Features:
+--------------
+1. **Container Definitions**:
+   Predefined container types such as:
+   - vial_2ml
+   - well_bio (microplate wells)
+   - bottle_20ml
+   - jar_100ml
+   - tube_1.5ml (tube_1500ul)
+   - balance_cuvette
+   - nanodrop_pedestal
+
+2. **Plate Setup**:
+   Eight plates are defined on the breadboard:
+   - plate0 to plate2: 2 mL vials (54 vials each)
+   - plate3 to plate5: 20 mL bottles (8 bottles each)
+   - plate6: 100 mL jars (2 jars)
+   - plate7: 1.5 mL tubes (20 tubes)
+
+3. **Coordinate Generation**:
+   Generates Cartesian coordinates for all wells/containers
+   on each plate using interpolation from corner coordinates
+   loaded from a configuration JSON (`brb.json`).
+
+4. **Container Assignment & Substance Tracking**:
+   Each container can be assigned:
+   - Coordinates (xy)
+   - Substance identity, volume, solvent, and liquid surface height
+   - Safety and physical parameters for liquid handling (e.g. jet height, immersion depth)
+
+5. **Deck Geometry for Pipette Tips**:
+   Support for different pipette tip geometries (50 µL, 300 µL, 1000 µL, balance tips).
+   Tip racks can be initialized and reloaded dynamically.
+
+6. **Tip Rack Management**:
+   - Load or reload tip racks with updated positions and availability.
+   - Mark tips as used after pipetting steps.
+   - Manage tip status persistently via `tip_rack.json`.
+
+7. **Robot Selection**:
+   Robot setup can be auto-detected via environment variable `PIPETTER_NAME`
+   or selected manually via a PySimpleGUI prompt.
+   Supported robots: `Robowski#1`, `Robowski#2`.
+
+8. **Data Structures**:
+   - `Container`: stores the metadata of a single container.
+   - `Plate`: holds a collection of containers and provides substance management.
+   - `Deck_para`: defines geometry and movement parameters for tip decks.
+   - `Liquid`: stores physical properties of liquids used in experiments.
+
+Environment Variables:
+----------------------
+- `PIPETTER_NAME`: Robot identifier (`Robowski#1` or `Robowski#2`)
+- `ROBOCHEM_DATA_PATH`: Base directory for experiment and robot configuration files
+
+External Dependencies:
+----------------------
+- numpy
+- json
+- os
+- copy
+- logging
+- PySimpleGUI (for GUI-based robot selection)
+
+Usage:
+------
+- Run this module as a script to reload tip racks manually.
+- Use `plate_on_breadboard()` to instantiate all plate objects with assigned containers and positions.
+- Call `load_new_tip_rack('300ul')` or similar to update tip availability when racks are changed.
+
+Note:
+-----
+Make sure that `ROBOCHEM_DATA_PATH` and `PIPETTER_NAME` are correctly set before using this module.
+
+Author: Yankai Jia
 """
+
 import logging
 # create logger
 module_logger = logging.getLogger('pipette_calibration.breadboard')

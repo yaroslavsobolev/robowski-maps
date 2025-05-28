@@ -1,3 +1,17 @@
+"""
+Reaction Preparation Module
+
+This module facilitates preparation of Excel-based reaction plans for automated pipetting workflows.
+It provides GUI-driven inputs, automatic validation, and structured transformation of user-supplied
+Excel files into standardized formats required for execution on the liquid handling platform.
+
+Typical Workflow:
+-----------------
+1. User provides reaction plan Excel file via GUI.
+2. Excel file is validated, backed up, and augmented with tracking columns.
+3. Reactions are filtered and grouped by plate for downstream pipetting runs.
+"""
+
 import json, math, os, openpyxl, pandas as pd, shortuuid, PySimpleGUI as sg, logging, numpy as np
 import sys
 
