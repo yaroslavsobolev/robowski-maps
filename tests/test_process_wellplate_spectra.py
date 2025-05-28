@@ -15,7 +15,10 @@ import json
 import pytest
 
 # Global flag to control saving of expected outputs
-# Set this to True only when you intentionally want to generate/update expected outputs
+# Set this to True only when you intentionally want to generate/update expected outputs.
+# If you do this update, keep in mind that the expected outputs will be saved in a temporary folder, somewhere in
+# the system, e.g. `C:\Users\<username>\AppData\Local\Temp\pytest-of-<username>\pytest-<random_string>\tmp<random_string>\expected_outputs`
+#
 # Can be controlled via environment variable
 # SAVE_EXPECTED_OUTPUTS = os.environ.get('SAVE_EXPECTED_OUTPUTS', '').lower() == 'true'
 # For now, it is controlled by this hardcoded value:

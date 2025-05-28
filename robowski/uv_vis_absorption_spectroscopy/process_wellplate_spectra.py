@@ -1115,10 +1115,18 @@ class SpectraProcessor:
             fit_report['rmse'] = np.sqrt(np.mean(residuals_here ** 2))
             lag = len(residuals_here) // 5
             lb_df = sm.stats.acorr_ljungbox(residuals_here, lags=[lag])
-            if len(lb_df) == 1:
-                # Record Ljung-Box test statistics for residual autocorrelation
-                fit_report['LB_pvalue'] = lb_df.loc[lag, 'lb_pvalue']
-                fit_report['LB_stat'] = lb_df.loc[lag, 'lb_stat']
+            # if lb_df is a DataFrame and its length is one
+            if isinstance(lb_df, pd.DataFrame):
+                if len(lb_df) == 1:
+                    # Record Ljung-Box test statistics for residual autocorrelation
+                    fit_report['LB_pvalue'] = lb_df.loc[lag, 'lb_pvalue']
+                    fit_report['LB_stat'] = lb_df.loc[lag, 'lb_stat']
+            # if lb_df is a tuple
+            elif isinstance(lb_df, tuple):
+                fit_report['LB_pvalue'] = lb_df[1][0]
+                fit_report['LB_stat'] = lb_df[0][0]
+            else:
+                raise ValueError(f"Unexpected type of lb_df: {type(lb_df)}. Expected DataFrame or tuple. Maybe something wrong with the statsmodels version?")
             return concentrations_here, fit_report
 
         return concentrations_here
@@ -1984,12 +1992,20 @@ class SpectraProcessor:
         for spectrum_index in range(number_of_spectra):
             residuals_here = separate_predicted_spectra[spectrum_index] - target_spectra_amplitudes_masked[
                 spectrum_index]
+            # Record Ljung-Box test statistics for residual autocorrelation
             lag = len(residuals_here) // 5
             lb_df = sm.stats.acorr_ljungbox(residuals_here, lags=[lag])
-            if len(lb_df) == 1:
-                # Record Ljung-Box test statistics for residual autocorrelation
-                fit_report[f'LB_pvalue_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_pvalue']
-                fit_report[f'LB_stat_dil_{spectrum_index}'] = lb_df.loc[lag, 'lb_stat']
+            if isinstance(lb_df, pd.DataFrame):
+                if len(lb_df) == 1:
+                    fit_report['LB_pvalue'] = lb_df.loc[lag, 'lb_pvalue']
+                    fit_report['LB_stat'] = lb_df.loc[lag, 'lb_stat']
+            # if lb_df is a tuple
+            elif isinstance(lb_df, tuple):
+                fit_report['LB_pvalue'] = lb_df[1][0]
+                fit_report['LB_stat'] = lb_df[0][0]
+            else:
+                raise ValueError(f"Unexpected type of lb_df: {type(lb_df)}. Expected DataFrame or tuple. "
+                                 f"Maybe something wrong with the statsmodels version?")
 
         # === VISUALIZATION ===
 
