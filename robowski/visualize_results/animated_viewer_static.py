@@ -1,13 +1,9 @@
-from robowski.settings import *
 import os
 import numpy as np
 from mayavi import mlab
 from tvtk.tools import visual
 from scipy.interpolate import Rbf
-# from visualize_results import *
 from scipy.interpolate import LinearNDInterpolator
-from scipy.interpolate import interp1d
-import robowski.misc_scripts.organize_run_results as organize_run_results
 
 os.environ['ETS_TOOLKIT'] = 'qt'
 os.environ['QT_API'] = 'pyqt5'
@@ -16,8 +12,6 @@ from mayavi.core.ui.api import MayaviScene, SceneEditor, \
                 MlabSceneModel
 from traits.api import HasTraits, Range, Instance, \
         on_trait_change
-
-# contourvalues = [0.5, 0.7, 0.9]
 
 def Arrow_From_A_to_B(x1, y1, z1, x2, y2, z2):
     """
@@ -55,10 +49,6 @@ def plot_3d_dataset_as_cube(x_raw, y_raw, z_raw, k_raw, substance_titles = ('Alc
                             contour_opacity=1, single_size_of_points=False,
                             forced_kmax=None, dont_mlabshow=False, reorient_callable=None, savefig=None,
                             transparent=False):
-    # get mayavi engine
-    # mlab_engine = mlab.get_engine()
-    # scene.scene.camera.focal_point = [0.5206201337277889, 0.4916610289365053, 0.5019663814455271]
-
 
     xs0 = (x_raw - np.min(x_raw)) / (np.max(x_raw) - np.min(x_raw))
     ys0 = (y_raw - np.min(y_raw)) / (np.max(y_raw) - np.min(y_raw))
@@ -110,13 +100,6 @@ def plot_3d_dataset_as_cube(x_raw, y_raw, z_raw, k_raw, substance_titles = ('Alc
                           contours=contours, opacity=contour_opacity, vmin=0, vmax=max_ks0, colormap=colormap,
                           transparent=transparent)
     plot.actor.actor.property.ambient = 0.0
-    # for i in range(3):
-    #     start = np.array([np.min(xs0), np.min(ys0), np.min(zs0)])
-    #     end = np.array([np.min(xs0), np.min(ys0), np.min(zs0)])
-    #     end[i] = list([max_xs0, max_ys0, max_zs0])[i]
-    #     arr = Arrow_From_A_to_B(start[0], start[1], start[2], end[0], end[1], end[2])
-    # arr_temp = Arrow_From_A_to_B(np.max(xs0), np.min(ys0), np.min(zs0),
-    #                                   np.max(xs0), np.min(ys0), np.max(zs0))
     ax1 = mlab.axes(color=(0.5, 0.5, 0.5), nb_labels=sparse_npoints, ranges=[np.min(x_raw), np.max(x_raw),
                                                                 np.min(y_raw), np.max(y_raw),
                                                                 np.min(z_raw), np.max(z_raw)])
