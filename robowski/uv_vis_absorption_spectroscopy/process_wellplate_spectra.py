@@ -360,7 +360,7 @@ def create_artifact_mask(wavelength_indices, target_spectrum,
 
     This function identifies and masks wavelength regions where instrumental artifacts
     occur due to insufficient light transmission reaching the detector. When absorbance
-    values become very high, the spectrophotometer generates random but string spectral features that
+    values become very high, the spectrophotometer generates random but strong spectral features that
     contaminate the measurement rather than reflecting genuine sample absorption.
     The artifacts typically begin at shorter (bluer) wavelengths where sample absorption
     is strongest, then extend toward longer wavelengths as overall absorbance increases.
