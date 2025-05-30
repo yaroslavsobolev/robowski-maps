@@ -131,32 +131,29 @@ head into and out of each vial, and from one vial to another.
 ### Automation of CRAIC microspectrometer
 
 The scripts for automating the CRAIC microspectrometer for measuring the UV-Vis absorption spectra of the 
-vial plates are in the `uv-vis-absorption-spectroscopy/craic-automation` folder.
+vial plates are in the `robowski/uv_vis_absorption_spectroscopy/craic-automation` folder.
 They are mostly based on PyAutoGUI for controlling the GUI of the CRAIC software for moving the XY stage and
 starting the measurements. The barcodes on the plates are read using a webcam and OpenCV (`cv2`) barcode detection
 functionality.
 
 ### Spectral unmixing of the UV-Vis absorption spectra
 
-Scripts related to spectral unmixing are in the `uv-vis-absorption-spectroscopy` folder. Most of the functionality
-for extracting the component concentrations from the spectra is in the
-`process_wellplate_spectra.py` module. This file is supposed to be imported into other scripts that use its functions;
-it is not meant to be run as a standalone script. 
+Scripts related to spectral unmixing are in the `robowski/uv_vis_absorption_spectroscopy` folder.
 
-For familiarizing oneself the overall workflow, we recommend starting with
-the scripts `uv-vis-absorption-spectroscopy/examples/versatility` folder as easy-to-understand, minimal examples of 
-spectral processing.
-For instance, the `Beckmann_WaiShing.py` is first running the calibration routines `perform_calibration()` for each of the components
-of the reaction mixture, and then executes the `process_plate()` method that iterates over the spectra from separate
-vials of the vial plate and applies the unmixing algorithm. The results are returned as `pandas` DataFrame object
-containing the concentrations of the components in each vial. Calibration procedures take the spectra of the pure
-components and construct the calibration matrix that is used in the unmixing algorithm and the concentration calculation.
-Processing for all the other reactions we studied is implemented in the respective scripts in the `uv-vis-absorption-spectroscopy/examples`
-folder and follows the same pattern, with the calibration executed first 
-(sometimes in a dedicated script usually named like `construct_reference...` or `construct_calibration`), and
-the spectral unmixing executed after that for all the vial plates obtained in a given experimental run --
-usually in a script whose name begins with `process_...`. The processing results are saved into data folder,
-specifically as the `results/product_concentration.csv` table in directory containing the raw data for the given 
+For familiarizing oneself the overall workflow, we recommend starting with the tutorial Jupyter Notebook
+located at `notebooks/spectral_unmixing_tutorial.ipynb` that demonstrates the calibration procedure and spectral unmixing
+for the real data of Claisen-Schmidt condensation reaction and reproduces the Figure 1c,d from the article.
+In the second chapter of the notebook, the user is guided through the process of performing the same calibration
+and spectral unmixing using the high-level methods from this repository.
+
+Processing for all the reactions we studied is implemented in the respective scripts in 
+the `robowski/uv_vis_absorption_spectroscopy/examples`
+folder. The calibration script (name begins with `calibration_`) should be executed first, and
+the spectral unmixing script (name begins with `process_`) should be executed after that. Unmixing is performed for all 
+the vial plates obtained in a given experimental run. 
+
+The processing results are saved into a subdirectory `results/` of the run directory,
+specifically as the `results/product_concentration.csv` table relative to the directory containing the raw data for the given 
 experimental run.
 
 ### 3D visualization of the yield maps
@@ -169,9 +166,9 @@ Interactive viewer of 3D datasets is implemented in `visualize_results/animated_
 based on `mayavi` library. It allows the user to rotate the 3D plot, zoom in and out, and offers various
 options for visualizing the data.
 
-For interactive visualization of 4D datasets, see the scripts whose names starting with `animated-viewer-singlecube...` in 
-the `visualize_results/examples` folder. Some of these scripts also perform fitting of kinetic models to the data
-prior to the visualization.
+For interactive visualization of 3D and 4D datasets, see the scripts whose names starting with `plot_3d_map_for_` 
+and `view_4d_data_for_` in 
+the `robowski/visualize_results/examples` folder.
 
 ### Outlier filtration and interpolation in Ugi reaction data
 
@@ -194,17 +191,17 @@ Kinetic fitting for the E1 and SN1 reactions is implemented in the `robowski/kin
 
 #### E1 reaction
 To reproduce
-the "corner plot" from precalculated bootstrapping analysis data, run the `robowski/visualize_results/examples/kinetics_of_E1_2023_bootstrap.py` script.
+the "corner plot" from precalculated bootstrapping analysis data, run the `robowski/kinetics_models/E1_kinetics/kinetics_of_E1_2023_bootstrap.py` script.
 This would reproduce the Figure S141 from the Supplementary Materials.
 For regenerating the data for the bootstrap analysis from scratch, 
-run the `robowski/visualize_results/examples/animated-viewer-singlecube-E1-narrowrange_with_perr_v3.py` script.
+run the `robowski/kinetics_models/E1_kinetics/E1_kinetics_v3.py` script.
 The same script can be used to plot the model prediction against the experimental data (Figures S138 and S140
 from the Supplementary Materials) by uncommenting the appropriate lines in the script.
 
 #### SN1 reactions
 
 For kinetics fitting to the SN1 reaction (Figure 2), 
-run the `robowski/visualize_results/examples/animated-viewer-singlecube-simpleSN1-2023-08-21.py` script.
+run the `robowski/kinetics_models/simpleSN1_kinetics/kinetics_of_simpleSN1_2023-11_2023-12.py` script.
 
 #### Ugi reaction
 
