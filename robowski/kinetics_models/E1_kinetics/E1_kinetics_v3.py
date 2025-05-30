@@ -204,14 +204,6 @@ def model_of_yield_for_one_condition(index_in_df, pKa_COH2plus_deltaS, pKa_COH2p
         if c_product < 0:
             c_product = 0
 
-        # OLD VERSION
-        # def left_hand_side(x):
-        #     return x**2 - K_1*(c_alcohol - x)*(c_hbr - x)
-        # # find roots using brentq method
-        # c_oh2_plus = brentq(left_hand_side, 0, min(c_alcohol, c_hbr))
-        # c_br_minus = c_oh2_plus
-        # c_remaining_HBr = c_hbr - c_br_minus
-
         # NEW VERSION
         # Figuring our the pH and the concentrations of different ions
         substances = ({'pKa': pKa_HBr, 'conc': c_hbr, 'charge': 0}, # HBr + H2O -> H3O+ + Br-
@@ -294,18 +286,9 @@ def fit_kinetic_model(indices_here, do_plot=False,
         p_default = [ 4.08008635e+01, -4.04065529e+00,  2.68463787e+02,  8.08157922e+01, 1.90497493e+01, -5.60271559e+00,  5.38416819e-06, -3.46293065e+00,  2.71691036e+00,  1.63131631e+02]
         lower_bounds_factor = 0.8
         upper_bounds_factor = 1.2
-        # if p_default is negative, lower bound is p_default * upper_bounds_factor, upper bound is p_default * lower_bounds_factor
-        # if p_default is positive, lower bound is p_default * lower_bounds_factor, upper bound is p_default * upper_bounds_factor
+
         lower_bounds = [p_default[i] * upper_bounds_factor if p_default[i] < 0 else p_default[i] * lower_bounds_factor for i in range(len(p_default))]
         upper_bounds = [p_default[i] * lower_bounds_factor if p_default[i] < 0 else p_default[i] * upper_bounds_factor for i in range(len(p_default))]
-        # lower_bounds[0] = p_default[0] * 0.95
-        # upper_bounds[0] = p_default[0] * 1.05
-        # lower_bounds[1] = p_default[1] * 1.05
-        # upper_bounds[1] = p_default[1] * 0.95
-        # lower_bounds[-3] = p_default[-3] * 1.1
-        # upper_bounds[-3] = p_default[-3] * 0.9
-        # lower_bounds[-2] = p_default[-2] * 0.9
-        # upper_bounds[-2] = p_default[-2] * 1.1
         popt, pcov = curve_fit(model_of_yield_for_many_conditions, x, y, p0=p0,
                                max_nfev=1000, bounds=(lower_bounds, upper_bounds), verbose=2,
                                x_scale=[x for x in [45, 10, 250, 80, 20, 5, 1e-6, 5, 3, 180]],

@@ -147,16 +147,6 @@ df_results = df_results[~df_results[column_to_plot].isin([np.inf, -np.inf])]
 df_results['c#E1OH02'] = df_results['c#E1OH02'].round(6)
 df_results['c#HBr'] = df_results['c#HBr'].round(6)
 
-# # iterate over unique values of "c#SN1OH03" and "temperature" and smooth the data across the 'c#HBr' values
-# for alcohol_concentration in df_results['c#SN1OH03'].unique():
-#     for temperature in df_results['temperature'].unique():
-#         print(f'c#SN1OH03 = {alcohol_concentration}, temperature = {temperature}')
-#         indices = (df_results['c#SN1OH03'] == alcohol_concentration) & \
-#                                                    (df_results['temperature'] == temperature)
-#         df_results.loc[indices, column_to_plot] = \
-#             smooth_across_HBr_concentrations(df_results.loc[indices, 'c#HBr'],
-#                                              df_results.loc[indices, column_to_plot]
-#                                              )
 
 def fit_kinetic_model(indices_here, do_plot=False):
 

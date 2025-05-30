@@ -217,17 +217,6 @@ def model_of_yield_for_many_conditions(indices, pKa_HBr, pKa_COH2plus, K_tilde, 
 # df_results.drop(df_results[df_results['is_outlier'] == 1].index, inplace=True)
 
 
-# # iterate over unique values of "c#SN1OH03" and "temperature" and smooth the data across the 'c#HBr' values
-# for alcohol_concentration in df_results['c#SN1OH03'].unique():
-#     for temperature in df_results['temperature'].unique():
-#         print(f'c#SN1OH03 = {alcohol_concentration}, temperature = {temperature}')
-#         indices = (df_results['c#SN1OH03'] == alcohol_concentration) & \
-#                                                    (df_results['temperature'] == temperature)
-#         df_results.loc[indices, column_to_plot] = \
-#             smooth_across_HBr_concentrations(df_results.loc[indices, 'c#HBr'],
-#                                              df_results.loc[indices, column_to_plot]
-#                                              )
-
 def fit_kinetic_model(indices_here, do_plot=False,
                       p0=tuple([-9.00000001, 0.48564436, 4.05143725, 0.06418353, 7.76078559])):
 
