@@ -175,13 +175,22 @@ prior to the visualization.
 
 ### Outlier filtration and interpolation in Ugi reaction data
 
-For reproducing the Figures S115-S127 from the Supplementary Materials, runs the
-`visualize_results/smooth_results.py` script. This script also superimposes the precalculated yields predicted by the
+Ater the initial mapping of the Ugi reaction data was completed, outliers were marked for
+repeat measurements. Marking the outliers is implemented in `robowski/outlier_handling/manually_mark_outliers.py`.
+The new experimental runs were then requested for remeasuring the outliers -- this is implemented in the
+`robowski/outlier_handling/request_new_runs_to_rerun_outliers.py` script. After experiments were completed,
+the completed runs were processed and the remeasured outlier data were merged with the original data. 
+The script for processing and merging the outlier data is
+`robowski/uv_vis_absorption_spectroscopy/examples/Ugi_reaction/process_ugi_remeasured_outliers_2023-07-05_run01.py`.
+
+
+For reproducing the Figures S115-S127 from the Supplementary Materials, run the
+`robowski/visualize_results/smooth_results.py` script. This script also superimposes the precalculated yields predicted by the
 kinetic model of Ugi reaction (Supplementary Materials Section 5.3) over the experimental data points.
 
 ### Fitting the kinetic models to the data
 
-Kinetic fitting for the E1 and SN1 reactions is implemented in the `visualize_results/examples/` folder. 
+Kinetic fitting for the E1 and SN1 reactions is implemented in the `robowski/kinetic_models/` folder. 
 
 #### E1 reaction
 To reproduce
@@ -245,7 +254,14 @@ Some examples of the usage of this script are in the `main` function of the `aci
 The scripts used as described in the Section 7.5 of the Supplementary Materials are in the
 `robowski/smoothness_theory` folder. The `smoothness_analyze.py` can be used to reproduce Figures S154 and S155.
 To reproduce the Figure S153 showing the smoothness of experimental yield maps, run the
-`robowski/smoothness_theory/smoothness_from_experiments.py` script.
+`robowski/smoothness_theory/smoothness_from_experiments.py` script. 
+
+Implementation of the simulation of
+the reaction network is implemented in the `robowski/smoothness_theory/smoothness_v2.py` script, and for running
+the calculations on the multi-CPU server the `robowski/smoothness_theory/run_simulation.py` script is used,
+followed by `robowski/smoothness_theory/construct_short_db.py` script for constructing the concise
+database of the simulation results. Be warned that the simulartions are computationally expensive and may take
+a long time to run, depending on the number of CPU cores available on your machine.
 
 
 ### Calculation of theoretical light absorption spectra from TD-DFT
