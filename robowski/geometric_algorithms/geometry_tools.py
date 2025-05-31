@@ -9,37 +9,21 @@ from scipy.optimize import minimize_scalar
 from typing import List, Dict, Tuple, Optional
 import warnings
 # import ripser
-# import kmapper as km
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import KMeans
-
+# import kmapper
+from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
 
 
 class ReactionHyperspaceAnalyzer:
     """
-    Geometric analysis of reaction condition spaces for chemical optimization.
+    Geometric analysis of reaction condition spaces
 
     Designed for experimental datasets where reaction conditions (temperature,
     concentrations, etc.) map to reaction yields. Handles both 3D and 4D
     hyperspace analysis with flexible column naming.
-
-    Example usage:
-        # For 3D analysis
-        analyzer = ReactionHyperspaceAnalyzer(
-            csv_path='hantzsch_data.csv',
-            coordinate_columns=['temperature', 'conc_aldehyde', 'conc_amine'],
-            yield_column='product_yield'
-        )
-
-        # For 4D analysis
-        analyzer = ReactionHyperspaceAnalyzer(
-            csv_path='ugi_data.csv',
-            coordinate_columns=['conc_aldehyde', 'conc_amine', 'conc_isocyanide', 'conc_ptsa'],
-            yield_column='yield_16e'
-        )
     """
 
-    def __init__(self, csv_path: str, coordinate_columns: List[str], yield_column: str):
+    def __init__(self, csv_path: str, coordinate_columns: List[str], yield_column: str, coordinate_column_labels=None):
         """
         Initialize analyzer with flexible column specification.
 
@@ -56,6 +40,10 @@ class ReactionHyperspaceAnalyzer:
         """
         self.csv_path = csv_path
         self.coordinate_columns = coordinate_columns
+        if coordinate_column_labels is not None:
+            self.coordinate_column_labels = coordinate_column_labels
+        else:
+            self.coordinate_column_labels = self.coordinate_columns
         self.yield_column = yield_column
         self.dimensionality = len(coordinate_columns)
 
@@ -465,7 +453,11 @@ class ReactionHyperspaceAnalyzer:
 
         Returns:
         --------
-        Dict containing gradient information
+        Dict containing:
+            'gradient_magnitude': N-D array of gradient magnitudes
+            'gradient_components': List of N-D arrays (one per dimension)
+            'mean_gradient': Average gradient magnitude
+            'max_gradient': Maximum gradient magnitude
         """
         if self.yield_array is None:
             raise ValueError("Must call interpolate_to_regular_grid() first")
@@ -473,10 +465,7 @@ class ReactionHyperspaceAnalyzer:
         print("Computing yield gradients...")
 
         # Compute gradients using numpy.gradient (central differences)
-        gradients_tuple = np.gradient(self.yield_array)
-
-        # Convert tuple to list for mutability
-        gradients = list(gradients_tuple)
+        gradients = np.gradient(self.yield_array)
 
         # Convert to real coordinate units (not grid units)
         grid_spacings = []
@@ -484,7 +473,7 @@ class ReactionHyperspaceAnalyzer:
             coord_range = self.coordinate_ranges[i][1] - self.coordinate_ranges[i][0]
             grid_spacing = coord_range / (self.grid_resolution - 1)
             grid_spacings.append(grid_spacing)
-            gradients[i] = gradients[i] / grid_spacing  # Now this works!
+            gradients[i] = gradients[i] / grid_spacing
 
         # Compute gradient magnitude
         gradient_magnitude = np.sqrt(sum(g ** 2 for g in gradients))
@@ -510,7 +499,6 @@ class ReactionHyperspaceAnalyzer:
             'max_gradient': max_grad,
             'grid_spacings': grid_spacings
         }
-
 
     def validate_grid_quality(self):
         """
@@ -565,7 +553,6 @@ class ReactionHyperspaceAnalyzer:
             print("⚠️  CAUTION: Significant yield range compression during interpolation")
 
         # 4. Recommendations
-        print("\nRecommendations:")
         if nan_fraction > 0.3:
             print("- Consider increasing experimental data density")
             print("- Try nearest neighbor interpolation if linear fails")
@@ -753,7 +740,7 @@ class ReactionHyperspaceAnalyzer:
             basin_mask = (labeled_array == peak_label)
             basin_volume = np.sum(basin_mask)
 
-            # Compute robustness as average yield in basin in relation to peak yield
+            # Compute robustness as average yield in basin
             basin_yields = self.yield_array[basin_mask]
             basin_robustness = np.mean(basin_yields) / peak_yield
 
@@ -808,8 +795,6 @@ class ReactionHyperspaceAnalyzer:
         decay_rate = np.nan
         if len(distances) >= 3:
             try:
-                from scipy.optimize import curve_fit
-
                 def exponential_decay(x, a, b):
                     return a * (1 - np.exp(-b * x))
 
@@ -847,633 +832,546 @@ class ReactionHyperspaceAnalyzer:
 
         return comparison
 
+    def _compare_basins(self, basin_analyses: List[Dict]):
+        """Compare properties between different basins."""
 
-    # Tier 2 implementations
-    def compute_persistent_homology(self, superlevel: bool = True, max_dimension: int = 1):
+        if len(basin_analyses) <= 1:
+            return {'note': 'Need at least 2 basins for comparison'}
+
+        # Extract key metrics
+        peak_yields = [b['peak_yield'] for b in basin_analyses]
+        basin_volumes = [b['basin_volume_real'] for b in basin_analyses]
+        max_curvatures = [b['max_curvature'] for b in basin_analyses if not np.isnan(b['max_curvature'])]
+        decay_rates = [b['exponential_decay_rate'] for b in basin_analyses if not np.isnan(b['exponential_decay_rate'])]
+
+        comparison = {
+            'yield_ratio': max(peak_yields) / min(peak_yields) if min(peak_yields) > 0 else np.inf,
+            'volume_ratio': max(basin_volumes) / min(basin_volumes) if min(basin_volumes) > 0 else np.inf,
+            'curvature_variation': np.std(max_curvatures) if len(max_curvatures) > 1 else 0,
+            'decay_rate_variation': np.std(decay_rates) if len(decay_rates) > 1 else 0
+        }
+
+        return comparison
+
+    def analyze_transition_paths(self, maxima_result, n_path_points=100, method='comprehensive'):
         """
-        Compute persistent homology to identify robust features in yield landscape.
+        Find and analyze transition paths between identified maxima.
 
-        Uses ripser to find topological features like robust maxima (0-dimensional)
-        and potential "bridges" between high-yield regions (1-dimensional).
+        Addresses reviewer requests for:
+        - Systematic algorithms for hyperspace structure analysis
+        - Geometric insights into high-dimensional spaces
+        - Characterization of disconnected maxima regions
 
         Parameters:
         -----------
-        superlevel : bool, default=True
-            If True, analyze superlevel sets (high yield regions)
-            If False, analyze sublevel sets (low yield regions)
-        max_dimension : int, default=1
-            Maximum homological dimension to compute
+        maxima_result : Dict
+            Output from find_local_maxima()
+        n_path_points : int, default=100
+            Number of points to sample along transition paths
+        method : str, default='comprehensive'
+            Analysis method ('direct', 'saddle_search', 'comprehensive')
 
         Returns:
         --------
-        Dict containing persistence diagrams and analysis
+        Dict containing transition path analysis and visualizations
         """
         if self.yield_array is None:
             raise ValueError("Must call interpolate_to_regular_grid() first")
 
-        print("Computing persistent homology...")
-
-        try:
-            import ripser
-        except ImportError:
-            raise ImportError("ripser package required. Install with: pip install ripser")
-
-        # Prepare data for ripser (needs 1D distance matrix or point cloud)
-        # For cubical/grid data, we'll use the ripser's built-in cubical complex functionality
-
-        # Flatten yield array and remove NaN values
-        yield_flat = self.yield_array.ravel()
-        valid_mask = ~np.isnan(yield_flat)
-
-        if not valid_mask.any():
-            raise ValueError("No valid yield data for persistence computation")
-
-        # For superlevel sets, we need to negate the function
-        if superlevel:
-            yield_for_ripser = -yield_flat[valid_mask]
-        else:
-            yield_for_ripser = yield_flat[valid_mask]
-
-        # Compute persistence using ripser
-        # Note: ripser expects distance matrices or point clouds, so we'll use a workaround
-        # Create point cloud in yield space for 0D persistence
-
-        # Simple approach: treat each yield value as a 1D point
-        points_1d = yield_for_ripser.reshape(-1, 1)
-
-        try:
-            result = ripser.ripser(points_1d, maxdim=max_dimension, distance_matrix=False)
-            diagrams = result['dgms']
-
-            print(f"Computed {len(diagrams)} persistence diagrams")
-            for i, dgm in enumerate(diagrams):
-                if len(dgm) > 0:
-                    print(f"  Dimension {i}: {len(dgm)} features")
-                    if i == 0:  # 0-dimensional features (connected components)
-                        # Find long-lived features
-                        persistences = dgm[:, 1] - dgm[:, 0]
-                        long_lived = persistences > np.percentile(persistences, 90)
-                        print(f"    {np.sum(long_lived)} robust features (top 10% persistence)")
-
-            return {
-                'diagrams': diagrams,
-                'superlevel': superlevel,
-                'long_lived_features_0d': self._extract_long_lived_features(
-                    diagrams[0] if len(diagrams) > 0 else np.array([]))
-            }
-
-        except Exception as e:
-            print(f"Ripser computation failed: {e}")
-            return {'diagrams': [], 'error': str(e)}
-
-
-    def _extract_long_lived_features(self, diagram_0d: np.ndarray, persistence_threshold: float = None):
-        """Extract long-lived 0-dimensional features (robust maxima)."""
-
-        if len(diagram_0d) == 0:
-            return []
-
-        # Compute persistence
-        persistences = diagram_0d[:, 1] - diagram_0d[:, 0]
-
-        # Auto-threshold if not provided
-        if persistence_threshold is None:
-            persistence_threshold = np.percentile(persistences, 90)
-
-        # Find long-lived features
-        long_lived_mask = persistences > persistence_threshold
-        long_lived_features = diagram_0d[long_lived_mask]
-
-        return {
-            'features': long_lived_features,
-            'count': len(long_lived_features),
-            'persistence_threshold': persistence_threshold,
-            'mean_persistence': np.mean(persistences[long_lived_mask]) if long_lived_mask.any() else 0
-        }
-
-    def create_mapper_graph(self, lens_function: str = 'yield', n_intervals: int = 15,
-                            overlap: float = 0.3, clustering_algorithm: str = 'DBSCAN',
-                            dbscan_eps: float = None, dbscan_min_samples: int = None):
-        """
-        Create Mapper graph for high-dimensional visualization.
-
-        Particularly useful for 4D data where direct visualization is impossible.
-        Creates a graph representation showing connectivity of high-yield regions.
-
-        Parameters:
-        -----------
-        lens_function : str, default='yield'
-            Function to use as lens ('yield', 'first_coordinate', etc.)
-        n_intervals : int, default=15
-            Number of intervals for cover
-        overlap : float, default=0.3
-            Overlap fraction between intervals
-        clustering_algorithm : str, default='DBSCAN'
-            Clustering method ('DBSCAN', 'KMeans')
-        dbscan_eps : float, optional
-            DBSCAN epsilon parameter. Auto-tuned if None.
-        dbscan_min_samples : int, optional
-            DBSCAN min_samples parameter. Auto-tuned if None.
-
-        Returns:
-        --------
-        Dict containing mapper graph and metadata
-        """
-        if self.yield_array is None:
-            raise ValueError("Must call interpolate_to_regular_grid() first")
-
-        print(f"Creating Mapper graph with {lens_function} lens...")
-
-        try:
-            import kmapper as km
-            from sklearn.cluster import DBSCAN
-            from sklearn.cluster import KMeans
-        except ImportError:
-            raise ImportError("kmapper and scikit-learn required. Install with: pip install kmapper scikit-learn")
-
-        # Prepare data: flatten grid to point cloud
-        valid_mask = ~np.isnan(self.yield_array)
-        valid_indices = np.argwhere(valid_mask)
-        n_valid = len(valid_indices)
-
-        if n_valid == 0:
-            raise ValueError("No valid data points for Mapper")
-
-        # Convert grid indices to real coordinates
-        point_cloud = np.zeros((n_valid, self.dimensionality + 1))  # coords + yield
-
-        for i, grid_idx in enumerate(valid_indices):
-            # Convert grid index to real coordinates
-            for dim in range(self.dimensionality):
-                coord_value = self.grid_coordinates[dim][grid_idx[dim]]
-                point_cloud[i, dim] = coord_value
-
-            # Add yield value
-            point_cloud[i, -1] = self.yield_array[tuple(grid_idx)]
-
-        # Debug data properties
-        print(f"Point cloud shape: {point_cloud.shape}")
-        print(f"Yield range in point cloud: [{np.min(point_cloud[:, -1]):.4f}, {np.max(point_cloud[:, -1]):.4f}]")
-        print(
-            f"Coordinate ranges: {[(np.min(point_cloud[:, i]), np.max(point_cloud[:, i])) for i in range(self.dimensionality)]}")
-
-        # CRITICAL: More aggressive subsampling for meaningful clustering
-        target_points = min(1000, n_valid)  # Much smaller for better clustering
-        if n_valid > target_points:
-            subsample_idx = np.random.choice(n_valid, target_points, replace=False)
-            point_cloud = point_cloud[subsample_idx]
-            print(f"Subsampled to {len(point_cloud)} points for Mapper")
-
-        # Set up lens function
-        if lens_function == 'yield':
-            lens = point_cloud[:, -1].reshape(-1, 1)
-        elif lens_function == 'first_coordinate':
-            lens = point_cloud[:, 0].reshape(-1, 1)
-        else:
-            raise ValueError(f"Unknown lens function: {lens_function}")
-
-        print(f"Lens range: [{np.min(lens):.4f}, {np.max(lens):.4f}]")
-
-        # CRITICAL FIX: Use only coordinate data for clustering (not yield!)
-        clustering_data = point_cloud[:, :-1]  # Exclude yield column
-
-        # FIXED: Calculate coord_ranges before any conditional logic
-        coord_ranges = np.max(clustering_data, axis=0) - np.min(clustering_data, axis=0)
-        print(f"Coordinate ranges for clustering: {coord_ranges}")
-
-        # Set up clustering with proper scaling
-        if clustering_algorithm == 'DBSCAN':
-            if dbscan_eps is None:
-                # Scale eps to coordinate ranges
-                dbscan_eps = np.mean(coord_ranges) * 0.02  # 2% of average coordinate range
-
-            if dbscan_min_samples is None:
-                dbscan_min_samples = max(3, len(point_cloud) // 100)  # At least 3, scale with data
-
-            print(f"DBSCAN parameters: eps={dbscan_eps:.6f}, min_samples={dbscan_min_samples}")
-            clusterer = DBSCAN(eps=dbscan_eps, min_samples=dbscan_min_samples)
-
-            # Test clustering on small sample
-            test_clustering = DBSCAN(eps=dbscan_eps, min_samples=dbscan_min_samples)
-            test_labels = test_clustering.fit_predict(clustering_data[:100])
-            n_clusters_test = len(set(test_labels)) - (1 if -1 in test_labels else 0)
-            print(f"Test clustering on 100 points: {n_clusters_test} clusters")
-
-            if n_clusters_test == 0:
-                print("WARNING: Test clustering found 0 clusters. Adjusting parameters...")
-                # Try progressively larger eps values
-                for multiplier in [0.05, 0.1, 0.15, 0.2]:
-                    dbscan_eps = np.mean(coord_ranges) * multiplier
-                    dbscan_min_samples = max(2, dbscan_min_samples // 2)
-
-                    test_clustering = DBSCAN(eps=dbscan_eps, min_samples=dbscan_min_samples)
-                    test_labels = test_clustering.fit_predict(clustering_data[:100])
-                    n_clusters_test = len(set(test_labels)) - (1 if -1 in test_labels else 0)
-
-                    print(
-                        f"  Trying eps={dbscan_eps:.6f}, min_samples={dbscan_min_samples}: {n_clusters_test} clusters")
-
-                    if n_clusters_test > 0:
-                        break
-
-                if n_clusters_test == 0:
-                    print("ERROR: Could not find working DBSCAN parameters. Switching to KMeans.")
-                    clustering_algorithm = 'KMeans'
-                else:
-                    clusterer = DBSCAN(eps=dbscan_eps, min_samples=dbscan_min_samples)
-                    print(f"Final DBSCAN: eps={dbscan_eps:.6f}, min_samples={dbscan_min_samples}")
-
-        if clustering_algorithm == 'KMeans':
-            n_clusters = min(8, max(2, len(point_cloud) // 100))  # Reasonable number of clusters
-            clusterer = KMeans(n_clusters=n_clusters, random_state=42)
-            print(f"Using KMeans with {n_clusters} clusters")
-
-        # Create Mapper with fewer intervals for cleaner graph
-        mapper = km.KeplerMapper(verbose=1)
-
-        try:
-            graph = mapper.map(lens=lens,
-                               X=clustering_data,
-                               clusterer=clusterer,
-                               cover=km.Cover(n_cubes=max(6, n_intervals // 3), perc_overlap=overlap))
-        except Exception as e:
-            return {'error': f'Mapper creation failed: {str(e)}'}
-
-        # Analyze graph properties
-        n_nodes = len(graph['nodes'])
-        n_edges = len(graph['links'])
-
-        print(f"Mapper graph: {n_nodes} nodes, {n_edges} edges")
-
-        # Target: 10-50 nodes for meaningful visualization
-        if n_nodes > 100:
-            print(f"⚠️  Warning: {n_nodes} nodes is too many for clear visualization.")
-            print("   Consider: increasing dbscan_eps, increasing dbscan_min_samples, fewer n_intervals")
-        elif n_nodes < 5:
-            print(f"⚠️  Warning: {n_nodes} nodes may be too few. Consider decreasing dbscan_eps")
-        else:
-            print(f"✅ Good graph complexity: {n_nodes} nodes")
-
-        # Find high-yield clusters
-        high_yield_nodes = []
-        for node_id, point_indices in graph['nodes'].items():
-            node_yields = point_cloud[point_indices, -1]
-            avg_yield = np.mean(node_yields)
-            max_yield = np.max(node_yields)
-
-            if avg_yield > 0.1:  # Threshold for your data
-                high_yield_nodes.append({
-                    'node_id': node_id,
-                    'avg_yield': avg_yield,
-                    'max_yield': max_yield,
-                    'size': len(point_indices)
-                })
-
-        print(f"Found {len(high_yield_nodes)} high-yield nodes")
-
-        return {
-            'graph': graph,
-            'point_cloud': point_cloud,
-            'lens': lens,
-            'high_yield_nodes': high_yield_nodes,
-            'n_nodes': n_nodes,
-            'n_edges': n_edges,
-            'lens_function': lens_function
-        }
-
-
-    def plot_mapper_graph_summary(self, mapper_result: Dict, save_path: str = None):
-        """
-        Create summary visualization of Mapper graph.
-
-        Shows graph structure with nodes colored by average yield.
-        Handles both simple and complex graphs appropriately.
-        """
-        if 'error' in mapper_result:
-            print(f"Cannot plot Mapper graph: {mapper_result['error']}")
-            return
-
-        try:
-            import matplotlib.pyplot as plt
-            import networkx as nx
-        except ImportError:
-            raise ImportError("matplotlib and networkx required for plotting")
-
-        graph = mapper_result['graph']
-        point_cloud = mapper_result['point_cloud']
-
-        # If too many nodes, use simplified visualization
-        if len(graph['nodes']) > 100:
-            print(f"Graph too complex ({len(graph['nodes'])} nodes). Creating simplified visualization...")
-            return self._plot_simplified_mapper(mapper_result, save_path)
-
-        print(f"Debug: Graph has {len(graph['nodes'])} nodes")
-        print(f"Debug: Node IDs: {list(graph['nodes'].keys())[:5]}...")  # Show first 5
-
-        # Create NetworkX graph
-        G = nx.Graph()
-
-        # Add nodes with yield information
-        node_yields = {}
-        node_sizes = {}
-
-        for node_id, point_indices in graph['nodes'].items():
-            # Ensure point_indices is valid
-            if len(point_indices) > 0:
-                node_yield = np.mean(point_cloud[point_indices, -1])
-                # Handle NaN values
-                if np.isnan(node_yield):
-                    node_yield = 0.0
-                node_yields[node_id] = node_yield
-                node_sizes[node_id] = len(point_indices)
-                G.add_node(node_id)
-
-        print(f"Debug: Added {len(G.nodes())} nodes to NetworkX graph")
-
-        # Add edges - handle different kmapper edge formats
-        edges_added = 0
-        for edge in graph['links']:
-            try:
-                if isinstance(edge, (list, tuple)) and len(edge) >= 2:
-                    node1, node2 = edge[0], edge[1]
-                    # Only add edge if both nodes exist
-                    if node1 in G.nodes() and node2 in G.nodes():
-                        G.add_edge(node1, node2)
-                        edges_added += 1
-                elif isinstance(edge, dict):
-                    # Handle dictionary format: {'source': ..., 'target': ...}
-                    if 'source' in edge and 'target' in edge:
-                        node1, node2 = edge['source'], edge['target']
-                        if node1 in G.nodes() and node2 in G.nodes():
-                            G.add_edge(node1, node2)
-                            edges_added += 1
-            except Exception as e:
-                print(f"Warning: Could not process edge {edge}: {e}")
-                continue
-
-        print(f"Debug: Added {edges_added} edges to NetworkX graph")
-
-        if len(G.nodes()) == 0:
-            print("Error: No valid nodes in graph for visualization")
+        if maxima_result['count'] < 2:
+            print("Need at least 2 maxima for transition path analysis")
             return None
 
-        # Create visualization
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+        print(f"Analyzing transition paths between {maxima_result['count']} maxima...")
 
-        # Plot 1: Graph colored by yield
-        try:
-            pos = nx.spring_layout(G, seed=42, k=1, iterations=50)
-        except:
-            # Fallback to random layout if spring layout fails
-            pos = nx.random_layout(G, seed=42)
+        # Extract peak information
+        peak1_coords = maxima_result['coordinates'][0]
+        peak2_coords = maxima_result['coordinates'][1]
+        peak1_yield = maxima_result['yields'][0]
+        peak2_yield = maxima_result['yields'][1]
+        peak1_idx = maxima_result['indices'][0]
+        peak2_idx = maxima_result['indices'][1]
 
-        # Extract data for plotting - ensure proper ordering
-        node_list = list(G.nodes())
-        yields = [node_yields[node] for node in node_list]
-        sizes = [node_sizes[node] * 50 for node in node_list]  # Scale for visibility
+        print(f"Peak 1: yield={peak1_yield:.4f} at {dict(zip(self.coordinate_columns, peak1_coords))}")
+        print(f"Peak 2: yield={peak2_yield:.4f} at {dict(zip(self.coordinate_columns, peak2_coords))}")
 
-        # Debug the data
-        print(f"Debug: yields range: {min(yields):.3f} to {max(yields):.3f}")
-        print(f"Debug: sizes range: {min(sizes)} to {max(sizes)}")
+        # 1. Direct linear path analysis
+        print("Analyzing direct linear path...")
+        path_analysis = self._analyze_direct_path(peak1_coords, peak2_coords, peak1_idx, peak2_idx, n_path_points)
 
-        # Check for problematic values
-        yields = np.array(yields)
-        sizes = np.array(sizes)
+        # 2. Find saddle points and barriers
+        print("Searching for saddle points and barriers...")
+        saddle_analysis = self._find_transition_barriers(peak1_idx, peak2_idx, path_analysis)
 
-        # Replace any remaining NaN or inf values
-        yields = np.nan_to_num(yields, nan=0.0, posinf=1.0, neginf=0.0)
-        sizes = np.nan_to_num(sizes, nan=50.0, posinf=500.0, neginf=50.0)
+        # 3. Compute geometric properties
+        print("Computing path geometry...")
+        geometry_analysis = self._compute_path_geometry(path_analysis, peak1_coords, peak2_coords)
 
-        # Extract positions
-        x_pos = [pos[node][0] for node in node_list]
-        y_pos = [pos[node][1] for node in node_list]
+        # 4. Create comprehensive visualizations
+        print("Creating transition path visualizations...")
+        self._visualize_transition_paths(path_analysis, saddle_analysis, geometry_analysis,
+                                         peak1_coords, peak2_coords, peak1_yield, peak2_yield)
 
-        # Create scatter plot with proper error handling
-        try:
-            scatter = ax1.scatter(x_pos, y_pos, c=yields, s=sizes,
-                                  cmap='viridis', alpha=0.7, vmin=yields.min(), vmax=yields.max())
-        except Exception as e:
-            print(f"Scatter plot failed: {e}")
-            # Fallback: simple plot without colors
-            scatter = ax1.scatter(x_pos, y_pos, s=sizes, alpha=0.7, c='blue')
+        # 5. Generate summary report
+        summary = self._generate_transition_summary(path_analysis, saddle_analysis, geometry_analysis)
 
-        # Draw edges
-        edges_drawn = 0
-        for edge in G.edges():
-            try:
-                if edge[0] in pos and edge[1] in pos:
-                    x_vals = [pos[edge[0]][0], pos[edge[1]][0]]
-                    y_vals = [pos[edge[0]][1], pos[edge[1]][1]]
-                    ax1.plot(x_vals, y_vals, 'k-', alpha=0.3, linewidth=0.5)
-                    edges_drawn += 1
-            except Exception as e:
-                print(f"Edge drawing failed for edge {edge}: {e}")
-                continue
+        print("\nTransition Path Analysis Summary:")
+        print(f"  Direct path length: {geometry_analysis['path_length_real']:.6f} units")
+        print(f"  Barrier height: {saddle_analysis['barrier_height']:.4f} yield units")
+        print(f"  Barrier location: {saddle_analysis['barrier_fraction']:.2f} along path")
+        print(f"  Path curvature: {geometry_analysis['mean_curvature']:.4f}")
+        print(f"  Transition efficiency: {summary['transition_efficiency']:.3f}")
 
-        print(f"Debug: Drew {edges_drawn} edges")
-
-        ax1.set_title(f'Mapper Graph ({len(G.nodes())} nodes, {len(G.edges())} edges)')
-        ax1.set_xlabel('Spring Layout X')
-        ax1.set_ylabel('Spring Layout Y')
-
-        # Add colorbar if scatter plot worked
-        try:
-            if 'scatter' in locals() and hasattr(scatter, 'get_cmap'):
-                cbar1 = plt.colorbar(scatter, ax=ax1)
-                cbar1.set_label('Average Yield')
-        except:
-            pass
-
-        # Plot 2: Yield distribution across nodes
-        try:
-            ax2.hist(yields, bins=min(10, len(yields)), alpha=0.7, edgecolor='black')
-            ax2.set_xlabel('Average Yield')
-            ax2.set_ylabel('Number of Nodes')
-            ax2.set_title('Yield Distribution Across Graph Nodes')
-
-            if len(yields) > 0:
-                mean_yield = np.mean(yields)
-                ax2.axvline(mean_yield, color='red', linestyle='--',
-                            label=f'Mean: {mean_yield:.3f}')
-                ax2.legend()
-        except Exception as e:
-            print(f"Histogram plot failed: {e}")
-            ax2.text(0.5, 0.5, 'Histogram failed', transform=ax2.transAxes, ha='center')
-
-        plt.tight_layout()
-
-        if save_path:
-            try:
-                plt.savefig(save_path, dpi=300, bbox_inches='tight')
-                print(f"Mapper graph saved to {save_path}")
-            except Exception as e:
-                print(f"Saving failed: {e}")
-
-        try:
-            plt.show()
-        except:
-            print("Display failed, but figure created")
-
-        return fig
-
-
-    def _plot_simplified_mapper(self, mapper_result: Dict, save_path: str = None):
-        """
-        Simplified visualization for very complex graphs.
-
-        When the Mapper graph has too many nodes (>100), this creates
-        aggregate visualizations focusing on high-yield regions and
-        overall data structure rather than individual node connectivity.
-        """
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            raise ImportError("matplotlib required for plotting")
-
-        graph = mapper_result['graph']
-        point_cloud = mapper_result['point_cloud']
-        high_yield_nodes = mapper_result['high_yield_nodes']
-
-        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 12))
-
-        # Plot 1: High-yield node analysis
-        if high_yield_nodes:
-            yields = [node['avg_yield'] for node in high_yield_nodes]
-            sizes = [node['size'] for node in high_yield_nodes]
-
-            scatter = ax1.scatter(range(len(yields)), yields, s=sizes, alpha=0.7, c=yields, cmap='viridis')
-            ax1.set_xlabel('High-Yield Node Index')
-            ax1.set_ylabel('Average Yield')
-            ax1.set_title(f'High-Yield Nodes ({len(high_yield_nodes)} total)')
-
-            try:
-                plt.colorbar(scatter, ax=ax1, label='Average Yield')
-            except:
-                pass
-
-            # Add text annotations for top nodes
-            for i, (y, s) in enumerate(zip(yields[:5], sizes[:5])):  # Top 5 nodes
-                ax1.annotate(f'{y:.3f}', (i, y), xytext=(5, 5), textcoords='offset points', fontsize=8)
-        else:
-            ax1.text(0.5, 0.5, 'No high-yield nodes found', transform=ax1.transAxes, ha='center')
-            ax1.set_title('High-Yield Nodes (None Found)')
-
-        # Plot 2: Overall yield distribution
-        all_yields = point_cloud[:, -1]
-        ax2.hist(all_yields, bins=30, alpha=0.7, edgecolor='black')
-        ax2.set_xlabel('Yield')
-        ax2.set_ylabel('Frequency')
-        ax2.set_title('Overall Yield Distribution')
-        ax2.axvline(np.mean(all_yields), color='red', linestyle='--',
-                    label=f'Mean: {np.mean(all_yields):.3f}')
-        ax2.axvline(np.median(all_yields), color='orange', linestyle='--',
-                    label=f'Median: {np.median(all_yields):.3f}')
-        ax2.legend()
-
-        # Plot 3: Node size distribution
-        all_node_sizes = [len(point_indices) for point_indices in graph['nodes'].values()]
-        ax3.hist(all_node_sizes, bins=20, alpha=0.7, edgecolor='black')
-        ax3.set_xlabel('Points per Node')
-        ax3.set_ylabel('Number of Nodes')
-        ax3.set_title('Node Size Distribution')
-        ax3.axvline(np.mean(all_node_sizes), color='red', linestyle='--',
-                    label=f'Mean: {np.mean(all_node_sizes):.1f}')
-        ax3.legend()
-
-        # Plot 4: Graph complexity metrics
-        graph_metrics = {
-            'Total Nodes': len(graph['nodes']),
-            'Total Edges': len(graph['links']),
-            'High-Yield Nodes': len(high_yield_nodes),
-            'Avg Points/Node': np.mean(all_node_sizes),
-            'Edge Density': len(graph['links']) / max(1, len(graph['nodes']) * (len(graph['nodes']) - 1) / 2)
+        return {
+            'path_analysis': path_analysis,
+            'saddle_analysis': saddle_analysis,
+            'geometry_analysis': geometry_analysis,
+            'summary': summary,
+            'peak1_coords': peak1_coords,
+            'peak2_coords': peak2_coords,
+            'peak1_yield': peak1_yield,
+            'peak2_yield': peak2_yield
         }
 
-        metrics_text = '\n'.join([f'{k}: {v:.3f}' if isinstance(v, float) else f'{k}: {v}'
-                                  for k, v in graph_metrics.items()])
+    def _analyze_direct_path(self, peak1_coords, peak2_coords, peak1_idx, peak2_idx, n_points):
+        """Analyze direct linear path between two peaks."""
 
-        ax4.text(0.1, 0.9, 'Graph Complexity Metrics:', transform=ax4.transAxes,
-                 fontsize=12, fontweight='bold', verticalalignment='top')
-        ax4.text(0.1, 0.7, metrics_text, transform=ax4.transAxes,
-                 fontsize=10, verticalalignment='top', fontfamily='monospace')
+        # Create linear path in parameter space
+        path_coords = np.zeros((n_points, self.dimensionality))
+        path_yields = np.zeros(n_points)
+        path_indices = np.zeros((n_points, self.dimensionality), dtype=int)
 
-        # Add interpretation
-        interpretation = []
-        if len(high_yield_nodes) >= 2:
-            interpretation.append("✅ Multiple high-yield regions detected")
-        elif len(high_yield_nodes) == 1:
-            interpretation.append("⚠️  Single high-yield region found")
+        for i in range(n_points):
+            t = i / (n_points - 1)  # Parameter from 0 to 1
+
+            # Linear interpolation in parameter space
+            current_coords = (1 - t) * peak1_coords + t * peak2_coords
+            path_coords[i] = current_coords
+
+            # Convert to grid indices for yield lookup
+            grid_indices = np.zeros(self.dimensionality, dtype=int)
+            for dim in range(self.dimensionality):
+                # Map coordinate to grid index
+                coord_min, coord_max = self.coordinate_ranges[dim]
+                normalized = (current_coords[dim] - coord_min) / (coord_max - coord_min)
+                grid_idx = int(np.clip(normalized * (self.grid_resolution - 1), 0, self.grid_resolution - 1))
+                grid_indices[dim] = grid_idx
+
+            path_indices[i] = grid_indices
+
+            # Look up yield at this point
+            path_yields[i] = self.yield_array[tuple(grid_indices)]
+
+        return {
+            'path_coords': path_coords,
+            'path_yields': path_yields,
+            'path_indices': path_indices,
+            'n_points': n_points,
+            'path_parameters': np.linspace(0, 1, n_points)
+        }
+
+    def _find_transition_barriers(self, peak1_idx, peak2_idx, path_analysis):
+        """Find barriers and saddle-like regions along the transition path."""
+
+        path_yields = path_analysis['path_yields']
+        path_coords = path_analysis['path_coords']
+        path_params = path_analysis['path_parameters']
+
+        # Find minimum yield point along path (main barrier)
+        barrier_idx = np.argmin(path_yields)
+        barrier_yield = path_yields[barrier_idx]
+        barrier_coords = path_coords[barrier_idx]
+        barrier_param = path_params[barrier_idx]
+
+        # Compute barrier height relative to both peaks
+        peak1_yield = path_yields[0]
+        peak2_yield = path_yields[-1]
+        barrier_height = min(peak1_yield, peak2_yield) - barrier_yield
+
+        # Find gradient at barrier point
+        barrier_gradient = self._compute_local_gradient(path_analysis['path_indices'][barrier_idx])
+        gradient_magnitude = np.linalg.norm(barrier_gradient)
+
+        # Analyze barrier width (region within 90% of barrier depth)
+        barrier_threshold = barrier_yield + 0.1 * barrier_height
+        barrier_region = path_yields <= barrier_threshold
+        barrier_width_indices = np.where(barrier_region)[0]
+        barrier_width = len(barrier_width_indices) / len(path_yields) if len(barrier_width_indices) > 0 else 0
+
+        return {
+            'barrier_idx': barrier_idx,
+            'barrier_yield': barrier_yield,
+            'barrier_coords': barrier_coords,
+            'barrier_fraction': barrier_param,
+            'barrier_height': barrier_height,
+            'barrier_gradient': barrier_gradient,
+            'gradient_magnitude': gradient_magnitude,
+            'barrier_width': barrier_width,
+            'is_saddle_like': gradient_magnitude < 0.01  # Low gradient suggests saddle-like point
+        }
+
+    def _compute_local_gradient(self, grid_indices):
+        """Compute gradient at a specific grid point using finite differences."""
+
+        gradient = np.zeros(self.dimensionality)
+
+        for dim in range(self.dimensionality):
+            # Forward and backward indices
+            idx_forward = grid_indices.copy()
+            idx_backward = grid_indices.copy()
+
+            # Finite difference with boundary checking
+            if grid_indices[dim] < self.grid_resolution - 1:
+                idx_forward[dim] += 1
+                forward_yield = self.yield_array[tuple(idx_forward)]
+            else:
+                forward_yield = self.yield_array[tuple(grid_indices)]
+
+            if grid_indices[dim] > 0:
+                idx_backward[dim] -= 1
+                backward_yield = self.yield_array[tuple(idx_backward)]
+            else:
+                backward_yield = self.yield_array[tuple(grid_indices)]
+
+            # Convert to real coordinate spacing
+            coord_range = self.coordinate_ranges[dim][1] - self.coordinate_ranges[dim][0]
+            spacing = coord_range / (self.grid_resolution - 1)
+
+            # Central difference approximation
+            gradient[dim] = (forward_yield - backward_yield) / (2 * spacing)
+
+        return gradient
+
+    def _compute_path_geometry(self, path_analysis, peak1_coords, peak2_coords):
+        """Compute geometric properties of the transition path."""
+
+        path_coords = path_analysis['path_coords']
+        path_yields = path_analysis['path_yields']
+
+        # Compute path length in parameter space
+        path_segments = np.diff(path_coords, axis=0)
+        segment_lengths = np.linalg.norm(path_segments, axis=1)
+        path_length_real = np.sum(segment_lengths)
+
+        # Compute path curvature (change in direction)
+        if len(path_coords) >= 3:
+            # Second derivatives for curvature
+            second_derivatives = np.diff(path_coords, n=2, axis=0)
+            curvatures = np.linalg.norm(second_derivatives, axis=1)
+            mean_curvature = np.mean(curvatures)
+            max_curvature = np.max(curvatures)
         else:
-            interpretation.append("❌ No high-yield regions found")
+            mean_curvature = max_curvature = 0
 
-        if len(graph['nodes']) > 200:
-            interpretation.append("⚠️  Very complex graph - consider\n   increasing clustering parameters")
-        elif len(graph['nodes']) < 10:
-            interpretation.append("⚠️  Very simple graph - consider\n   decreasing clustering parameters")
+        # Compute yield gradient along path
+        yield_gradient = np.gradient(path_yields)
+        max_yield_gradient = np.max(np.abs(yield_gradient))
+
+        # Direct distance between peaks
+        direct_distance = np.linalg.norm(peak2_coords - peak1_coords)
+        path_efficiency = direct_distance / path_length_real if path_length_real > 0 else 0
+
+        return {
+            'path_length_real': path_length_real,
+            'direct_distance': direct_distance,
+            'path_efficiency': path_efficiency,
+            'mean_curvature': mean_curvature,
+            'max_curvature': max_curvature,
+            'max_yield_gradient': max_yield_gradient,
+            'segment_lengths': segment_lengths
+        }
+
+    def _generate_transition_summary(self, path_analysis, saddle_analysis, geometry_analysis):
+        """Generate summary metrics for transition analysis."""
+
+        path_yields = path_analysis['path_yields']
+
+        # Transition efficiency metrics
+        yield_range = np.max(path_yields) - np.min(path_yields)
+        barrier_prominence = saddle_analysis['barrier_height'] / yield_range if yield_range > 0 else 0
+        transition_efficiency = 1.0 - barrier_prominence  # Higher when barrier is lower
+
+        # Geometric complexity
+        geometric_complexity = geometry_analysis['mean_curvature'] * geometry_analysis['path_length_real']
+
+        # Classification
+        if saddle_analysis['is_saddle_like']:
+            transition_type = "Saddle-mediated transition"
+        elif saddle_analysis['barrier_height'] < 0.01:
+            transition_type = "Nearly barrierless transition"
         else:
-            interpretation.append("✅ Reasonable graph complexity")
+            transition_type = "Barrier-mediated transition"
 
-        ax4.text(0.1, 0.4, 'Interpretation:', transform=ax4.transAxes,
-                 fontsize=12, fontweight='bold', verticalalignment='top')
-        ax4.text(0.1, 0.3, '\n'.join(interpretation), transform=ax4.transAxes,
-                 fontsize=10, verticalalignment='top')
+        return {
+            'transition_efficiency': transition_efficiency,
+            'barrier_prominence': barrier_prominence,
+            'geometric_complexity': geometric_complexity,
+            'transition_type': transition_type,
+            'yield_range_along_path': yield_range
+        }
 
-        ax4.set_xlim(0, 1)
-        ax4.set_ylim(0, 1)
-        ax4.axis('off')
+    def _visualize_transition_paths(self, path_analysis, saddle_analysis, geometry_analysis,
+                                    peak1_coords, peak2_coords, peak1_yield, peak2_yield):
+        """Create comprehensive visualizations of transition paths."""
 
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+
+        # Create figure with multiple subplots
+        fig = plt.figure( figsize=(15, 15))
+
+        # 1. 3D path trajectory (use first 3 dimensions for visualization)
+        ax1 = fig.add_subplot(2, 2, 1, projection='3d')
+        self._plot_3d_trajectory(ax1, path_analysis, peak1_coords, peak2_coords,
+                                 peak1_yield, peak2_yield, saddle_analysis)
+
+        # 2. Yield profile along path
+        ax2 = fig.add_subplot(2, 2, 2)
+        self._plot_yield_profile(ax2, path_analysis, saddle_analysis)
+
+        # 3. Parameter evolution along path
+        ax3 = fig.add_subplot(2, 2, 3)
+        self._plot_parameter_evolution(ax3, path_analysis)
+
+        # 4. 2D cross-sections through barrier region
+        ax4 = fig.add_subplot(2, 2, 4)
+        self._plot_barrier_cross_section(ax4, path_analysis, saddle_analysis)
+
+        # # 5. Path geometry analysis
+        # ax5 = fig.add_subplot(2, 3, 5)
+        # self._plot_path_geometry(ax5, path_analysis, geometry_analysis)
+        #
+        # # 6. Summary metrics visualization
+        # ax6 = fig.add_subplot(2, 3, 6)
+        # self._plot_summary_metrics(ax6, path_analysis, saddle_analysis, geometry_analysis)
+
+        # plt.suptitle('Transition Path Analysis Between Reaction Maxima', fontsize=16, fontweight='bold')
         plt.tight_layout()
+        plt.savefig('transition_path_analysis.png', dpi=300, bbox_inches='tight')
+        plt.show()
 
-        if save_path:
-            try:
-                plt.savefig(save_path, dpi=300, bbox_inches='tight')
-                print(f"Simplified mapper plot saved to {save_path}")
-            except Exception as e:
-                print(f"Saving failed: {e}")
+    def _plot_3d_trajectory(self, ax, path_analysis, peak1_coords, peak2_coords,
+                            peak1_yield, peak2_yield, saddle_analysis):
+        """Plot 3D trajectory of transition path using first 3 coordinate dimensions."""
 
-        try:
-            plt.show()
-        except:
-            print("Display failed, but figure created")
+        path_coords = path_analysis['path_coords']
+        path_yields = path_analysis['path_yields']
 
-        return fig
+        # Use first 3 dimensions for 3D visualization
+        x = path_coords[:, 0]
+        y = path_coords[:, 1]
+        z = path_coords[:, 2]
+
+        # Color by yield
+        scatter = ax.scatter(x, y, z, c=path_yields, cmap='viridis', s=50, alpha=0.7)
+
+        # Plot path as line
+        ax.plot(x, y, z, 'k-', alpha=0.3, linewidth=2)
+
+        # Highlight peaks
+        ax.scatter([peak1_coords[0]], [peak1_coords[1]], [peak1_coords[2]],
+                   c='green', s=200, marker='*', label=f'Global maximum (yield={peak1_yield:.3f})', edgecolors='black')
+        ax.scatter([peak2_coords[0]], [peak2_coords[1]], [peak2_coords[2]],
+                   c='blue', s=200, marker='*', label=f'Local maximum (yield={peak2_yield:.3f})', edgecolors='black')
+
+        # Highlight barrier point
+        barrier_idx = saddle_analysis['barrier_idx']
+        barrier_coords = saddle_analysis['barrier_coords']
+        ax.scatter([barrier_coords[0]], [barrier_coords[1]], [barrier_coords[2]],
+                   c='red', s=150, marker='X', label=f'Barrier (yield={saddle_analysis["barrier_yield"]:.3f})',
+                   edgecolors='black', zorder=10)
+
+        # Labels and formatting
+        ax.set_xlabel(self.coordinate_column_labels[0])
+        ax.set_ylabel(self.coordinate_column_labels[1])
+        ax.set_zlabel(self.coordinate_column_labels[2])
+        ax.set_title('3D projection of 4D transition trajectory')
+        ax.legend()
+
+        # Add colorbar
+        plt.colorbar(scatter, ax=ax, shrink=0.8, label='Yield')
+
+    def _plot_yield_profile(self, ax, path_analysis, saddle_analysis):
+        """Plot yield profile along the transition path."""
+
+        path_params = path_analysis['path_parameters']
+        path_yields = path_analysis['path_yields']
+
+        # Plot yield profile
+        ax.plot(path_params, path_yields, 'b-', linewidth=3, label='Yield along path')
+
+        # Highlight barrier point
+        barrier_param = saddle_analysis['barrier_fraction']
+        barrier_yield = saddle_analysis['barrier_yield']
+        ax.plot(barrier_param, barrier_yield, 'rx', label='Barrier point', markersize=15, markeredgewidth=3)
+
+        # Highlight peaks
+        ax.plot(0, path_yields[0], '*g', markersize=15, label='Global maximum')
+        ax.plot(1, path_yields[-1], '*b', markersize=15, label='Local maximum')
+
+        # Add barrier height annotation
+        barrier_height = saddle_analysis['barrier_height']
+        ax.annotate(f'Barrier\n(point of lowest yield, {barrier_height:.4f})',
+                    xy=(barrier_param, barrier_yield), xytext=(0.5, barrier_yield + 0.05),
+                    arrowprops=dict(arrowstyle='->', color='red'),
+                    fontsize=10, ha='center')
+
+        ax.set_xlabel('Path internal coordinate (0=Peak1, 1=Peak2)')
+        ax.set_ylabel('Yield')
+        ax.set_title('Yield profile along transition path')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+
+    def _plot_parameter_evolution(self, ax, path_analysis):
+        """Plot how each parameter changes along the transition path."""
+
+        path_params = path_analysis['path_parameters']
+        path_coords = path_analysis['path_coords']
+
+        # Plot each coordinate dimension
+        colors = ['red', 'blue', 'green', 'purple', 'orange']
+        for dim in range(self.dimensionality):
+            ax.plot(path_params, path_coords[:, dim],
+                    color=colors[dim % len(colors)], linewidth=2,
+                    label=self.coordinate_column_labels[dim])
+
+        ax.set_xlabel('Path internal coordinate (0=Global max., 1=local max.)')
+        ax.set_ylabel('Parameter value')
+        ax.set_title('Parameter evolution along transition path')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+
+    def _plot_barrier_cross_section(self, ax, path_analysis, saddle_analysis):
+        """Plot 2D cross-section around the barrier region."""
+
+        barrier_coords = saddle_analysis['barrier_coords']
+
+        # Create 2D slice through the barrier point using first 2 dimensions
+        n_points = 50
+        dim1, dim2 = 0, 1  # Use first two dimensions
+
+        # Create grid around barrier point
+        coord_ranges = []
+        for dim in [dim1, dim2]:
+            coord_min, coord_max = self.coordinate_ranges[dim]
+            center = barrier_coords[dim]
+            half_width = (coord_max - coord_min) * 0.3  # 30% of total range
+            grid_min = max(coord_min, center - half_width)
+            grid_max = min(coord_max, center + half_width)
+            coord_ranges.append(np.linspace(grid_min, grid_max, n_points))
+
+        X, Y = np.meshgrid(coord_ranges[0], coord_ranges[1])
+        Z = np.zeros_like(X)
+
+        # Sample yields on this 2D grid (keeping other dimensions at barrier values)
+        for i in range(n_points):
+            for j in range(n_points):
+                sample_coords = barrier_coords.copy()
+                sample_coords[dim1] = X[i, j]
+                sample_coords[dim2] = Y[i, j]
+
+                # Convert to grid indices
+                grid_indices = []
+                for dim in range(self.dimensionality):
+                    coord_min, coord_max = self.coordinate_ranges[dim]
+                    normalized = (sample_coords[dim] - coord_min) / (coord_max - coord_min)
+                    grid_idx = int(np.clip(normalized * (self.grid_resolution - 1), 0, self.grid_resolution - 1))
+                    grid_indices.append(grid_idx)
+
+                Z[i, j] = self.yield_array[tuple(grid_indices)]
+
+        # Create contour plot
+        contour = ax.contourf(X, Y, Z, levels=20, cmap='viridis', alpha=0.8, method='cubic')
+        ax.contour(X, Y, Z, levels=10, colors='black', alpha=0.3, linewidths=0.5, method='cubic')
+
+        # Mark barrier point
+        ax.plot(barrier_coords[dim1], barrier_coords[dim2], 'rx', markersize=15, markeredgewidth=3)
+
+        ax.set_xlabel(self.coordinate_column_labels[dim1])
+        ax.set_ylabel(self.coordinate_column_labels[dim2])
+        ax.set_title(
+            f'Cross-section at barrier point\n({self.coordinate_column_labels[dim1]} vs {self.coordinate_column_labels[dim2]})')
+
+        plt.colorbar(contour, ax=ax, label='Yield')
+
+    def _plot_path_geometry(self, ax, path_analysis, geometry_analysis):
+        """Plot geometric properties of the path."""
+
+        path_params = path_analysis['path_parameters']
+        segment_lengths = geometry_analysis['segment_lengths']
+
+        # Plot cumulative distance along path
+        cumulative_distance = np.cumsum(np.concatenate([[0], segment_lengths]))
+        ax.plot(path_params, cumulative_distance, 'g-', linewidth=2, label='Cumulative distance')
+
+        # Plot local curvature if available
+        if len(path_analysis['path_coords']) >= 3:
+            path_coords = path_analysis['path_coords']
+            second_derivatives = np.diff(path_coords, n=2, axis=0)
+            curvatures = np.linalg.norm(second_derivatives, axis=1)
+            curvature_params = path_params[1:-1]  # Curvature has 2 fewer points
+
+            ax2 = ax.twinx()
+            ax2.plot(curvature_params, curvatures, 'r--', linewidth=2, label='Path curvature')
+            ax2.set_ylabel('Curvature', color='red')
+            ax2.tick_params(axis='y', labelcolor='red')
+
+        ax.set_xlabel('Path Parameter')
+        ax.set_ylabel('Cumulative Distance', color='green')
+        ax.set_title('Path Geometry Analysis')
+        ax.tick_params(axis='y', labelcolor='green')
+        ax.grid(True, alpha=0.3)
+
+    def _plot_summary_metrics(self, ax, path_analysis, saddle_analysis, geometry_analysis):
+        """Plot summary metrics as a text-based visualization."""
+
+        ax.axis('off')  # Turn off axes for text display
+
+        # Compile summary statistics
+        summary_text = f"""
+        TRANSITION PATH ANALYSIS SUMMARY
+        
+        Path Properties:
+        • Total path length: {geometry_analysis['path_length_real']:.6f} units
+        • Direct distance: {geometry_analysis['direct_distance']:.6f} units  
+        • Path efficiency: {geometry_analysis['path_efficiency']:.3f}
+        • Mean curvature: {geometry_analysis['mean_curvature']:.4f}
+        
+        Barrier Analysis:
+        • Barrier height: {saddle_analysis['barrier_height']:.4f} yield units
+        • Barrier position: {saddle_analysis['barrier_fraction']:.2f} along path
+        • Barrier yield: {saddle_analysis['barrier_yield']:.4f}
+        • Gradient magnitude: {saddle_analysis['gradient_magnitude']:.4f}
+        • Saddle-like: {'Yes' if saddle_analysis['is_saddle_like'] else 'No'}
+        
+        Peak Information:
+        • Peak 1 coordinates: {dict(zip(self.coordinate_columns, path_analysis['path_coords'][0]))}
+        • Peak 2 coordinates: {dict(zip(self.coordinate_columns, path_analysis['path_coords'][-1]))}
+        
+        Geometric Classification:
+        • Transition type: {'Saddle-mediated' if saddle_analysis['is_saddle_like'] else 'Barrier-mediated'}
+        • Yield range: {np.max(path_analysis['path_yields']) - np.min(path_analysis['path_yields']):.4f}
+        """
+
+        ax.text(0.05, 0.95, summary_text, transform=ax.transAxes, fontsize=10,
+                verticalalignment='top', fontfamily='monospace',
+                bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.8))
 
 
 # Usage example for testing
 if __name__ == "__main__":
     pass
-    # # ### For 3D analysis
-    # analyzer = ReactionHyperspaceAnalyzer(
-    #     csv_path='simpleSN1_resampled_yields_hyvu.csv',
-    #     coordinate_columns=['[Alcohol](mM)','[HBr](mM)','Temperature(°C)'],
-    #     yield_column='yield'
-    # )
-    #
-    # # Interpolate to regular grid
-    # analyzer.interpolate_to_regular_grid(grid_resolution=5)
-    #
-    # analyzer.save_regular_grid_to_file('3d_grid.npz')
-    #
-    # analyzer.load_regular_grid_from_file('3d_grid.npz')
-    #
-    # # # Validate quality
-    # # analyzer.validate_grid_quality()
-    #
-    # # Find local maxima
-    # maxima = analyzer.find_local_maxima(min_distance=2, threshold_abs=0.9)
-    #
-    # # Compute gradients
-    # gradients = analyzer.compute_yield_gradients()
-
     # For 4D analysis
     analyzer = ReactionHyperspaceAnalyzer(
         csv_path='postprocessed_yields_decimated.csv',
         coordinate_columns=['ic001','am001','ald001','ptsa'],
-        yield_column='yield'
+        yield_column='yield',
+        coordinate_column_labels=['Isocyanide', 'Amine', 'Aldehyde', 'pTSA'],
     )
 
     # Interpolate to regular grid
-    analyzer.interpolate_to_regular_grid(grid_resolution=10)
+    grid_resolution = 40
+    analyzer.interpolate_to_regular_grid(grid_resolution=grid_resolution)
 
     analyzer.save_regular_grid_to_file('4d_grid.npz')
 
@@ -1483,20 +1381,11 @@ if __name__ == "__main__":
     analyzer.validate_grid_quality()
 
     # Find local maxima
-    maxima = analyzer.find_local_maxima(min_distance=5, threshold_abs=0.11)
+    maxima = analyzer.find_local_maxima(min_distance=int(round(grid_resolution/2)), threshold_abs=0.11)
 
     # # Compute gradients
     # gradients = analyzer.compute_yield_gradients()
 
-    # Test the new functionality:
-
-    print("\n" + "=" * 60)
-    print("TESTING NEW GEOMETRIC ANALYSIS FUNCTIONALITY")
-    print("=" * 60)
-
-    # 1. Analyze basins around the identified maxima
-    print("\n1. BASIN ANALYSIS")
-    print("-" * 30)
     basin_analysis = analyzer.analyze_maxima_basins(maxima, basin_threshold_fraction=0.8)
 
     # Print summary of basin analysis
@@ -1523,105 +1412,27 @@ if __name__ == "__main__":
         if 'volume_ratio' in comp:
             print(f"  Volume ratio (max/min): {comp['volume_ratio']:.3f}")
 
-    # 2. Persistent homology analysis
-    print("\n\n2. PERSISTENT HOMOLOGY ANALYSIS")
-    print("-" * 40)
-    ph_result = analyzer.compute_persistent_homology(superlevel=True, max_dimension=1)
-
-    if 'error' not in ph_result:
-        print("Persistent homology computed successfully!")
-
-        # Analyze 0-dimensional features (should show your two maxima)
-        if 'long_lived_features_0d' in ph_result and ph_result['long_lived_features_0d']:
-            features_0d = ph_result['long_lived_features_0d']
-            print(f"Long-lived 0D features (robust maxima): {features_0d['count']}")
-            print(f"Mean persistence: {features_0d['mean_persistence']:.4f}")
-
-            # This should show 2 features for your two-maxima dataset!
-            if features_0d['count'] == 2:
-                print("✅ SUCCESS: Found exactly 2 robust maxima (matches expected two disjoined maxima!)")
-            elif features_0d['count'] == 1:
-                print("⚠️  Found only 1 robust maximum - may need to adjust persistence threshold")
-            else:
-                print(f"⚠️  Found {features_0d['count']} robust maxima - unexpected for this dataset")
-
-        # Print dimensions of persistence diagrams
-        for i, dgm in enumerate(ph_result['diagrams']):
-            print(f"Dimension {i} persistence: {len(dgm)} features")
-    else:
-        print(f"Persistent homology failed: {ph_result['error']}")
-
-    # 3. Mapper graph analysis (great for 4D visualization)
-    print("\n\n3. MAPPER GRAPH ANALYSIS (4D VISUALIZATION)")
-    print("-" * 50)
-    mapper_result = analyzer.create_mapper_graph(
-        lens_function='yield',
-        n_intervals=8,  # Fewer intervals
-        overlap=0.4,  # Reasonable overlap
-        clustering_algorithm='DBSCAN',
-        dbscan_eps=0.01,  # Larger eps for bigger clusters
-        dbscan_min_samples=10  # Much higher min_samples
+    # ================== TRANSITION ANALYSIS ==================
+    analyzer = ReactionHyperspaceAnalyzer(
+        csv_path='postprocessed_yields_decimated.csv',
+        coordinate_columns=['ic001','am001','ald001','ptsa'],
+        yield_column='yield',
+        coordinate_column_labels=['Isocyanide', 'Amine', 'Aldehyde', 'pTSA'],
     )
 
-    if 'error' not in mapper_result:
-        print("Mapper graph created successfully!")
-        print(f"Graph structure: {mapper_result['n_nodes']} nodes, {mapper_result['n_edges']} edges")
-        print(f"High-yield nodes: {len(mapper_result['high_yield_nodes'])}")
+    # Interpolate to regular grid
+    analyzer.interpolate_to_regular_grid(grid_resolution=19)
 
-        # Analyze high-yield nodes (should cluster into 2 groups for your data)
-        if mapper_result['high_yield_nodes']:
-            high_yields = [node['avg_yield'] for node in mapper_result['high_yield_nodes']]
-            print(f"High-yield node yields: {[f'{y:.3f}' for y in sorted(high_yields, reverse=True)]}")
+    analyzer.save_regular_grid_to_file('4d_grid.npz')
 
-            # Check if we can see separation (clustering of high-yield nodes)
-            if len(high_yields) >= 2:
-                yield_gap = max(high_yields) - min(high_yields)
-                print(f"Yield gap between high-yield regions: {yield_gap:.3f}")
+    analyzer.load_regular_grid_from_file('4d_grid.npz')
 
-        # Create visualization
-        print("\nCreating Mapper graph visualization...")
-        try:
-            analyzer.plot_mapper_graph_summary(mapper_result, save_path='mapper_4d_analysis.png')
-        except Exception as e:
-            print(f"Visualization failed: {e}")
+    # Validate quality
+    analyzer.validate_grid_quality()
 
-    else:
-        print(f"Mapper graph creation failed: {mapper_result['error']}")
+    # Find local maxima
+    maxima = analyzer.find_local_maxima(min_distance=10, threshold_abs=0.11)
 
-    # 4. Overall gradient analysis (addresses reviewer smoothness questions)
-    print("\n\n4. OVERALL GRADIENT ANALYSIS")
-    print("-" * 35)
-    gradient_analysis = analyzer.compute_yield_gradients()
 
-    print(f"Mean gradient magnitude: {gradient_analysis['mean_gradient']:.6f}")
-    print(f"Max gradient magnitude: {gradient_analysis['max_gradient']:.6f}")
-    print(f"This addresses reviewer questions about |D_ij| ≤ 1 smoothness")
-
-    # Check if gradients are indeed small (supporting your smoothness claims)
-    if gradient_analysis['max_gradient'] <= 1.0:
-        print("✅ Confirms smooth landscape (max gradient ≤ 1)")
-    else:
-        print("⚠️  Higher gradients detected - may indicate steep regions")
-
-    print("\n" + "=" * 60)
-    print("ANALYSIS COMPLETE")
-    print("=" * 60)
-
-    # Optional: Save all results for further analysis
-    print(f"\nSaving analysis results...")
-    import pickle
-
-    results_summary = {
-        'maxima': maxima,
-        'basin_analysis': basin_analysis,
-        'persistent_homology': ph_result,
-        'mapper_graph': mapper_result,
-        'gradient_analysis': gradient_analysis
-    }
-
-    with open('hyperspace_analysis_results.pkl', 'wb') as f:
-        pickle.dump(results_summary, f)
-
-    print("Results saved to 'hyperspace_analysis_results.pkl'")
-    print("Mapper visualization saved to 'mapper_4d_analysis.png' (if successful)")
-
+    # After your existing basin analysis:
+    transition_analysis = analyzer.analyze_transition_paths(maxima, n_path_points=50)
