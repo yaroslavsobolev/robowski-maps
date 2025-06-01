@@ -35,3 +35,13 @@ causing large uncertainties in the concentration values. Therefore, these plots 
 in the accompanying research article. You can plot it out of curiosity, but don't expect it to be useful for anything.
 The maps of yield plotted in Figure 5 of the article are based on the HPLC measurements, not on unmixing of UV-Vis
 spectra.
+
+### Script `plot_onion_map_for_ugi_reaction.py`
+
+This script is an implementation of a visualization approach suggested by one of the Reviewers
+of the research article:
+> (four reactants and one product): use three orthogonal axes for isocyanide, amine, and aldehyde concentrations; 
+> indicate the concentration of p-toluenesulfonic acid by node size; and yield by node color.
+
+This visualization method is not used in the research article, but we leave it here for 
+entertainment of a curious reader.
