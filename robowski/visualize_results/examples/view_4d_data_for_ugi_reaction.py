@@ -42,7 +42,10 @@ sorted_unique_values_of_ptsa_column.sort()
 print(sorted_unique_values_of_ptsa_column)
 
 ptsa_targets = [0.05, 0.12, 0.17, 0.24, 0.298]
+
+### Select the target PTSA value for which the 3D slice (cube) will be plotted
 ptsa_target = ptsa_targets[1]
+
 # first index where ptsa is greater than
 ith_ptsa = next(i for i, x in enumerate(sorted_unique_values_of_ptsa_column) if x > ptsa_target)
 # ith_ptsa = len(sorted_unique_values_of_ptsa_column) - 1
