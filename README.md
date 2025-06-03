@@ -31,7 +31,10 @@ changing the environment variable for it to be recognized by the system.
 ## Requirements for running the Python scripts
 
 For requirements of the automation script used for pipetting robots coupled to the NanoDrop spectrometer,
-see the `requirements.txt` file in the `zeus-pipetter` folder and the `README.md` file in the same folder.
+see the `requirements.txt` file in the `zeus-pipetter` folder and the `README.md` file in the same foldder.
+Computing the persistent homology diagrams requires the `ripser` and `persim` packages, which are incompatible with
+the packages used for the rest of the repository, and should be executed in a separate Python environment having
+`pandas`, `numpy`, `ripser`, `persim`, and `matplotlib` installed.
 
 For the rest of the repository, the installation procedure is as follows:
 
