@@ -59,7 +59,6 @@ if 'ROBOCHEM_DATA_PATH' in os.environ:
     df_results.dropna(subset=[column_to_plot], inplace=True)
     df_results = df_results[~df_results[column_to_plot].isin([np.inf, -np.inf])]
     # df_results[column_to_plot] = df_results[column_to_plot].apply(lambda x: x if x > 1e-10 else 0)
-    # df_results[column_to_plot] = df_results[column_to_plot].apply(lambda x: x if x <= 100 else 100)
 
     # round concentrations "c#SN1OH03" and "c#HBr" to 6 decimal places
     df_results['c#E1OH02'] = df_results['c#E1OH02'].round(6)
@@ -68,6 +67,7 @@ if 'ROBOCHEM_DATA_PATH' in os.environ:
     # df_results.to_csv('e1results.csv', index=False)
     njobs = 4
 else:
+    # This are settings for computing server with 80 CPU cores
     import robowski.kinetics_models.acid_base_equilibrium as abe
     df_results = pd.read_csv('e1results.csv')
     njobs = 77
@@ -76,61 +76,6 @@ else:
 abe.PURE_WATER_MOLARITY = Decimal(19.1473812) # mol/L
 abe.LOG10_PURE_WATER_MOLARITY = abe.PURE_WATER_MOLARITY.log10()
 abe.LOG10_PURE_WATER_MOLARITY_FLOAT = np.log10(19.1473812)
-
-# set yields to nan at the minimum of c#SN1OH01 column
-# df_results.loc[df_results[substances[0]].round(4) == df_results[substances[0]].round(4).min(), column_to_plot] = np.nan
-
-# # set yields to nan where the temperature is 6 and yield is above 0.9
-# df_results.loc[(df_results['temperature'] == 6) & (df_results[column_to_plot] > 0.9), column_to_plot] = np.nan
-
-# set yields to nan where the HBr is zero
-# df_results.loc[df_results['c#HBr'] == 0, column_to_plot] = np.nan
-
-# divide yields by 5
-# df_results[column_to_plot] = df_results[column_to_plot].apply(lambda x: x/5)
-
-# remove all rows where 'yield' columns is nan
-# df_results.dropna(subset=[column_to_plot], inplace=True)
-# remove all rows where 'yield' columns is inf
-# df_results = df_results[~df_results[column_to_plot].isin([np.inf, -np.inf])]
-
-# df_results[column_to_plot] = df_results[column_to_plot].apply(lambda x: 0.5 if x <= 0.5 else 1)
-
-# df_results[column_to_plot] = df_results[column_to_plot].apply(lambda x: x if x > 1e-10 else 0)
-# df_results[column_to_plot] = df_results[column_to_plot].apply(lambda x: x if x <= 1 else 1)
-
-## drop rows where 'is_outlier' columns is equal to 1
-
-#
-# # convert from mol/L to mM
-# for substrate in substrates:
-#     df_results[substrate] = df_results[substrate].apply(lambda x: x*1000 if x>1e-10 else 0)
-#     # df_results[substrate] = df_results[substrate].round(4)
-#
-# xs = df_results[substrates[0]].to_numpy()
-# ys = df_results[substrates[1]].to_numpy()
-# zs = df_results['temperature'].to_numpy()
-# yields = df_results[column_to_plot].to_numpy()
-# #
-# # logging.info(f'Min concentrations of substrates: {[np.min(x) for x in [xs, ys, zs]]}')
-# #
-# # [ic(np.min(x)) for x in [xs, ys, zs]]
-# #
-# # print(f'Max concentrations of substrates: {[np.max(x) for x in [xs, ys, zs]]}')
-# # print(f'Yields - min: {min(yields)}, max: {max(yields)}')
-# #
-# avs.plot_3d_dataset_as_cube(xs, ys, zs, yields,
-#                             substance_titles=('Alcohol,\nmM', 'HBr,\nmM', 'Temperature,\n°C'),
-#                             colorbar_title=column_to_plot,
-#                             npoints=50, sparse_npoints=5, rbf_epsilon=1,
-#                             rbf_smooth=0.05,
-#                             interpolator_choice='rbf',
-#                             data_for_spheres='raw',
-#                             rbf_function='multiquadric',
-#                             axes_ticks_format='%.0f',
-#                             axes_font_factor=1.3,
-#                             contours=[0.2, 0.4, 0.7, 0.85],
-#                             contour_opacity=0.4)
 
 
 def model_of_yield_for_one_condition(index_in_df, pKa_COH2plus_deltaS, pKa_COH2plus_deltaH, K_tilde_deltaS, K_tilde_deltaH, k_forward_over_k_backward_deltaS, k_forward_over_k_backward_deltaH, k_backward_kappa, k_backward_deltaS, k_backward_deltaH, HBr_B):
