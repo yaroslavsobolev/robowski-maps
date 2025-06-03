@@ -4,7 +4,8 @@ This repository contains the code and data supporting the article
 
 'Robot-assisted reconstruction of reaction hyperspaces and complex reaction networks they contain'
 by Yankai Jia, Rafał Frydrych, Yaroslav I. Sobolev, Wai-Shing Wong, Bibek Prajapati, Yasemin Bilgi, 
-Daniel Matuszczyk, Galymzhan Moldagulov, Juan Carlos Ahumada, Namhun Kim, Eric Larsen, Bartosz A. Grzybowski
+Daniel Matuszczyk, Galymzhan Moldagulov, Juan Carlos Ahumada, Namhun Kim, Eric Larsen, Louis Gadina, 
+Maxence Deschamps, Yanqiu Jiang, Bartosz A. Grzybowski
 
 To cite this work, use the following citation:
 
@@ -222,9 +223,11 @@ Covariance matrices are plotted by the `ugi_kinetics_v3_covplot.py` script based
 of the scripts whose names contain `_perr_`, meaning "parameter errors analysis".
 
 #### Hantzsch reaction
-1. To reproduce the Figure 5a and Figure S99, run the `robowski/misc_scripts/hntz_discovery_timeline.py` script.
-2. To reproduce the main-text figure 5b, run the `robowski/misc_scripts/figures_for_articles/all_hantzsch_spectra_figure5b.py` script.
-3. To reproduce the Figure 5d, 5e and 5f, run the `robowski/visualize_results/examples/plot_3d_map_for_hantzsch_by_HPLC.py` script.
+To reproduce the Figure 5a and Figure S99, run the `robowski/misc_scripts/hntz_discovery_timeline.py` script.
+
+To reproduce the main-text figure 5b, run the `robowski/misc_scripts/figures_for_articles/all_hantzsch_spectra_figure5b.py` script.
+
+To reproduce the Figure 5d, 5e and 5f, run the `robowski/visualize_results/examples/plot_3d_map_for_hantzsch_by_HPLC.py` script.
 
 #### Reactions with prussian blue analogs
 
