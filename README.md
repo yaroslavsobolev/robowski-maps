@@ -12,7 +12,7 @@ To cite this work, use the following citation:
 ``` 
     BIBTEX citation entry to be added upon publication
 ```
-For with a step-by-step tutorial of the core functionality of calibration and spectral unmixing for 
+For a step-by-step tutorial of the core functionality of calibration and spectral unmixing for 
 the Claisen-Schmidt condensation case shown in Figure 1c,d of the respective article, see the [Google Colab notebook](https://colab.research.google.com/drive/1uXaoWjkHYaPoCt8N6q4GzYY3e92T_nC-?usp=sharing),
 which reproduces the first chapter of the Jupyter notebook `notebooks/spectral_unmixing_tutorial.ipynb` located in this repository,
 but does not require any local installation and allows the users to upload their own spectral data for analysis.
