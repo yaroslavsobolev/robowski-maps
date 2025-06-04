@@ -12,6 +12,10 @@ To cite this work, use the following citation:
 ``` 
     BIBTEX citation entry to be added upon publication
 ```
+For with a step-by-step tutorial of the core functionality of calibration and spectral unmixing for 
+the Claisen-Schmidt condensation case shown in Figure 1c,d of the respective article, see the [Google Colab notebook](https://colab.research.google.com/drive/1uXaoWjkHYaPoCt8N6q4GzYY3e92T_nC-?usp=sharing),
+which reproduces the first chapter of the Jypyter notebook `notebooks/spectral_unmixing_tutorial.ipynb` located in this repository,
+but does not require any local installation and allows the users to upload their own spectral data for analysis.
 
 ## If you are only looking for the final datasets of reaction yields
 
@@ -162,9 +166,13 @@ experimental run.
 
 ### 3D visualization of the yield maps
 
+The figures in the article were produced with a Python package MayaVi, as described below. However, if you want to
+interactively inspect the datasets, we recommend to instead use the Hyperspace Viewer
+distributed with the article (in [Zenodo repository](https://zenodo.org/uploads/14880579) and article's Supplementary 
+Files). Hyperspace Viewer is a standalone application that does not even require Python.
+
 The `visualize_results` folder contains the scripts for processing the output of the spectral unmixing workflow.
 This includes scripts for visualizing the reaction yield data in 3D,
-as well as the scripts for fitting the kinetics models to the data.
 
 Interactive viewer of 3D datasets is implemented in `visualize_results/animated_viewer_static.py` script and is
 based on `mayavi` library. It allows the user to rotate the 3D plot, zoom in and out, and offers various
@@ -172,7 +180,13 @@ options for visualizing the data.
 
 For interactive visualization of 3D and 4D datasets, see the scripts whose names starting with `plot_3d_map_for_` 
 and `view_4d_data_for_` in 
-the `robowski/visualize_results/examples` folder.
+the `robowski/visualize_results/examples` folder. Detailed table linking scripts to the respective
+figures in the article is given in `robowski/visualize_results/examples/README.md` README file.
+
+For example, to reproduce the Figure 3, run the `robowski/visualize_results/examples/plot_3d_map_for_SN1_reaction.py` script.
+To show all the raw data and reproduce Supplementary Figure S124, run the same script after setting
+the parameters `data_for_spheres='raw'` on the line 130,
+in the function call `animated_viewer_static.plot_3d_dataset_as_cube`.
 
 ### Outlier filtration and interpolation in Ugi reaction data
 
