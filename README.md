@@ -1,6 +1,6 @@
 # Robot-assisted reconstruction of reaction hyperspaces and complex reaction networks they contain
 
-This repository contains the code and data supporting the article
+This repository (also [available via Github](https://github.com/yaroslavsobolev/robowski-maps)) contains the code and data supporting the article
 
 'Robot-assisted reconstruction of reaction hyperspaces and complex reaction networks they contain'
 by Yankai Jia, Rafał Frydrych, Yaroslav I. Sobolev, Wai-Shing Wong, Bibek Prajapati, Yasemin Bilgi, 
