@@ -1,3 +1,6 @@
+## TO REPRODUCE THE SUPPLEMENTARY FIGURE S124:
+# Set the parameters data_for_spheres='raw' in the function call animated_viewer_static.plot_3d_dataset_as_cube below
+
 from robowski.settings import *
 from matplotlib import pyplot as plt
 from scipy.optimize import curve_fit
@@ -117,6 +120,7 @@ yields = df_results['yield'].to_numpy()
 print(f'Max concentrations of substrates: {[print(max(x)) for x in [xs0, ys0, zs0]]}')
 print(f'Yields - min: {min(yields)}, max: {max(yields)}')
 
+## TO REPRODUCE THE SUPPLEMENTARY FIGURE S124, SET THE data_for_spheres='raw'
 animated_viewer_static.plot_3d_dataset_as_cube(xs, ys, zs, yields,
                             substance_titles=('Alcohol,\nmM', 'HBr,\nmM', 'Temperature,\n°C'),
                             colorbar_title='Conversion:',
@@ -159,43 +163,3 @@ animated_viewer_static.plot_3d_dataset_as_cube(xs, ys, zs, yields,
 #                             axes_ticks_format='%.0f',
 #                             axes_font_factor=1.3,
 #                             contours=[0.15, 0.2])
-
-#
-# # fit the kinetics
-# xdata = np.vstack((ys0.T, zs0.T))
-# ydata = yields.T
-#
-# def kinetics_yield(catalyst_C, temperature, a, b):
-#     return (1 - np.exp(-a*catalyst_C*np.exp(-b/(temperature + 273.15))))
-#
-# def func(x, a, b):
-#     return kinetics_yield(catalyst_C=x[0], temperature=x[1], a=a, b=b)
-#
-# popt, pcov = curve_fit(func, xdata, ydata, p0=[96079.4039589, 4371.26728913], ftol=1e-10)
-# print(popt)
-#
-# npoints = 20j
-# x_raw, y_raw, z_raw = np.mgrid[np.min(xs):np.max(xs):npoints,
-#                       np.min(ys):np.max(ys):npoints,
-#                       np.min(zs):np.max(zs):npoints]
-# # flatten all arrays
-# x_raw = x_raw.flatten()
-# y_raw = y_raw.flatten()
-# z_raw = z_raw.flatten()
-# # k_raw = x_raw * y_raw * z_raw
-# # k_raw = x_raw + y_raw + z_raw
-#
-# fitted_yields = kinetics_yield(y_raw, z_raw, *popt)
-
-
-# animated_viewer_static.plot_3d_dataset_as_cube(x_raw, y_raw, z_raw, fitted_yields,
-#                             substance_titles=('Alcohol,\nmM', 'HBr,\nmM', 'Temperature,\n°C'),
-#                             colorbar_title='Conversion:',
-#                             npoints=50, sparse_npoints=7, rbf_epsilon=1,
-#                             rbf_smooth=0.05,
-#                             interpolator_choice='linear',
-#                             data_for_spheres='interpolated',
-#                             rbf_function='multiquadric',
-#                             axes_ticks_format='%.0f',
-#                             axes_font_factor=1.3,
-#                             contours=[0.2, 0.4, 0.7, 0.85])
