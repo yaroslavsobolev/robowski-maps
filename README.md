@@ -216,6 +216,10 @@ run the `robowski/kinetics_models/E1_kinetics/E1_kinetics_v3.py` script.
 The same script can be used to plot the model prediction against the experimental data (Figures S138 and S140
 from the Supplementary Materials) by uncommenting the appropriate lines in the script.
 
+To reproduce the Supplementary Figure S154 showing the fraction of yield at 4 hours to the equilibrium yield, run the 
+`robowski/kinetics_models/E1_kinetics/equilibrium_fraction_analysis/equilibrium_fractions_for_three_tempereature.py`
+script.
+
 #### SN1 reactions
 
 For kinetics fitting to the SN1 reaction (Figure 2), 
