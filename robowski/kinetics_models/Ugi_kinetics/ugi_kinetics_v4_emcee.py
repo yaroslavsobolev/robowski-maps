@@ -81,7 +81,7 @@ def model_of_yield_for_one_condition(*popt):
 
     row = df_results.loc[index_in_df]
     npoints = 100
-    reaction_time_in_hours = 14 # when fitting experimental data obtained at 16 hours reaction time, we leave this variable equal to 14 hours and then scale the kinetic rate constants by 14/16 when reporting them in the article. Mathematically, this scaling is equivalent to setting this parameter to 14 hours in the code; we use clumsy scaling approach for legacy reasons.
+    reaction_time_in_hours = 14 # when fitting experimental data obtained at 16 hours reaction time, we leave this variable equal to 14 hours and then scale the kinetic rate constants by 14/16 when reporting them in the article. Mathematically, this scaling is equivalent to setting this parameter to 16 hours here in the code; we use clumsy scaling approach for legacy reasons.
     dt = reaction_time_in_hours / npoints
     # get concentrations of substrates
     c_a = row['ald001']
