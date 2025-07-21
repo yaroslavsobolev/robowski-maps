@@ -56,9 +56,14 @@ Launch the terminal with Anaconda activated. The easiest way to do it is by clic
 finding (e.g. by typing in search) "Anaconda Command Prompt" and running it. It is recommended
 that you run it with administrator privileges, so right-click on the "Anaconda Command Prompt" and select "Run as administrator".
 In the launched command prompt, navigate to your local folder containing this 
-repository and create a new `conda` environment named `robowski` by running this command:
+repository and create a new `conda` environment named `robowski` by running this command in case of Windows OS:
 ```bash
 conda env create -f environment.yml
+```
+
+Or the following command in case of Linux OS (we tested it on 64-bit Ubuntu v.24):
+```bash
+conda env create -f environment_linux.yml
 ```
 
 If this command has failed for some reason, you can either attempt the troubleshooting (next section),
