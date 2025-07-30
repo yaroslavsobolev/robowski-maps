@@ -1,10 +1,11 @@
 # Robot-assisted mapping of chemical reaction hyperspaces and networks
 
-This repository (also [available via Github](https://github.com/yaroslavsobolev/robowski-maps)) contains the code and data supporting the research article
+This repository (also [available via Github](https://github.com/yaroslavsobolev/robowski-maps)) contains the code and 
+data supporting the research article
 
-Yankai Jia, Rafał Frydrych, Yaroslav I. Sobolev, Wai-Shing Wong, Bibek Prajapati, Yasemin Bilgi, 
-Daniel Matuszczyk, Galymzhan Moldagulov, Juan Carlos Ahumada, Namhun Kim, Eric Larsen, Louis Gadina, 
-Maxence Deschamps, Yanqiu Jiang, Bartosz A. Grzybowski. "Robot-assisted mapping of chemical reaction hyperspaces and networks"
+Yankai Jia, Rafał Frydrych, Yaroslav I. Sobolev, Wai-Shing Wong, Bibek Prajapati, Daniel Matuszczyk, Yasemin Bilgi, 
+Louis Gadina, Juan Carlos Ahumada, Galymzhan Moldagulov, Namhun Kim, Eric Larsen, Maxence Deschamps, Yanqiu Jiang, 
+Bartosz A. Grzybowski. "Robot-assisted mapping of chemical reaction hyperspaces and networks"
 *Nature* (**2025**)
 
 To cite this work, use the following citation:
