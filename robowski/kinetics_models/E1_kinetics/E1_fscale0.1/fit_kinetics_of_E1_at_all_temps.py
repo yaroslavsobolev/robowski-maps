@@ -383,12 +383,12 @@ if __name__ == '__main__':
     #            0.0 # HBr_B
     #             ]
     # p0 =[ 3.72552834e+01, -4.92827878e+00,  1.62358019e+02,  4.83551781e+01, 2.60480250e+01, -7.62140716e+00,  9.32408675e-06, -5.31211743e+00, 3.05198766e+00,  6.20249974e-02]
-    keq_initials = np.load('keq_fits_with_errs_tdep_homosc_2024-12-05a.npy')
+    # keq_initials = np.load('keq_fits_with_errs_tdep_homosc_2024-12-05a.npy')
 
     # all indices
     indices_where_mask_is_true = df_results.index.to_numpy()
     # p0 = keq_fit
-    p0 = keq_initials[0]
+    # p0 = keq_initials[0]
     # p0[2] = 167.4631113
     # p0[3] = 37.8728323
 
@@ -411,17 +411,20 @@ if __name__ == '__main__':
     #     np.save(f'bootstrapped_keq_fits_size{i+1}_2024-12-05.npy', np.array(bootstrapped_keq_fits))
 
 
-    keq_fit, keq_err = fit_kinetic_model(indices_where_mask_is_true, do_plot=False, p0=p0)
+    # keq_fit, keq_err = fit_kinetic_model(indices_where_mask_is_true, do_plot=False, p0=p0)
+    # 
+    # # keq_err = np.zeros_like(keq_fit)
+    # print(f'keq_fit = {keq_fit}')
+    # print(f'keq_err = {keq_err}')
+    # 
+    # # save keq_fits as numpy array
+    # if 'ROBOCHEM_DATA_PATH' in os.environ:
+    #     np.save(f'{data_folder}simple-reactions/2023-09-14-run01/results/kinetics/keq_fits_with_errs_tdep_2024-12-05a.npy', np.array((keq_fit, keq_err)))
+    # else:
+    #     np.save('keq_fits_with_errs_tdep_homosc_2024-12-05b.npy', np.array((keq_fit, keq_err)))
 
-    # keq_err = np.zeros_like(keq_fit)
-    print(f'keq_fit = {keq_fit}')
-    print(f'keq_err = {keq_err}')
-
-    # save keq_fits as numpy array
-    if 'ROBOCHEM_DATA_PATH' in os.environ:
-        np.save(f'{data_folder}simple-reactions/2023-09-14-run01/results/kinetics/keq_fits_with_errs_tdep_2024-12-05a.npy', np.array((keq_fit, keq_err)))
-    else:
-        np.save('keq_fits_with_errs_tdep_homosc_2024-12-05b.npy', np.array((keq_fit, keq_err)))
+    keq_fit = np.load('D:/Docs/Science/UNIST/Projects/robochem/code/roborea/bootstrap_medians.npy')
+    print(keq_fit)
 
     for temp_index, temperature in enumerate(temperatures):
         fig1 = plt.figure(figsize=(4, 3.9), dpi=300)
@@ -431,7 +434,10 @@ if __name__ == '__main__':
         plt.title(f'Temperature {temperature} °C')
         plot_kinetic_model(indices_where_mask_is_true, keq_fit)
         if 'ROBOCHEM_DATA_PATH' in os.environ:
-            plt.gcf().savefig(f'{data_folder}simple-reactions/2023-11-28-run01/results/kinetics/figures/temperature_{temperature}C.png', dpi=300)
+            # plt.gcf().savefig(f'{data_folder}simple-reactions/2023-11-28-run01/results/kinetics/figures/temperature_{temperature}C.png', dpi=300)
+            plt.gcf().savefig(
+                f'{data_folder}simple-reactions/2023-11-28-run01/results/kinetics/figures/temperature_{temperature}C.eps',
+                dpi=300)
             plt.xlim(-0.001, 0.011)
             plt.show()
         else:
