@@ -349,34 +349,3 @@ if __name__ == '__main__':
         # pickle bootstrapped_keq_fits
         np.save(f'bootstrapped_keq_fits_size{i+1}_2024-12-24a_temps16-21-26.npy', np.array(bootstrapped_keq_fits))
 
-    print(f'keq_fit = {keq_fit}')
-    print(f'keq_err = {keq_err}')
-
-    # # save keq_fits as numpy array
-    # output_fname = 'keq_fits_with_errs_tdep_homosc_2024-12-16a_temps16-21-26__from_medians_exact__size249_rep6.npy'
-    # if 'ROBOCHEM_DATA_PATH' in os.environ:
-    #     np.save(f'{data_folder}simple-reactions/2023-09-14-run01/results/kinetics/{output_fname}', np.array((keq_fit, keq_err)))
-    # else:
-    #     np.save(output_fname, np.array((keq_fit, keq_err)))
-
-    for temp_index, temperature in enumerate(temperatures):
-        fig1 = plt.figure(figsize=(4, 3.9), dpi=300)
-        print(f'Plotting model at temperature = {temperature}')
-        mask = (df_results['temperature'] == temperature)
-        indices_where_mask_is_true = df_results[mask].index.to_numpy()
-        plt.title(f'Temperature {temperature} °C')
-        plot_kinetic_model(indices_where_mask_is_true, keq_fit)
-        if 'ROBOCHEM_DATA_PATH' in os.environ:
-            plt.gcf().savefig(f'{data_folder}simple-reactions/2023-11-28-run01/results/kinetics/figures/temperature_{temperature}C.png', dpi=300)
-            plt.xlim(-0.001, 0.011)
-            plt.show()
-        else:
-            plt.gcf().savefig(
-                f'temperature_{temperature}C.png',
-                dpi=300)
-            # close all figs
-            plt.close('all')
-
-    print(np.array(keq_fit))
-
-
