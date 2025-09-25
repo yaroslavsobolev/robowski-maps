@@ -5,13 +5,23 @@ data supporting the research article
 
 Yankai Jia, Rafał Frydrych, Yaroslav I. Sobolev, Wai-Shing Wong, Bibek Prajapati, Daniel Matuszczyk, Yasemin Bilgi, 
 Louis Gadina, Juan Carlos Ahumada, Galymzhan Moldagulov, Namhun Kim, Eric Larsen, Maxence Deschamps, Yanqiu Jiang, 
-Bartosz A. Grzybowski. "Robot-assisted mapping of chemical reaction hyperspaces and networks"
-*Nature* (**2025**)
+Bartosz A. Grzybowski. "Robot-assisted mapping of chemical reaction hyperspaces and networks". *Nature* **645**, 922–931 (2025). [https://doi.org/10.1038/s41586-025-09490-1](https://doi.org/10.1038/s41586-025-09490-1)
 
-To cite this work, use the following citation:
-
+To cite this work, please cite the paper above; here it is in the BibTex format for your convenience:
 ``` 
-    BIBTEX citation entry to be added upon publication
+@article{jia_robot-assisted_2025,
+	title = {Robot-assisted mapping of chemical reaction hyperspaces and networks},
+	volume = {645},
+	issn = {1476-4687},
+	url = {https://doi.org/10.1038/s41586-025-09490-1},
+	doi = {10.1038/s41586-025-09490-1},
+	number = {8082},
+	journal = {Nature},
+	author = {Jia, Yankai and Frydrych, Rafał and Sobolev, Yaroslav I. and Wong, Wai-Shing and Prajapati, Bibek and Matuszczyk, Daniel and Bilgi, Yasemin and Gadina, Louis and Ahumada, Juan Carlos and Moldagulov, Galymzhan and Kim, Namhun and Larsen, Eric S. and Deschamps, Maxence and Jiang, Yanqiu and Grzybowski, Bartosz A.},
+	month = sep,
+	year = {2025},
+	pages = {922--931},
+}
 ```
 For a step-by-step tutorial of the core functionality of calibration and spectral unmixing for 
 the Claisen-Schmidt condensation case shown in Figure 1c,d of the respective article, see the [Google Colab notebook](https://colab.research.google.com/drive/1uXaoWjkHYaPoCt8N6q4GzYY3e92T_nC-?usp=sharing),
